@@ -72,4 +72,49 @@ describe("deterministic medical-health fact events", () => {
       blocked: 0,
     });
   });
+
+  it("keeps a relevant opinion without a verifiable action as a Signal", async () => {
+    const profileSlug = "medical-health-data-elements";
+    const config = loadConfig({
+      NODE_ENV: "test",
+      DATABASE_URL: "sqlite::memory:",
+      INDUSTRY_PROFILE: profileSlug,
+    });
+    const db = createDatabase(config);
+    databases.push(db);
+    await migrateToLatest(db, config);
+    await seedDatabase(db, {
+      industryProfileSlug: profileSlug,
+      rootDir: config.rootDir,
+    });
+    const repository = new Repository(db);
+    const source = (await repository.listSources()).find((item) => item.slug === "nhsa-policy");
+    const rules = loadIndustryRules(profileSlug, config.rootDir);
+    if (!source || !rules) throw new Error("industry_opinion_fixture_requires_source_and_rules");
+    const input = {
+      url: "https://www.nhsa.gov.cn/art/2026/7/12/art_14_21384.html",
+      title: "医保数据从“身份证”正在变成“信用卡”",
+      summary: "一篇署名分析讨论医保数据公开、药品追溯数据融资和数据质量。",
+      language: "zh-CN",
+      publishedAt: new Date().toISOString(),
+      category: "medical-insurance",
+      tags: ["医保数据"],
+      metrics: {},
+    };
+    const industryScope = assessIndustryScope(input, { slug: source.slug }, rules);
+    expect(industryScope).toMatchObject({ decision: "include", matchedActions: ["融资"] });
+    await repository.insertSignal(source.id, {
+      ...input,
+      rawMeta: { industryScope, quality: { score: 90 } },
+    });
+
+    await expect(
+      clusterSignals(db, {
+        industryProfileSlug: profileSlug,
+        rootDir: config.rootDir,
+      }),
+    ).resolves.toMatchObject({ created: 0, deferred: 1 });
+    expect(await repository.listEvents()).toHaveLength(0);
+    expect(await repository.publicSignals()).toHaveLength(1);
+  });
 });

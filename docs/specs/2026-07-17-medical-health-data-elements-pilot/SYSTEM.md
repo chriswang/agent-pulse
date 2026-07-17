@@ -76,7 +76,7 @@ JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 
 行业聚类使用主体、行为、对象、时间窗口、实体别名和原始引用链；上游 AI 模型名称 fingerprint 只在默认行业生效。来源独立性按 original URL、source identity 和引用链计算，不能只按 source slug 计数。
 
-行业影响分由确定性标签映射计算，模型不能直接写总分。高优先级 Event 要求 Tier 1 原始证据和独立辅助证据，或两个独立 Tier 2 证据；单一 Tier 1 Event 可以作为普通事实发布，但明确显示待交叉验证，不能进入高优先级 Top 10。
+行业影响分由确定性标签映射计算，模型不能直接写总分。高优先级 Event 要求 Tier 1 原始证据和独立辅助证据，或两个独立 Tier 2 证据；单一 Tier 1 Event 可以作为普通事实发布，但明确显示待交叉验证，不能进入高优先级 Top 10。无模型普通事实的标题还必须包含发布、印发、召开、上线、签约等可验证动作；评论、解读和观点文章即使正文提到相关动作，也只保留为 Signal，不自动包装成 Event。
 
 事实摘要、行业判断、未来信号和业务价值分别持久化使用的 Evidence URL。相关性不足、中文输出失败、证据映射不完整或评分不可解释时保持 review/triage。
 

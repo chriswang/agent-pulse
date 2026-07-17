@@ -211,7 +211,9 @@ export function industryEventabilityScore(
   const authority = source.tier === 1 ? 20 : source.tier === 2 ? 10 : 4;
   const original = source.role === "policy" || source.role === "primary" ? 15 : 8;
   const action = Math.min(12, scope.matchedActions.length * 4);
-  return clamp(scope.score * 0.6 + authority + original + action);
+  const score = clamp(scope.score * 0.6 + authority + original + action);
+  const hasTitledAction = matches(normalize(signal.title), rules.relevance.action.terms).length > 0;
+  return hasTitledAction ? score : Math.min(69, score);
 }
 
 export function initialIndustryImpactScore(
