@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "jobId": "6f9b3b94-306b-4506-b23c-bb1fe172edb8",
-  "startedAt": "2026-07-17T07:07:26.386Z",
-  "finishedAt": "2026-07-17T07:07:42.474Z",
+  "jobId": "4317f308-4d66-4bf7-b5fa-e17c07abc8f3",
+  "startedAt": "2026-07-17T08:22:19.016Z",
+  "finishedAt": "2026-07-17T08:22:31.911Z",
   "total": 30,
-  "healthy": 19,
+  "healthy": 17,
   "degraded": 2,
-  "failed": 2,
-  "skipped": 7,
-  "accessible": 30,
-  "fetched": 28,
-  "withContent": 19,
+  "failed": 6,
+  "skipped": 5,
+  "accessible": 29,
+  "fetched": 24,
+  "withContent": 17,
   "results": [
     {
       "slug": "datavant",
@@ -31,7 +31,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2010
+      "durationMs": 209
     },
     {
       "slug": "ecdc-public-health-data",
@@ -52,7 +52,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3492
+      "durationMs": 715
     },
     {
       "slug": "eu-health-data-space",
@@ -73,7 +73,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep_manual",
       "recommendedLifecycle": "shadow",
-      "durationMs": 3862
+      "durationMs": 897
     },
     {
       "slug": "ema-news-events",
@@ -94,7 +94,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3638
+      "durationMs": 257
     },
     {
       "slug": "hl7-blog",
@@ -115,7 +115,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2186
+      "durationMs": 245
     },
     {
       "slug": "nhs-digital-data-points",
@@ -128,15 +128,15 @@
       "itemCount": 10,
       "latestItemAt": "2026-07-16T08:00:05.000Z",
       "duplicateRatio": 0,
-      "qualityScore": 73,
+      "qualityScore": 72,
       "errorType": null,
       "errorCode": null,
       "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
+      "proxyHint": "not_required",
+      "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1505
+      "durationMs": 785
     },
     {
       "slug": "truveta",
@@ -157,7 +157,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 5986
+      "durationMs": 4228
     },
     {
       "slug": "cdc-media-releases",
@@ -178,7 +178,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 952
+      "durationMs": 175
     },
     {
       "slug": "fda-press-releases",
@@ -199,7 +199,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 546
+      "durationMs": 71
     },
     {
       "slug": "healthit-onc-blog",
@@ -220,7 +220,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2080
+      "durationMs": 213
     },
     {
       "slug": "govuk-dhsc",
@@ -241,7 +241,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3763
+      "durationMs": 28
     },
     {
       "slug": "govuk-mhra",
@@ -262,7 +262,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3044
+      "durationMs": 477
     },
     {
       "slug": "who-news",
@@ -279,11 +279,11 @@
       "errorType": null,
       "errorCode": null,
       "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
+      "proxyHint": "not_required",
+      "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1119
+      "durationMs": 344
     },
     {
       "slug": "shanghai-data-exchange",
@@ -304,7 +304,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep_manual",
       "recommendedLifecycle": "shadow",
-      "durationMs": 740
+      "durationMs": 2153
     },
     {
       "slug": "caict-health-data",
@@ -325,7 +325,7 @@
       "proxyUsed": false,
       "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 748
+      "durationMs": 3050
     },
     {
       "slug": "gov-cn-latest-policy",
@@ -346,7 +346,7 @@
       "proxyUsed": false,
       "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 373
+      "durationMs": 1505
     },
     {
       "slug": "yidu-tech",
@@ -367,7 +367,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep_manual",
       "recommendedLifecycle": "shadow",
-      "durationMs": 955
+      "durationMs": 2697
     },
     {
       "slug": "nhsa-policy",
@@ -388,7 +388,7 @@
       "proxyUsed": false,
       "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 444
+      "durationMs": 3273
     },
     {
       "slug": "national-health-commission",
@@ -409,7 +409,7 @@
       "proxyUsed": false,
       "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 679
+      "durationMs": 1701
     },
     {
       "slug": "national-data-administration",
@@ -430,49 +430,49 @@
       "proxyUsed": false,
       "retentionDecision": "keep_manual",
       "recommendedLifecycle": "shadow",
-      "durationMs": 595
+      "durationMs": 2073
     },
     {
       "slug": "national-medical-products-administration",
-      "status": "skipped",
-      "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "unsupported",
+      "status": "failed",
+      "accessStatus": "unreachable",
+      "fetchStatus": "failed",
+      "parseStatus": "not_started",
       "schemaStatus": "not_applicable",
       "policyStatus": "manual_review",
       "itemCount": 0,
       "latestItemAt": null,
       "duplicateRatio": 0,
       "qualityScore": 0,
-      "errorType": null,
-      "errorCode": null,
-      "repairAction": "configure_stable_adapter",
-      "proxyHint": "not_required",
+      "errorType": "network",
+      "errorCode": "ADAPTER_ERROR",
+      "repairAction": "verify_or_replace_endpoint",
+      "proxyHint": "possible",
       "proxyUsed": false,
-      "retentionDecision": "keep_manual",
+      "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 846
+      "durationMs": 1135
     },
     {
       "slug": "shenzhen-data-exchange",
-      "status": "skipped",
+      "status": "failed",
       "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "unsupported",
+      "fetchStatus": "failed",
+      "parseStatus": "not_started",
       "schemaStatus": "not_applicable",
       "policyStatus": "manual_review",
       "itemCount": 0,
       "latestItemAt": null,
       "duplicateRatio": 0,
       "qualityScore": 0,
-      "errorType": null,
-      "errorCode": null,
-      "repairAction": "configure_stable_adapter",
+      "errorType": "permanent_http",
+      "errorCode": "HTTP_418",
+      "repairAction": "verify_or_replace_endpoint",
       "proxyHint": "not_required",
       "proxyUsed": false,
-      "retentionDecision": "keep_manual",
+      "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 773
+      "durationMs": 2271
     },
     {
       "slug": "fierce-healthcare",
@@ -485,36 +485,36 @@
       "itemCount": 25,
       "latestItemAt": "2026-07-16T15:12:00.000Z",
       "duplicateRatio": 0,
-      "qualityScore": 64,
+      "qualityScore": 63,
       "errorType": null,
       "errorCode": null,
       "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
+      "proxyHint": "not_required",
+      "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1206
+      "durationMs": 166
     },
     {
       "slug": "health-affairs",
-      "status": "healthy",
+      "status": "failed",
       "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "succeeded",
-      "schemaStatus": "valid",
+      "fetchStatus": "failed",
+      "parseStatus": "failed",
+      "schemaStatus": "unknown",
       "policyStatus": "allowed_metadata",
-      "itemCount": 15,
-      "latestItemAt": "2026-07-07T07:51:07.000Z",
+      "itemCount": 0,
+      "latestItemAt": null,
       "duplicateRatio": 0,
-      "qualityScore": 66,
-      "errorType": null,
-      "errorCode": null,
-      "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
-      "retentionDecision": "keep",
-      "recommendedLifecycle": "active",
-      "durationMs": 1359
+      "qualityScore": 0,
+      "errorType": "permanent_http",
+      "errorCode": "HTTP_403",
+      "repairAction": "replace_or_correct_endpoint",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "observe",
+      "recommendedLifecycle": "degraded",
+      "durationMs": 81
     },
     {
       "slug": "jmir",
@@ -535,28 +535,28 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2246
+      "durationMs": 528
     },
     {
       "slug": "nejm-ai",
-      "status": "healthy",
+      "status": "failed",
       "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "succeeded",
-      "schemaStatus": "valid",
+      "fetchStatus": "failed",
+      "parseStatus": "failed",
+      "schemaStatus": "unknown",
       "policyStatus": "allowed_metadata",
-      "itemCount": 12,
-      "latestItemAt": "2026-07-15T05:00:00.000Z",
+      "itemCount": 0,
+      "latestItemAt": null,
       "duplicateRatio": 0,
-      "qualityScore": 65,
-      "errorType": null,
-      "errorCode": null,
-      "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
-      "retentionDecision": "keep",
-      "recommendedLifecycle": "active",
-      "durationMs": 1021
+      "qualityScore": 0,
+      "errorType": "permanent_http",
+      "errorCode": "HTTP_403",
+      "repairAction": "replace_or_correct_endpoint",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "observe",
+      "recommendedLifecycle": "degraded",
+      "durationMs": 271
     },
     {
       "slug": "ohdsi-news",
@@ -577,7 +577,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1397
+      "durationMs": 201
     },
     {
       "slug": "arxiv-health-data",
@@ -598,7 +598,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 4892
+      "durationMs": 44
     },
     {
       "slug": "npj-digital-medicine",
@@ -615,11 +615,11 @@
       "errorType": null,
       "errorCode": null,
       "repairAction": "observe_in_shadow",
-      "proxyHint": "required",
-      "proxyUsed": true,
+      "proxyHint": "not_required",
+      "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3916
+      "durationMs": 51
     },
     {
       "slug": "chima",
@@ -640,7 +640,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep_manual",
       "recommendedLifecycle": "shadow",
-      "durationMs": 2126
+      "durationMs": 5826
     }
   ]
 }
