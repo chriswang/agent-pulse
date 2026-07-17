@@ -9,7 +9,7 @@ export const capabilities = [
     maturity: 44,
     release: "unreleased",
     evidence:
-      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; two GitHub no-model audits cleared 14 China and 3 international publishers, a later 11-of-12 transient failure stopped the main workflow, and five unavailable sources are now replaced by current Jiangsu, Zhejiang and Guangdong health or payer authorities to provide 20 China-ready slugs across 19 independent publishers; cloud re-verification is pending and the model remains paused",
+      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; two GitHub no-model audits cleared 14 China and 3 international publishers, a later 11-of-12 transient failure stopped the main workflow, and the first expanded audit cleared 15 China plus 3 international publishers; the 20-slug China-ready pool now retains verified Jiangsu health and payer sources while unreachable candidates are replaced by current Hubei, Sichuan and Shanghai government pages; the model remains paused",
   },
   {
     slug: "source-catalog",

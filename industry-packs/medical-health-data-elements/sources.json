@@ -264,10 +264,10 @@
       "identityHosts": ["wjw.beijing.gov.cn"]
     },
     {
-      "slug": "zhejiang-health-commission",
-      "name": "浙江省卫生健康委员会",
-      "homepageUrl": "https://wsjkw.zj.gov.cn/",
-      "endpoint": "https://wsjkw.zj.gov.cn/",
+      "slug": "hubei-health-commission",
+      "name": "湖北省卫生健康委员会",
+      "homepageUrl": "https://wjw.hubei.gov.cn/",
+      "endpoint": "https://wjw.hubei.gov.cn/",
       "adapter": "web-scraper",
       "tier": 1,
       "role": "policy",
@@ -276,9 +276,9 @@
       "authorityScore": 94,
       "category": "policy",
       "acquisition": "html",
-      "topics": ["health-data", "public-data", "digital-health"],
-      "purpose": "跟踪浙江健康医疗公共数据开发利用、数字健康和区域数据治理。",
-      "identityHosts": ["wsjkw.zj.gov.cn"]
+      "topics": ["health-data", "high-quality-datasets", "medical-ai"],
+      "purpose": "跟踪湖北健康医疗大数据、高质量数据集、智慧医疗和医院数据协同。",
+      "identityHosts": ["wjw.hubei.gov.cn"]
     },
     {
       "slug": "yidu-tech",
@@ -315,10 +315,10 @@
       "identityHosts": ["cn.taimei.com"]
     },
     {
-      "slug": "zhejiang-healthcare-security",
-      "name": "浙江省医疗保障局",
-      "homepageUrl": "https://ybj.zj.gov.cn/",
-      "endpoint": "https://ybj.zj.gov.cn/",
+      "slug": "sichuan-health-commission",
+      "name": "四川省卫生健康委员会",
+      "homepageUrl": "https://wsjkw.sc.gov.cn/",
+      "endpoint": "https://wsjkw.sc.gov.cn/",
       "adapter": "web-scraper",
       "tier": 1,
       "role": "policy",
@@ -327,15 +327,15 @@
       "authorityScore": 94,
       "category": "policy",
       "acquisition": "html",
-      "topics": ["health-insurance-data", "commercial-insurance", "payer-data"],
-      "purpose": "跟踪浙江医保数据共享、商保创新药、支付改革和数据治理。",
-      "identityHosts": ["ybj.zj.gov.cn"]
+      "topics": ["health-data", "medical-ai", "hospital-data"],
+      "purpose": "跟踪四川数字健康、智能医疗、医院数据治理和区域卫生信息化。",
+      "identityHosts": ["wsjkw.sc.gov.cn"]
     },
     {
-      "slug": "guangdong-healthcare-security",
-      "name": "广东省医疗保障局",
-      "homepageUrl": "https://hsa.gd.gov.cn/",
-      "endpoint": "https://hsa.gd.gov.cn/",
+      "slug": "shanghai-government-data-health",
+      "name": "上海市人民政府 · 数据与医疗政策",
+      "homepageUrl": "https://www.shanghai.gov.cn/",
+      "endpoint": "https://www.shanghai.gov.cn/nw12344/",
       "adapter": "web-scraper",
       "tier": 1,
       "role": "policy",
@@ -344,9 +344,9 @@
       "authorityScore": 94,
       "category": "policy",
       "acquisition": "html",
-      "topics": ["health-insurance-data", "smart-insurance", "payer-data"],
-      "purpose": "跟踪广东医保数据治理、电子处方、智能监管和支付改革。",
-      "identityHosts": ["hsa.gd.gov.cn"]
+      "topics": ["data-elements", "health-data", "medical-ai"],
+      "purpose": "跟踪上海数据要素、高质量医疗数据集、医学人工智能和医保商保协同政策。",
+      "identityHosts": ["www.shanghai.gov.cn", "shanghai.gov.cn"]
     },
     {
       "slug": "cq-health-information-association",
