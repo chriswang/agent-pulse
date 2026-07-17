@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      DATABASE_URL: sqlite:${{ runner.temp }}/medical-health-source-audit.db
+      DATABASE_URL: sqlite:./var/medical-health-source-audit.db
       INDUSTRY_PROFILE: medical-health-data-elements
       SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health-github.json
     steps:

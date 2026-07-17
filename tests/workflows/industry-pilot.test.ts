@@ -35,6 +35,8 @@ describe("medical health industry workflows", () => {
 
   it("can verify the source gate on GitHub without calling a model or deploying", async () => {
     const workflow = await readWorkflow("industry-source-audit.yml");
+    expect(workflow).toContain("DATABASE_URL: sqlite:./var/medical-health-source-audit.db");
+    expect(workflow).not.toContain("DATABASE_URL: sqlite:$" + "{{ runner.temp }}");
     expect(workflow).toContain("npm run sources:audit");
     expect(workflow).toContain("industry:sources:gate");
     expect(workflow).toContain("chineseReadyPublishers");
