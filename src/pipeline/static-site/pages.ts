@@ -1309,8 +1309,26 @@ const TRACK_SOURCE_TERMS: Record<string, string[]> = {
   ],
 };
 
+const CHINA_FIRST_SOURCE_TRACKS = new Set([
+  "policy-and-compliance",
+  "health-data-infrastructure",
+  "payer-and-insurance",
+  "pharma-and-medtech",
+  "market-and-competitors",
+  "standards-and-conferences",
+]);
+
+const SOURCE_HEALTH_ORDER: Record<PublicSource["healthStatus"], number> = {
+  healthy: 0,
+  degraded: 1,
+  unchecked: 2,
+  skipped: 3,
+  failed: 4,
+};
+
 function sourcesForTrack(sources: PublicSource[], slug: string): PublicSource[] {
   const terms = TRACK_SOURCE_TERMS[slug] ?? [];
+  const chinaFirst = CHINA_FIRST_SOURCE_TRACKS.has(slug);
   return sources
     .filter((source) => {
       if (slug === "global-innovation" && source.region !== "US") return true;
@@ -1321,6 +1339,8 @@ function sourcesForTrack(sources: PublicSource[], slug: string): PublicSource[] 
     })
     .sort(
       (left, right) =>
+        (chinaFirst ? Number(right.region === "CN") - Number(left.region === "CN") : 0) ||
+        SOURCE_HEALTH_ORDER[left.healthStatus] - SOURCE_HEALTH_ORDER[right.healthStatus] ||
         Number(right.observationEnabled) - Number(left.observationEnabled) ||
         left.tier - right.tier ||
         right.qualityScore - left.qualityScore ||

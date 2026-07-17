@@ -155,6 +155,9 @@ describe("medical health data elements industry profile", () => {
       const policyTrackPage = await readFile(join(config.distDir, "lines/index.html"), "utf8");
       expect(policyTrackPage).toContain("国家数据局 · 通知公告");
       expect(policyTrackPage).not.toContain("暂无匹配来源");
+      expect(policyTrackPage.indexOf("国家数据局 · 通知公告")).toBeLessThan(
+        policyTrackPage.indexOf("European Medicines Agency News"),
+      );
     } finally {
       await db.destroy();
     }
