@@ -135,6 +135,31 @@ describe("repository data snapshot", () => {
       metrics: { platforms: ["syndication"] },
       rawMeta: {},
     });
+    await repository.insertSignal(openai?.id ?? "", {
+      externalId: "snapshot-industry-scope",
+      url: "https://openai.com/index/snapshot-industry-scope",
+      title: "Snapshot industry scope signal",
+      summary: "Only the validated industry scope assessment may survive the public snapshot.",
+      language: "zh-CN",
+      publishedAt: "2026-07-11T09:00:00.000Z",
+      category: "policy",
+      tags: ["industry-scope"],
+      metrics: {},
+      rawMeta: {
+        privateCollectorDetail: "must-not-survive",
+        industryScope: {
+          profileSlug: "medical-health-data-elements",
+          rulesVersion: 1,
+          decision: "include",
+          score: 82,
+          matchedStrong: ["医疗健康数据"],
+          matchedContext: ["医院"],
+          matchedActions: ["政策"],
+          matchedEntities: [],
+          matchedExclusions: [],
+        },
+      },
+    });
     await repository.deferSignal(snapshotSignal?.id ?? "", "snapshot-triage-fixture", 42, {
       reversible: true,
     });
@@ -146,6 +171,7 @@ describe("repository data snapshot", () => {
     expect(second).toMatchObject({ changed: false, sha256: first.sha256 });
     const serialized = await readFile(join(root, "data/snapshot/v1.json"), "utf8");
     expect(serialized).not.toContain("must-not-leak");
+    expect(serialized).not.toContain("must-not-survive");
     expect(serialized).not.toContain("raw_meta_json");
     expect(serialized).not.toContain("/Users/");
     expect(serialized).toContain("[local-path]");
@@ -230,6 +256,24 @@ describe("repository data snapshot", () => {
     expect(restoredSignal?.canonical_url).toBe("https://openai.com/index/snapshot-test");
     expect(restoredSignal?.summary).toBe(localSummary);
     expect(restoredSignal?.raw_meta_json).toContain("privateLocalDetail");
+    const restoredIndustryScope = await targetDb
+      .selectFrom("signals")
+      .select("raw_meta_json")
+      .where("canonical_url", "=", "https://openai.com/index/snapshot-industry-scope")
+      .executeTakeFirstOrThrow();
+    expect(JSON.parse(restoredIndustryScope.raw_meta_json)).toEqual({
+      industryScope: {
+        profileSlug: "medical-health-data-elements",
+        rulesVersion: 1,
+        decision: "include",
+        score: 82,
+        matchedStrong: ["医疗健康数据"],
+        matchedContext: ["医院"],
+        matchedActions: ["政策"],
+        matchedEntities: [],
+        matchedExclusions: [],
+      },
+    });
     expect(
       await targetDb
         .selectFrom("sources")

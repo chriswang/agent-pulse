@@ -820,6 +820,7 @@ export class Repository {
       const incomingTags = item.tags.slice(0, 20);
       const tags = [...new Set([...existingTags, ...incomingTags])].slice(0, 20);
       const existingMetrics = parseJson<Record<string, unknown>>(existing.metrics_json, {});
+      const existingRawMeta = parseJson<Record<string, unknown>>(existing.raw_meta_json, {});
       const title =
         item.title.length > existing.title.length ? item.title.slice(0, 2_000) : existing.title;
       const summary =
@@ -834,6 +835,7 @@ export class Repository {
           author: existing.author ?? item.author?.slice(0, 255) ?? null,
           tags_json: json(tags),
           metrics_json: json({ ...existingMetrics, ...item.metrics }),
+          raw_meta_json: json({ ...existingRawMeta, ...item.rawMeta }),
           updated_at: timestamp,
         })
         .where("id", "=", existing.id)

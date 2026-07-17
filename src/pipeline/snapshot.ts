@@ -4,6 +4,7 @@ import type { Kysely, Transaction } from "kysely";
 import { parseJson } from "../db/repository.js";
 import type { DatabaseSchema } from "../db/types.js";
 import { canonicalizeUrl, sha256 } from "../domain/url.js";
+import { scopeAssessmentFromSignal } from "../industry/rules.js";
 
 export const SNAPSHOT_SCHEMA_VERSION = 1;
 export const DEFAULT_SNAPSHOT_PATH = join("data", "snapshot", "v1.json");
@@ -248,6 +249,7 @@ async function buildRepositorySnapshot(db: Kysely<DatabaseSchema>): Promise<Repo
     signals: signalRows
       .map((signal) => {
         const canonicalUrl = snapshotUrl(signal.canonical_url);
+        const industryScope = scopeAssessmentFromSignal(signal);
         return {
           id: signal.id,
           sourceSlug: signal.sourceSlug,
@@ -262,6 +264,7 @@ async function buildRepositorySnapshot(db: Kysely<DatabaseSchema>): Promise<Repo
           category: signal.category,
           tags: parseJson(signal.tags_json, []),
           metrics: snapshotMetrics(parseJson(signal.metrics_json, {})),
+          ...(industryScope ? { industryScope } : {}),
           contentHash: signal.content_hash,
           createdAt: signal.created_at,
           updatedAt: signal.updated_at,
@@ -646,6 +649,7 @@ async function restoreSnapshot(
     const incomingSummary = requiredString(value, "summary");
     const incomingTags = Array.isArray(value.tags) ? value.tags : [];
     const incomingMetrics = asRecord(value.metrics);
+    const industryScope = safeSnapshotIndustryScope(value.industryScope);
     const row = {
       source_id: sourceId,
       external_id: optionalString(value.externalId),
@@ -660,7 +664,7 @@ async function restoreSnapshot(
       category: requiredString(value, "category"),
       tags_json: JSON.stringify(incomingTags),
       metrics_json: JSON.stringify(incomingMetrics),
-      raw_meta_json: "{}",
+      raw_meta_json: JSON.stringify(industryScope ? { industryScope } : {}),
       content_hash: requiredString(value, "contentHash"),
       created_at: requiredString(value, "createdAt"),
       updated_at: incomingUpdatedAt,
@@ -1121,6 +1125,13 @@ async function restoreSnapshot(
       .onConflict((conflict) => conflict.column("id").doNothing())
       .execute();
   }
+}
+
+function safeSnapshotIndustryScope(value: unknown) {
+  if (!value) return null;
+  return scopeAssessmentFromSignal({
+    raw_meta_json: JSON.stringify({ industryScope: value }),
+  });
 }
 
 function safeSourceState(value: unknown): Record<string, string> {

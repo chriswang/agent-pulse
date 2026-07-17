@@ -77,7 +77,7 @@ describe("aggregator discovery persistence", () => {
       adapter: "json-api",
       role: "aggregator",
       source_category: "aggregator",
-      config_json: JSON.stringify({ url: "https://example.com/feed", take: 10 }),
+      config_json: JSON.stringify({ url: "https://1.1.1.1/feed", take: 10 }),
     });
     vi.stubGlobal(
       "fetch",
