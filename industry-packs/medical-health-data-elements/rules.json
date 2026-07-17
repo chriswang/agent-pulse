@@ -171,7 +171,9 @@
       "传染病通报",
       "疫苗接种提醒",
       "临床病例",
-      "患者教育"
+      "患者教育",
+      "防汛抗旱",
+      "疾病通报"
     ],
     "sourceBoosts": {
       "national-data-administration": 20,

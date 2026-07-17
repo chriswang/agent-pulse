@@ -128,6 +128,7 @@ export function assessIndustryScope(
   source: Pick<SourceDescriptor, "slug">,
   rules: IndustryRules,
 ): IndustryScopeAssessment {
+  const titleText = normalize(signal.title);
   const text = normalize([signal.title, signal.summary, ...signal.tags].join(" "));
   const matchedStrong = matches(text, rules.relevance.strong.terms);
   const matchedGenericStrong = matches(text, rules.relevance.genericStrong);
@@ -135,6 +136,8 @@ export function assessIndustryScope(
   const matchedContext = matches(text, rules.relevance.context.terms);
   const matchedActions = matches(text, rules.relevance.action.terms);
   const matchedExclusions = matches(text, rules.relevance.exclusions);
+  const matchedTitleStrong = matches(titleText, rules.relevance.strong.terms);
+  const matchedTitleExclusions = matches(titleText, rules.relevance.exclusions);
   const matchedEntities = rules.entities
     .filter((entity) => entity.aliases.some((alias) => text.includes(normalize(alias))))
     .map((entity) => entity.canonical);
@@ -154,7 +157,9 @@ export function assessIndustryScope(
     matchedStrong.every((term) => matchedGenericStrong.includes(term)) &&
     matchedRequiredContext.length === 0 &&
     matchedEntities.length === 0;
-  const score = genericOnly ? Math.min(rawScore, rules.relevance.holdThreshold - 1) : rawScore;
+  const titleExcluded = matchedTitleExclusions.length > 0 && matchedTitleStrong.length === 0;
+  const score =
+    genericOnly || titleExcluded ? Math.min(rawScore, rules.relevance.holdThreshold - 1) : rawScore;
   const decision: IndustryScopeDecision =
     score >= rules.relevance.includeThreshold
       ? "include"

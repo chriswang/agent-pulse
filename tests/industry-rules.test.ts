@@ -89,4 +89,20 @@ describe("medical health industry relevance rules", () => {
     expect(result.matchedStrong).toContain("数据要素");
     expect(result.decision).toBe("exclude");
   });
+
+  it("lets a title exclusion override data terms leaked from adjacent list items", () => {
+    const result = assessIndustryScope(
+      {
+        title: "省卫生健康委召开全省卫生健康系统防汛抗旱工作调度",
+        summary: "相邻列表还显示省卫生健康委举行医疗健康高质量数据集建设主题沙龙。",
+        tags: [],
+      },
+      { slug: "jiangsu-health-commission" },
+      rules,
+    );
+
+    expect(result.matchedStrong).toContain("高质量数据集");
+    expect(result.matchedExclusions).toContain("防汛抗旱");
+    expect(result.decision).toBe("exclude");
+  });
 });
