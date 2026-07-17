@@ -1,39 +1,39 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-17T10:36:13.136Z",
+  "generatedAt": "2026-07-17T12:23:58.316Z",
   "window": {
     "start": "2026-07-17T00:00:00.000Z",
     "end": "2026-08-15T00:00:00.000Z",
     "targetDays": 30,
-    "observedDays": 0
+    "observedDays": 1
   },
   "sources": {
     "configured": 30,
     "automated": 30,
     "manual": 0,
-    "audited": 0,
-    "healthy": 0,
-    "degraded": 0,
-    "failed": 0,
-    "unchecked": 30,
-    "healthRatePercent": null,
+    "audited": 30,
+    "healthy": 24,
+    "degraded": 3,
+    "failed": 3,
+    "unchecked": 0,
+    "healthRatePercent": 80,
     "chineseConfigured": 24,
-    "chineseHealthy": 0,
-    "chineseReadyPublishers": 0,
+    "chineseHealthy": 18,
+    "chineseReadyPublishers": 14,
     "minimumChineseReady": 12,
     "chinaContentTargetPercent": 80
   },
   "collection": {
-    "runs": 0,
-    "successfulRuns": 0,
-    "failedRuns": 0,
-    "successRatePercent": null,
+    "runs": 23,
+    "successfulRuns": 21,
+    "failedRuns": 2,
+    "successRatePercent": 91.3,
     "targetPercent": 90,
-    "status": "pending"
+    "status": "pass"
   },
   "intelligence": {
-    "signals": 0,
+    "signals": 37,
     "publishedEvents": 0,
     "multiSourceEvents": 0,
     "multiSourceRatePercent": null,
