@@ -17,8 +17,8 @@
 - [x] 创建公开 Fork、推送本地分支并配置 Pages
 - [x] 禁用 Fork 中的上游数据写入 workflow
 - [x] 由用户在 GitHub Secret 录入方舟 Coding API `MODEL_API_KEY`
-- [ ] 真实验证 `glm-5.2` model id、JSON 输出与 Token 用量
-- [ ] 手动触发首轮 audit / collect / Pages 并浏览器验收
+- [x] 真实验证 `glm-5.2` model id、JSON 输出与 Token 用量
+- [x] 手动触发首轮 audit / collect / Pages 并完成线上验收
 
 ## 3. 连续 7 天
 

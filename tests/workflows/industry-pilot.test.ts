@@ -21,6 +21,10 @@ describe("medical health industry workflows", () => {
       workflow.indexOf("npm run --silent industry:report"),
     );
     expect(workflow).toContain("npm run --silent public:validate");
+    expect(workflow).toContain("npx biome format --write");
+    expect(workflow.indexOf("npx biome format --write")).toBeLessThan(
+      workflow.indexOf('git add -- "$REPOSITORY_SNAPSHOT_PATH"'),
+    );
     expect(workflow).toContain('git add -- "$REPOSITORY_SNAPSHOT_PATH"');
   });
 

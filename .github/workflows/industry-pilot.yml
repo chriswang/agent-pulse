@@ -125,6 +125,13 @@ jobs:
       - name: Write the privacy-safe industry snapshot
         run: npm run db:snapshot -- write
 
+      - name: Format generated public data
+        run: >-
+          npx biome format --write
+          "$REPOSITORY_SNAPSHOT_PATH"
+          "$PILOT_REPORT"
+          "$SOURCE_HEALTH_REPORT"
+
       - name: Commit measured pilot state
         id: commit
         shell: bash

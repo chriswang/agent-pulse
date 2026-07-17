@@ -3098,9 +3098,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "68ce0af0a69e9151e2014e0c07b53dcb2e4da0f74bdda1db65224354409e824d",
       "createdAt": "2026-07-17T07:08:00.916Z",
@@ -3120,9 +3118,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b5612a80000542953efbc13126045078c5fb3b92e8e4f344c31008f6d387dc30",
       "createdAt": "2026-07-17T07:08:07.788Z",
@@ -3142,9 +3138,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "fc12b2bb334266a54617b9202c50bde6fd34089716b3f82b8dcb80b60ef71d9f",
       "createdAt": "2026-07-17T07:08:04.469Z",
@@ -3164,9 +3158,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c3f6f0092ca524ea22304a2887b71c20746bcc4f5b08d11c10eb15e3c40809d8",
       "createdAt": "2026-07-17T07:08:11.144Z",
@@ -3186,9 +3178,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "756e5d18eb3ae37e8da72aa7eb21fd3bc1c2df1e202d3f71fa4f5114e1cd3c7f",
       "createdAt": "2026-07-17T07:08:01.996Z",
@@ -3208,9 +3198,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "553a898e2c1a01df361452f94611e132406ceb930cd7f059a57868afad77821c",
       "createdAt": "2026-07-17T07:08:11.143Z",
@@ -3230,9 +3218,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1daf79ca95bd06c873b6837888573766550ad50acef79e274d3bd2a24fdc23a8",
       "createdAt": "2026-07-17T07:08:05.518Z",
@@ -3252,9 +3238,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "21de99df0959422770098dfd3a7542eddead03980cf2b9fa4f1b71d0dd58bbbf",
       "createdAt": "2026-07-17T07:08:01.970Z",
@@ -3274,9 +3258,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6689f5fb1f6ed1bf080d600327b26f141aa51a22e5978aa76cd2421e0ca64c8a",
       "createdAt": "2026-07-17T07:08:11.167Z",
@@ -3296,9 +3278,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7d99b3238578b41aaff1b4c3862f516a3985177f80a8b034423147d517522cc9",
       "createdAt": "2026-07-17T07:08:11.165Z",
@@ -3318,9 +3298,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e0f7c6147821839892fe9e916a8af543381ad817f35fc1b8b18bb4e6427081ae",
       "createdAt": "2026-07-17T07:08:04.487Z",
@@ -3340,9 +3318,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f11005cd9b339dc19847f46f3dcab443915ccca516fea3c8f9e71e2bc4843d93",
       "createdAt": "2026-07-17T07:08:00.917Z",
@@ -3362,9 +3338,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1bb10017083eda623b05118195a62f9f37e91d394055d2dcff97c944503fa0e4",
       "createdAt": "2026-07-17T07:08:07.786Z",
@@ -3384,9 +3358,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0891c6b9fdbb11269eacb0c40a4688347a1a76f18af57c40b834dd3184f9454d",
       "createdAt": "2026-07-17T07:08:00.904Z",
@@ -3406,9 +3378,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6a3d732c19d2535b6ca1d2d05d9e165d9783bec3ee6373eb55db519fdf7cd659",
       "createdAt": "2026-07-17T07:08:11.161Z",
@@ -3428,9 +3398,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7e548786d3c9d073fa877a4ddab664b9eba0ada4c08eb958402604c554d3b079",
       "createdAt": "2026-07-17T07:08:00.223Z",
@@ -3450,9 +3418,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4aa837129253060730197f2eb046ecf1d3bda0d1ae2350523388f7e3598ec1cc",
       "createdAt": "2026-07-17T07:08:05.500Z",
@@ -3472,9 +3438,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7b3c46f3abd10f0ee46eb397981225d95b52b38428ed96b7c8b9a76719f4b057",
       "createdAt": "2026-07-17T07:08:02.237Z",
@@ -3494,9 +3458,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2a91f201db6308377db2c76476672ec2857acb70fab70a7fa59ed1699e489739",
       "createdAt": "2026-07-17T07:08:05.434Z",
@@ -3516,9 +3478,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8febaa5a5424683f51508c2faafd1d4d6d7ebe01298f9d89d63432d10b4e5060",
       "createdAt": "2026-07-17T07:08:00.925Z",
@@ -3538,9 +3498,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7bbea091e9751787925773b2b82b985bae7c02bd998fb44e79a0876b9f4429d4",
       "createdAt": "2026-07-17T07:08:04.494Z",
@@ -3560,9 +3518,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9b8f7ad77110df7c474d36df71ffd09bed03c94ef20acdd668f8b7358ed33fb6",
       "createdAt": "2026-07-17T07:08:04.897Z",
@@ -3582,9 +3538,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "641aa32ff734ec35a809632d17b453adf3761934edaa476fa329edfc123575b3",
       "createdAt": "2026-07-17T07:08:00.257Z",
@@ -3604,9 +3558,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4d4d11b4aaba7240588c5204c659a1a2279c81cb310477b974210ea3f2a6ca75",
       "createdAt": "2026-07-17T07:08:09.079Z",
@@ -3626,9 +3578,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "42e3181bf3c8e9f63a3de4f4695b824b2185969e48533442d989926f273a44cc",
       "createdAt": "2026-07-17T07:08:04.896Z",
@@ -3648,9 +3598,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e26ddc6846cfb89884ebe7c0bdf3e144235ba857ebadd00cc78b4e349d50c0c2",
       "createdAt": "2026-07-17T07:08:01.997Z",
@@ -3670,9 +3618,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0885a33d412ea6474eeefac9dbe1ae0bb7d8f12fe222248d7cf2a7f6507727fe",
       "createdAt": "2026-07-17T07:08:00.215Z",
@@ -3692,9 +3638,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0c0d4057cd74dea87a9e9be8cfdce772d5333dfe37b2481929af8b912872bdce",
       "createdAt": "2026-07-17T07:08:00.924Z",
@@ -3714,9 +3658,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "00f1a0d49598806dfbbeb711a2322b778bcf80407c2147757062b112d0ce51a4",
       "createdAt": "2026-07-17T07:08:05.437Z",
@@ -3736,9 +3678,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7df7b69bbb9b45b2edbcdf735e7e7207cd284c0d82b4fbdf61cdd41e54873820",
       "createdAt": "2026-07-17T07:08:01.458Z",
@@ -3758,9 +3698,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1ab57b6a4f5b1dce34645d939bc5a52fc1291f5fcb95a91cfe2443b7e06c287b",
       "createdAt": "2026-07-17T07:08:06.048Z",
@@ -3780,9 +3718,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8bcb51d35c2cea857ea1e2826bf5a29b5add3591c7a24de9ce0d46aedaee06c1",
       "createdAt": "2026-07-17T07:08:05.476Z",
@@ -3802,9 +3738,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "739ded51f82499605c984070ecd5650f3c52a791ac22b47d8ead7de849e54f4c",
       "createdAt": "2026-07-17T07:08:06.093Z",
@@ -3824,9 +3758,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a976ea3b86053ec06310aa5b9e6518d9b41a059ac1ef50b9925a9dd25e58daa0",
       "createdAt": "2026-07-17T07:08:05.518Z",
@@ -3846,9 +3778,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b03fdc77aa5ccf30420dab1f916e08a320d21699feac06965b750183c5a14c48",
       "createdAt": "2026-07-17T07:08:05.436Z",
@@ -3868,9 +3798,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "488a8c0e5fe96add1e32c0fe39614993426c0b7335ef211197092b69d95ad6c3",
       "createdAt": "2026-07-17T07:08:01.199Z",
@@ -3890,9 +3818,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e0c1aab41b15fa3989a1ca4dbafbfb4d28a8c0ba45c1570532f831ecec6371df",
       "createdAt": "2026-07-17T07:08:00.246Z",
@@ -3912,9 +3838,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ffec391eaf423c0b965b1e3e11b08b2610173fbd1c7e2449bcd8022675f90268",
       "createdAt": "2026-07-17T07:08:00.921Z",
@@ -3934,9 +3858,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8365e299607a9cb8f683fd36cd2c2fd2eb4596e1b7961721ce010fa2cdc8db33",
       "createdAt": "2026-07-17T07:08:01.460Z",
@@ -3956,9 +3878,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1efc9d990d1562f84593c02bfc11bd12c3c6c70d4e34e15c36c7780f53800e96",
       "createdAt": "2026-07-17T07:08:00.909Z",
@@ -3978,9 +3898,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c82bfa362f81dd4fd68b113a4410e3e431a1f9f41e723475c0a8f495b57d3ad5",
       "createdAt": "2026-07-17T07:08:00.236Z",
@@ -4000,9 +3918,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1bfcdbf60a83eea5ce76bc6959e9165ce0c0f572c6077cf874ed42bad0cbdb02",
       "createdAt": "2026-07-17T07:08:06.083Z",
@@ -4022,9 +3938,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5bdfd282abcb6413e1ad0717c148fa12c9d99d0374dfb6d0c9428b22d9af1e16",
       "createdAt": "2026-07-17T07:08:11.880Z",
@@ -4044,9 +3958,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "957faa1152e50ac763664b8c2be00110c84e0ae65051f8e3a642e3bc31e6ed7c",
       "createdAt": "2026-07-17T07:08:11.157Z",
@@ -4066,9 +3978,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c122cf5b31962a23056171117a89cc5a438d927de927c4a0e665c81ad22f5bcf",
       "createdAt": "2026-07-17T07:08:04.471Z",
@@ -4088,9 +3998,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a3cc2c978eb8b645dd0c7919c9ac3d2b339e167f1f26f782c4d22904c31079e1",
       "createdAt": "2026-07-17T07:08:11.168Z",
@@ -4110,9 +4018,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "aeb37962da388d2085efe8e0e6e3e54ddc7affa8212951ec082496905bc48946",
       "createdAt": "2026-07-17T07:08:11.884Z",
@@ -4132,9 +4038,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f0175a01fb3c15ea907ce5ce5db31404f819e98f2608d40f47741988229054a3",
       "createdAt": "2026-07-17T07:08:00.913Z",
@@ -4154,9 +4058,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0c3aa0c8e6cdc330f25d797a2a9e98ad46e0ddbe855d9c2c30dd761b8155f3bc",
       "createdAt": "2026-07-17T07:08:01.977Z",
@@ -4176,9 +4078,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ef58d5f893714ab196880cb2bcdc24f9261cd18cdc589fed8754e77e6ec7ce52",
       "createdAt": "2026-07-17T07:08:01.190Z",
@@ -4198,9 +4098,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8fedbe9c2a95a3a3ad1865f7225356a0000cb9997503c62278b75e03c7a923b7",
       "createdAt": "2026-07-17T07:08:01.202Z",
@@ -4220,9 +4118,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c0449755ca58c576f7ed147477c71bd9754ff8b38901097ba92f8d15b823182c",
       "createdAt": "2026-07-17T07:08:01.195Z",
@@ -4242,9 +4138,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "794297bd138833a0a93ad54e101cae86e196edcf22d2d8d7cd153ef118b23f33",
       "createdAt": "2026-07-17T07:08:06.044Z",
@@ -4264,9 +4158,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "aec8712fb33fb45a41f1974ecdf118baf8b77de679713ea2cbff804ca40763f8",
       "createdAt": "2026-07-17T07:08:07.799Z",
@@ -4286,9 +4178,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "efe384045042be049e6c50a2ba1c1528ce1c8c868e36a1cb20a8d330a7b8fd65",
       "createdAt": "2026-07-17T07:08:06.051Z",
@@ -4308,9 +4198,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d98793b8f1e5411e793c8c3a25c95055a9847d53a5e45ebd3cca0607d1ba86a1",
       "createdAt": "2026-07-17T07:08:00.906Z",
@@ -4330,9 +4218,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "18e6e6937c98fdd6cf7631453f7af27a7237b8630e956c159f86687d89b16ab5",
       "createdAt": "2026-07-17T07:08:07.160Z",
@@ -4352,9 +4238,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "480e9306d8ae9362eb1605ee5e357b9b8f08c0d47be67f05819af58eb03b593a",
       "createdAt": "2026-07-17T07:08:04.482Z",
@@ -4374,9 +4258,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "bab5db34601892d185821bb89fca9d09164b7ac7784887a20470d0777124f177",
       "createdAt": "2026-07-17T07:08:11.885Z",
@@ -4396,9 +4278,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8a02263219a70c3308449c72c385715098c9241e4d0876a9c3a59f8e8846d2e4",
       "createdAt": "2026-07-17T07:08:05.435Z",
@@ -4418,9 +4298,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "dce2e789db5ba01ef72761a46dbea1aa4a13f9f4beaed849df620c1299a1594c",
       "createdAt": "2026-07-17T07:08:01.195Z",
@@ -4440,9 +4318,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "428bebaa60010f7d54c551f65d484fb6984e767b940f47f1637a682d1f20a602",
       "createdAt": "2026-07-17T07:08:07.800Z",
@@ -4462,9 +4338,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "44ea7336d750ddc4eb832643c41a4ba41d1730661d61a1494b3647381e20049a",
       "createdAt": "2026-07-17T07:08:00.207Z",
@@ -4484,9 +4358,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9b93c41716a62bd76b1ac4060ad4321380bead14a2435a20916bd1aa18b755bc",
       "createdAt": "2026-07-17T07:08:01.971Z",
@@ -4506,9 +4378,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "26225c515631f6339de7763289f5f03f8695d453c90bddd52db75210dab15d86",
       "createdAt": "2026-07-17T07:08:05.435Z",
@@ -4528,9 +4398,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c943e4d3c53e2f1ab644ec0c7ff2465046009c296556bc4c0aaca4cf4f5d8938",
       "createdAt": "2026-07-17T07:08:01.974Z",
@@ -4550,9 +4418,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "73c36a1d792a8d44352a9b5616c11725b52361f3f1e823239e00928fb97adb19",
       "createdAt": "2026-07-17T07:08:02.234Z",
@@ -4572,9 +4438,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "53310f7ed7493281df1d9ea62b32b8f873d925115e9a407d50c7487d0e2ebe0f",
       "createdAt": "2026-07-17T07:08:01.193Z",
@@ -4594,9 +4458,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4fefa83348a2c26b1f17c3ea317fee78836d09dad98d8c76376efea44a914e2d",
       "createdAt": "2026-07-17T07:08:01.974Z",
@@ -4616,9 +4478,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f92f117a119221978d07e352524427a6ec46e798f2d8a7bed22c848b85f5090f",
       "createdAt": "2026-07-17T07:08:05.479Z",
@@ -4638,9 +4498,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d5e0c7b313a2f90d7f095acd2438a2612e6300008b6b600f9429d6602843d14c",
       "createdAt": "2026-07-17T07:08:00.903Z",
@@ -4660,9 +4518,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c1759fa7863f195251706afb549d4cd8570bba90b35800e8c32c83f1db0a36ea",
       "createdAt": "2026-07-17T07:08:11.168Z",
@@ -4682,9 +4538,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4fdc798fbb00634ad8ec97aa2c0ff8ad13dbd3ea389503f6fa53f2657fd404e6",
       "createdAt": "2026-07-17T07:08:05.474Z",
@@ -4704,9 +4558,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2a0401f94db2b34b817e7a9c762169f30336219a272b0065e757dfccc76d4bcb",
       "createdAt": "2026-07-17T07:08:06.086Z",
@@ -4726,9 +4578,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5b465d229607decbf5df2f02e0275972ea03637cd46f52742d449cbc1ddf97ac",
       "createdAt": "2026-07-17T07:08:05.495Z",
@@ -4748,9 +4598,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "380e62a64cccc8e8e2239de4444bbbb7ab8bb58f81d23a8e6a55c4862b14655d",
       "createdAt": "2026-07-17T07:08:05.430Z",
@@ -4770,9 +4618,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4dd3e0b0e201e12b2d01e65a8dfb941c5da8e0e2599a873b7af00e1bf64e9fcb",
       "createdAt": "2026-07-17T07:08:01.197Z",
@@ -4792,9 +4638,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7ddcd3ca8769c6be5d37fff61a935cd9ed3fda8ffd039f7dfbd205f69d8f5afb",
       "createdAt": "2026-07-17T07:08:00.253Z",
@@ -4814,9 +4658,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "da7f4bf35f9e7068827f903dac9e9458635c28e1f1278b5bac4e91db5246749d",
       "createdAt": "2026-07-17T07:08:04.485Z",
@@ -4836,9 +4678,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "70d291cf8bafea46ccb3579b2a89e4e269dd997aeaadd792b8f322d6f415684a",
       "createdAt": "2026-07-17T07:08:02.237Z",
@@ -4858,9 +4698,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3380fbad4d819b22edaed14649ee17e606d01bd307c108410d40f95905a8b59a",
       "createdAt": "2026-07-17T07:08:09.083Z",
@@ -4880,9 +4718,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "717c3e16489348bd487ffed619d28dfbe5fba15d1e60bd68efee9f20c7ba069d",
       "createdAt": "2026-07-17T07:08:02.236Z",
@@ -4902,9 +4738,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5951ec0b5ddcc997320b9c15034a6ad982df65f5ed11d3afb0a245df990f0472",
       "createdAt": "2026-07-17T07:08:00.922Z",
@@ -4924,9 +4758,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ce00e1ff860b2b78850bf71bba65ef6bfb0b9e76cfb0fbe202fe10c5aaee1f0f",
       "createdAt": "2026-07-17T07:08:11.161Z",
@@ -4946,9 +4778,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ea77e4871f57e7ddeed596f687f669cd0179ffca245d0be02f29fe2f957746da",
       "createdAt": "2026-07-17T07:08:04.485Z",
@@ -4968,9 +4798,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d70ed47f897cae4357c485096824f832d10fee10d5bf160b911d38db4d9b5123",
       "createdAt": "2026-07-17T07:08:06.084Z",
@@ -4990,9 +4818,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ef5c114bd51720159c86e68d2f791527eb74956faaf62d06c08ccaa597c7b657",
       "createdAt": "2026-07-17T07:08:00.915Z",
@@ -5012,9 +4838,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e67b38147658055ea4c4f01a27214581232117b032bd296ee43e847231cc1a02",
       "createdAt": "2026-07-17T07:08:06.049Z",
@@ -5034,9 +4858,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9e642abb766baa38d9327d4c779d3c7642612954cc1cf9c87a18a2ea690a3517",
       "createdAt": "2026-07-17T07:08:00.900Z",
@@ -5056,9 +4878,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5abebe23548aee43c58be0ef29618ce1508c570b808c4582366912d863d98a39",
       "createdAt": "2026-07-17T07:08:04.473Z",
@@ -5078,9 +4898,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c13d33ef9853fa27a88abc863a31d1ef028880335c0ba3e4cc68c99d13fd73dd",
       "createdAt": "2026-07-17T07:08:01.975Z",
@@ -5100,9 +4918,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3f63f07e8c1d2f3f5b7dfad4d89e610bdeb28596750368bd66301758bd7aa46b",
       "createdAt": "2026-07-17T07:08:01.973Z",
@@ -5122,9 +4938,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b865206a8aef03b73ffd5566ec884745f7769a3e388d381b1fd21fb23a13fd20",
       "createdAt": "2026-07-17T07:08:00.919Z",
@@ -5144,9 +4958,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "382cc9f08d6c5111968612d1379d7ebf9533b55e9037212a728d754eb3b675ab",
       "createdAt": "2026-07-17T07:08:04.474Z",
@@ -5166,9 +4978,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2657ec159510c94d829cb0e37a745a98b71b0215153a62a7957875d7d749f285",
       "createdAt": "2026-07-17T07:08:05.512Z",
@@ -5188,9 +4998,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6a050581a02fa7d63a345100fd080ea5b99eec3a87b3c0384667171125c6f82e",
       "createdAt": "2026-07-17T07:08:02.235Z",
@@ -5210,9 +5018,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "dba56563d5ab844a9e3c252db9f0bc86600e1e64f50dd40c7c8277dc996d8995",
       "createdAt": "2026-07-17T07:08:07.160Z",
@@ -5232,9 +5038,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1bcba28eaef3cd47e622599ccc6ef088d31f746978ce3bc792e2e7b5996716f0",
       "createdAt": "2026-07-17T07:08:05.515Z",
@@ -5254,9 +5058,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "34f90f046c1c229fdbcde73c4f917c1e0b2ac3e215b9b0cd76324b8ca7ef3aba",
       "createdAt": "2026-07-17T07:08:00.254Z",
@@ -5276,9 +5078,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "185402fdeab93c00d41cfbd18d3d672235368e04a3511cb6a8765547de1c2e23",
       "createdAt": "2026-07-17T07:08:05.478Z",
@@ -5298,9 +5098,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4b4e34323e9ffe21e2e8fc90056339ed37ad2bcb002b806d7741d7e43016d224",
       "createdAt": "2026-07-17T07:08:11.141Z",
@@ -5320,9 +5118,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b038e4dff36b7d0fcfa352e2dcb1a8ac778ae05a3d09cff177a34356ef07a44f",
       "createdAt": "2026-07-17T07:08:01.188Z",
@@ -5342,9 +5138,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f9f191a6fff6baa3f809d5e3c6d866a8ce4f26b91397ca52d6578ad1268ced16",
       "createdAt": "2026-07-17T07:08:01.461Z",
@@ -5364,9 +5158,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7c1486c4ede76226a7ae310e8b6c89ca1a26d0526e408ac6e9089e984c5e5531",
       "createdAt": "2026-07-17T07:08:11.166Z",
@@ -5386,9 +5178,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5eaabe9528350301208147079446275ca9e4ae9989c98cb8877a3969291a3344",
       "createdAt": "2026-07-17T07:08:00.894Z",
@@ -5408,9 +5198,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7e321bb1e45b92a89dbaa4e64d6e623c3b1ce83df3c71a70f576ef9e6a796414",
       "createdAt": "2026-07-17T07:08:01.993Z",
@@ -5430,9 +5218,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b5815ab1e8f2e1da70b4fd8dee09012b4dc0d78e75429724426b5ea53340fba0",
       "createdAt": "2026-07-17T07:08:11.882Z",
@@ -5452,9 +5238,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1425142abaaa00a5bc4aefae62ebca84a736a2990a255a29c68faf22de956a3e",
       "createdAt": "2026-07-17T07:08:05.504Z",
@@ -5474,9 +5258,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "560e5657d86c3aa190b9a303b6d0887decba4e80ed0dd66c3882cddcc5998abb",
       "createdAt": "2026-07-17T07:08:04.488Z",
@@ -5496,9 +5278,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e0bf31b0ac517499fb72372e444bec8d9fed0fe8ef974a99d44ceb4cd1bd0541",
       "createdAt": "2026-07-17T07:08:07.161Z",
@@ -5518,9 +5298,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5c72d1ce4ea140daf588acbab0a1a174d868a55c821bb4cb76616066acd46182",
       "createdAt": "2026-07-17T07:08:04.484Z",
@@ -5540,9 +5318,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "68755aabd0fba33b81fd7f163660da4d480b7452735be5a1e208fb43a9b20a96",
       "createdAt": "2026-07-17T07:08:04.488Z",
@@ -5562,9 +5338,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "eb6df2b6595d00ec0c0ad71a56d38eb5893866f0b9eb779c3e88d339b94616cb",
       "createdAt": "2026-07-17T07:08:04.895Z",
@@ -5584,9 +5358,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1b36f609a15cbdf1323c65762ea275a267541278ab2eb8b9844c40976e3db12b",
       "createdAt": "2026-07-17T07:08:00.237Z",
@@ -5606,9 +5378,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e49d7614fee5a68c1d8f2cba4e04d912e4e8c7053ad738a9531d6870fb961d0a",
       "createdAt": "2026-07-17T07:08:07.162Z",
@@ -5628,9 +5398,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6caadf71d0b3e06766b1d5993e60344aec24343fa415cc9d761a16c1888560f1",
       "createdAt": "2026-07-17T07:08:05.517Z",
@@ -5650,9 +5418,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "52ffb56d5f7b3d2a3d3de19aaf1c1166544d61c75f5ec5d8bd70c5ac73746c03",
       "createdAt": "2026-07-17T07:08:01.996Z",
@@ -5672,9 +5438,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c3322ebd60e49414db903fa1407a2a7f7acfd1e4323444f53f9230a94a0ed913",
       "createdAt": "2026-07-17T07:08:06.045Z",
@@ -5694,9 +5458,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2eac89d76bc728d8984bd4026d1a37f99e85e1d072fae23f69d4f229b46967e3",
       "createdAt": "2026-07-17T07:08:00.913Z",
@@ -5716,9 +5478,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3652deb9994981835c2d81cc54d7f802db9bb0f4c668e51f56cb8abe44ebc0cd",
       "createdAt": "2026-07-17T07:08:06.100Z",
@@ -5738,9 +5498,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "bb112865e99b31a32dd3ac6ffe9f3137257f7f5d47ed27bb7c41939ce1a1f905",
       "createdAt": "2026-07-17T07:08:02.231Z",
@@ -5760,9 +5518,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d5cc09d27f64ebda46d818eb5177f64fee21cecc86ee5822063d7f9502c2b060",
       "createdAt": "2026-07-17T07:08:00.240Z",
@@ -5782,9 +5538,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "20de56a12ccad9c3e5d27b0d4f628c4474acd52c67d3f980d452f848846b7cd8",
       "createdAt": "2026-07-17T07:08:01.461Z",
@@ -5804,9 +5558,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "baf4c82f96dc07c1588a0253e7907c62d47cffdd5c0f5819a946ddfaa69e4717",
       "createdAt": "2026-07-17T07:08:04.468Z",
@@ -5826,9 +5578,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "41ed301309ced6fbb32e68e3ad14042a0b544e0672229ee76c4df8a333e4b8e1",
       "createdAt": "2026-07-17T07:08:05.523Z",
@@ -5848,9 +5598,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a520591324a9abf5e1570feb8a49cad91ca3b7d6c552d9a8e771b9115b8ff41d",
       "createdAt": "2026-07-17T07:08:04.899Z",
@@ -5870,9 +5618,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8d1316da6d1d62f8c89e56d15f50b67b052e8399d4dc9b6601d2f053b0545819",
       "createdAt": "2026-07-17T07:08:04.475Z",
@@ -5892,9 +5638,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7245cc28fb3ffaa46e7981f3910fe6238cd0d00312622483ee074a6986ff9560",
       "createdAt": "2026-07-17T07:08:11.165Z",
@@ -5914,9 +5658,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b231e9cdfed51bd2e13e7775d592af199a0296d0ee87051cec05d1e7a41709a0",
       "createdAt": "2026-07-17T07:08:00.892Z",
@@ -5936,9 +5678,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c3571592432d26f88e2f4e70e273e4bf2f354126c1e8fcb757792e4fd5d57ef7",
       "createdAt": "2026-07-17T07:08:04.896Z",
@@ -5958,9 +5698,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "481e7f479fbe6bbf0a8abcf7a4e8bca60f071de1f28dc501ed424a8529142bab",
       "createdAt": "2026-07-17T07:08:07.161Z",
@@ -5980,9 +5718,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "521e7290298c7b0b9fa0cc1e54f1a2fe7653e8756980d64b229f086739379434",
       "createdAt": "2026-07-17T07:08:01.455Z",
@@ -6002,9 +5738,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "237b298b32d926c20cb349f4ebd2a59562cb63f2ffce67ee8c1463a4c4b77d47",
       "createdAt": "2026-07-17T07:08:00.896Z",
@@ -6024,9 +5758,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f5da31f74d85db5844e5bbb4883e1b5d53ee0665d40baad7880622650b70580f",
       "createdAt": "2026-07-17T07:08:01.998Z",
@@ -6046,9 +5778,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5b41ed75315b2d74adc8be4a4732f2b498861b6ad781eeda83a8578f29c4fbf2",
       "createdAt": "2026-07-17T07:08:11.163Z",
@@ -6068,9 +5798,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b43af25a130fc5080002ee8ab16182096bbd1eebd85b647eff049682b58d2962",
       "createdAt": "2026-07-17T07:08:01.975Z",
@@ -6090,9 +5818,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3c3ffbee058357855e5d08965f415515e946d3d4453a5b05a30e1c63d20ea3c4",
       "createdAt": "2026-07-17T07:08:05.434Z",
@@ -6112,9 +5838,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "02d1e196a9fa761ca6b47989b965d0b5f7b662020c96fa4060ab8b8f4fac7e62",
       "createdAt": "2026-07-17T07:08:11.166Z",
@@ -6134,9 +5858,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1d42579dc314f1a46620da815a671b1068fc9623a2d302978a56999d6c27c95d",
       "createdAt": "2026-07-17T07:08:07.159Z",
@@ -6156,9 +5878,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1ccbf7260f8e8eb7af377cfe345e4372217ac99009d5cf2d192c46398a2f6f7a",
       "createdAt": "2026-07-17T07:08:05.474Z",
@@ -6178,9 +5898,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2c5782519f830cbb6b93dcbb1e86574dacdc62d96dcc48e6408e733c62ec3f4a",
       "createdAt": "2026-07-17T07:08:00.926Z",
@@ -6200,9 +5918,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a37aaeb3bb172ea19d188caa3cb56e8d96a7f77023a46ffa5bccd469b09754b4",
       "createdAt": "2026-07-17T07:08:09.082Z",
@@ -6222,9 +5938,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3ebc68048891a65d680a69443c94a8eb7bc567159c1864d97f3d0220ae040a30",
       "createdAt": "2026-07-17T07:08:01.992Z",
@@ -6244,9 +5958,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "fd9e2abfb03d87eaea362e272626d0dd3c4734604ea7fdcea4375238d96f1090",
       "createdAt": "2026-07-17T07:08:07.798Z",
@@ -6266,9 +5978,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "dd687aefc998fc1248c4258630d012996e80961b74be0ef0f3b611e6299db820",
       "createdAt": "2026-07-17T07:08:06.043Z",
@@ -6288,9 +5998,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d792a1214b89ff4f58edc6576357745612429deca5bca32037653f9cc596c022",
       "createdAt": "2026-07-17T07:08:11.143Z",
@@ -6310,9 +6018,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2376fc62076654264117fe07b7ba419452905287b1481327e3c1e75246535932",
       "createdAt": "2026-07-17T07:08:01.459Z",
@@ -6332,9 +6038,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4c17da2438c290ab0c30d7660c654556f78394456d006a6a5feaa0f9b93fc35a",
       "createdAt": "2026-07-17T07:08:04.483Z",
@@ -6354,9 +6058,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "afd5ef8782c57c453991f99878a550b71876838aae2e0965c8e63770f2e1fac4",
       "createdAt": "2026-07-17T07:08:04.486Z",
@@ -6376,9 +6078,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f97686bb0260671d8dbe4514dfe9be62d84883c263c457c5c47d5aa4798887ce",
       "createdAt": "2026-07-17T07:08:11.878Z",
@@ -6398,9 +6098,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a7030919c00563befcecc1d79760c6416587db3fd2c1ef80bb0669a9e0669560",
       "createdAt": "2026-07-17T07:08:00.258Z",
@@ -6420,9 +6118,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0ba18c5ff439756916ba0b28aa6e281747fb7750c7c69a04646358d5b0830594",
       "createdAt": "2026-07-17T07:08:05.514Z",
@@ -6442,9 +6138,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d9186544c884d88a5b0b9e8ddadfa4347cf1269f2241cce8320401f9e87aee0d",
       "createdAt": "2026-07-17T07:08:05.524Z",
@@ -6464,9 +6158,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d5bb74e0f56ff5a318459b6bc9023347141409873e8f1cfe460a4820e0f8c168",
       "createdAt": "2026-07-17T07:08:04.495Z",
@@ -6486,9 +6178,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a1748c911faf258be6ba9d534bb0e6abf4ce0b967f6445141b9b8e06ff40dd34",
       "createdAt": "2026-07-17T07:08:00.247Z",
@@ -6508,9 +6198,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ac3eba1d103e85da3ec1ba8693438ea73341e25c495364f2a96e16fd313e75dd",
       "createdAt": "2026-07-17T07:08:04.484Z",
@@ -6530,9 +6218,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "bea9c091095208562a889258eb16b93f144bf34323c65dff9455a6f323aed62c",
       "createdAt": "2026-07-17T07:08:00.927Z",
@@ -6552,9 +6238,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "bbb226d849a519e566028eb76283180ccfe2a62bb2e86bacb5f00aece21fd23f",
       "createdAt": "2026-07-17T07:08:01.996Z",
@@ -6574,9 +6258,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a951ed238ca2af00a5a9064652c3c4b1ba73d0a44cafc54e163bed36c7ca79bc",
       "createdAt": "2026-07-17T07:08:07.160Z",
@@ -6596,9 +6278,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "af6b685bd672fa97e295c81a02d5e297c2fa152cfaa0e5d92cb76b3ae215a8f9",
       "createdAt": "2026-07-17T07:08:11.879Z",
@@ -6618,9 +6298,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "eb8aded1050af8ff16a5f1335a9ceab15ab0cf1fd2500c7ca0abecc801cc11b8",
       "createdAt": "2026-07-17T07:08:11.878Z",
@@ -6640,9 +6318,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0df6f8a0ab26c4de522cf0e1fdc75bdc90d77265272264d672d3740eab7dff5b",
       "createdAt": "2026-07-17T07:08:01.977Z",
@@ -6662,9 +6338,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6ffa41a470a2792de828b7f31fa0156a59fadcc607bbb73c024dc29d315058b1",
       "createdAt": "2026-07-17T07:08:01.977Z",
@@ -6684,9 +6358,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3acad8be1d9323fdbcd2a450c2251abe61f54792f889bed18384a020736fd3e4",
       "createdAt": "2026-07-17T07:08:11.145Z",
@@ -6706,9 +6378,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d1b3b7bf72d9e5b2443f35b638c4a218dc1e78715291bcfebb222c589d66a6da",
       "createdAt": "2026-07-17T07:08:05.515Z",
@@ -6728,9 +6398,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e417af89c171f25908e86b379a16c0d537a31c09325dd1fd4223028843a5108c",
       "createdAt": "2026-07-17T07:08:02.236Z",
@@ -6750,9 +6418,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e5c19da11f490f6629fb360dc3d15e47f630ea9abbdb65839b24fc321b2533d9",
       "createdAt": "2026-07-17T07:08:06.068Z",
@@ -6772,9 +6438,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9d5c15c6f8af8f1bf23074b3e5d995254db61fc119c5ab7457c047e5fb7b4b08",
       "createdAt": "2026-07-17T07:08:11.156Z",
@@ -6794,9 +6458,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "96ae85c5ac8ba13f2635b3707b7b1b1958ff54196eec34a4ab530b08ce362463",
       "createdAt": "2026-07-17T07:08:01.976Z",
@@ -6816,9 +6478,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ecfa0f6b35e628b2e5335ce4463e1ce56f7e1fbea91bc426af4af7b9bcd47b08",
       "createdAt": "2026-07-17T07:08:04.469Z",
@@ -6838,9 +6498,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "105fbfd87b46a85d9fb65f305cd3f49f3e76b2de2fd4d4cdc27144d135aea139",
       "createdAt": "2026-07-17T07:08:06.052Z",
@@ -6860,9 +6518,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "74fe75b179c3ed98f5f72551afb3771af08479525663d2a54f4eb48c5ebfbb18",
       "createdAt": "2026-07-17T07:08:05.472Z",
@@ -6882,9 +6538,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d285e2fcbe9d93d178db7c4e06a901254b3cfa246d9e655df2ed31e471555a1d",
       "createdAt": "2026-07-17T07:08:11.879Z",
@@ -6904,9 +6558,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1b67f019bab5c031f9770573fba669f38a1eaaf3ebabb448595cb71f48f7d005",
       "createdAt": "2026-07-17T07:08:02.235Z",
@@ -6926,9 +6578,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6c35fd76054031f3da0c1ead8ffa974d0b4213f003133ccfb0031684990b890f",
       "createdAt": "2026-07-17T07:08:04.471Z",
@@ -6948,9 +6598,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9d5c09619b0c380180063a111dbd8015c693643261e2d1fbe326a18a98419f63",
       "createdAt": "2026-07-17T07:08:06.049Z",
@@ -6970,9 +6618,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "61896ae5a09ceacfcefd01efa58ca118dcd660869d9826e2484f5b274a711152",
       "createdAt": "2026-07-17T07:08:01.973Z",
@@ -6992,9 +6638,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "25bd7e0904509f72e01310b8e6ca2447742547546635837c54a95cfa31425588",
       "createdAt": "2026-07-17T07:08:07.795Z",
@@ -7014,9 +6658,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "62b205fb4ee70167dd74a2bf3fbbc48a85928cb8f82889d1dfc3ef273182a066",
       "createdAt": "2026-07-17T07:08:00.925Z",
@@ -7036,9 +6678,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d5f0dd8d4d99c72c79b310419e89cc8b92214c55baba4e97100228c4a9b349c6",
       "createdAt": "2026-07-17T07:08:01.994Z",
@@ -7058,9 +6698,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a02154bee1da42db2729dff551cf72b70800a9a3ca7185535e518815552cdb13",
       "createdAt": "2026-07-17T07:08:09.082Z",
@@ -7080,9 +6718,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "e4333d07616a7defef8bffe685161d4626a7b1672e052ada66f14d46f7034f1e",
       "createdAt": "2026-07-17T07:08:02.229Z",
@@ -7102,9 +6738,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8d76e4a912d4814bdaaecdd4ee3287f3a3de4c2e11b55a9080489fe3cd230027",
       "createdAt": "2026-07-17T07:08:06.102Z",
@@ -7124,9 +6758,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "742a79c31f1f492a120fe6ae2491230db267dfcb458ffc2ce64ea8a2a2473180",
       "createdAt": "2026-07-17T07:08:11.160Z",
@@ -7146,9 +6778,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3cfb893d003dca6c9b010250ebf4c8d4137c9fa555f8873cc444de1048c538ef",
       "createdAt": "2026-07-17T07:08:04.486Z",
@@ -7168,9 +6798,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a787cab7f1263c4bf1d5ba603762d93c0072b04f67671bcc6c4ca95891127358",
       "createdAt": "2026-07-17T07:08:01.976Z",
@@ -7190,9 +6818,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "62350bca896417b491975d6235b2001631876fe14ecea23b756532e9db1a9b89",
       "createdAt": "2026-07-17T07:08:00.237Z",
@@ -7212,9 +6838,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0899347e8c621d0ed6a858eb7e85d1d506de3f59a5b03595f09ac562c43643fb",
       "createdAt": "2026-07-17T07:08:01.978Z",
@@ -7234,9 +6858,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "1a18f817f596e99d56a18cdf2b9b3773b5b35c059ab9f37d809dd628624bce36",
       "createdAt": "2026-07-17T07:08:07.158Z",
@@ -7256,9 +6878,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "816092d74270e4437bdbd9b16c1326e69e9715234f80b32de0b9610a6f8f0fae",
       "createdAt": "2026-07-17T07:08:01.993Z",
@@ -7278,9 +6898,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "2af8950fd45351e1ee978c1e5b3c7d1dc1c2870fb7380e704dcabbdb32807c73",
       "createdAt": "2026-07-17T07:08:01.459Z",
@@ -7300,9 +6918,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "50092a5c56ebeb658eb707167255c026dcea956d8d5e78bc7bcab56d24aa6f61",
       "createdAt": "2026-07-17T07:08:11.169Z",
@@ -7322,9 +6938,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f6404c24c445dd0e254611b004d53edc81ad4d3a6a44cc795fae6077d9d23bbd",
       "createdAt": "2026-07-17T07:08:07.794Z",
@@ -7344,9 +6958,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "84054679a64f96ce123d8cb60c9135937e8ddc4488144443f51812c7d8952cc9",
       "createdAt": "2026-07-17T07:08:09.083Z",
@@ -7366,9 +6978,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f0bf4f0b6b11750951361a3d984099d560847358eda75be9d8f16c876a00deed",
       "createdAt": "2026-07-17T07:08:11.885Z",
@@ -7388,9 +6998,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "85e1d87eb91a51d17308d7700198b38d6ca122ade72d1d048bd632e211f4dad2",
       "createdAt": "2026-07-17T07:08:04.896Z",
@@ -7410,9 +7018,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d77fb3c2e34fa62c01e0485b768190d46e2ba42aeb34caabf39f02a3348285fc",
       "createdAt": "2026-07-17T07:08:05.429Z",
@@ -7432,9 +7038,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f6f1093d0dac8614ec75bc7d7fdb2ca950c687cbbe31a0c411347b065e6d2391",
       "createdAt": "2026-07-17T07:08:02.236Z",
@@ -7454,9 +7058,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c19f010146a00eddb1177e1ea8632c75952408239bc7e9301001f217d192dc68",
       "createdAt": "2026-07-17T07:08:04.495Z",
@@ -7476,9 +7078,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f4bdd3e593fa5d2b42168c9354a11d17e7967770caa761299fd5e6d2fa1c4c7d",
       "createdAt": "2026-07-17T07:08:00.250Z",
@@ -7498,9 +7098,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7dabaa3d02308d66ff07a8ab4b64187792dad352ed594adad19c8a7989511900",
       "createdAt": "2026-07-17T07:08:11.155Z",
@@ -7520,9 +7118,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "20a4001f5ee15e9a4af27948aeee414e0600d6b04029a483fad83e7e68cb7936",
       "createdAt": "2026-07-17T07:08:05.433Z",
@@ -7542,9 +7138,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "b50c132eb70064036ae956db0b53abc94de6a6ec8d45ed3e7faeb98cf4e319be",
       "createdAt": "2026-07-17T07:08:06.046Z",
@@ -7564,9 +7158,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "98db024f7df6a36b30d05b644bf165833d6c645706bdbd72c8e603e949c38b50",
       "createdAt": "2026-07-17T07:08:04.493Z",
@@ -7586,9 +7178,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5971cbc7cb7f8bd8c5188f06d34348662700a3038f4dd05e4e68bd7ee4cad352",
       "createdAt": "2026-07-17T07:08:11.160Z",
@@ -7608,9 +7198,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6330874acba4648517ab54039cf1fa28cbe969d531c2d2bacc8829dd2ca6204c",
       "createdAt": "2026-07-17T07:08:04.496Z",
@@ -7630,9 +7218,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3a86c379fbb884334ab9449e381e9fe694e9f0d69f448a48f3b43d582bdde5e3",
       "createdAt": "2026-07-17T07:08:00.249Z",
@@ -7652,9 +7238,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "3e56065c19b62e10c61a4f4ab15a4ffe363f35443d7db4d60ce10af7d8baf343",
       "createdAt": "2026-07-17T07:08:01.975Z",
@@ -7674,9 +7258,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9555d322854deb135934d0ca5037e457c9c45130cc8a045c1644f79f59a16262",
       "createdAt": "2026-07-17T07:08:11.877Z",
@@ -7696,9 +7278,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c6a74ca2d7219af7d67bea9bc9cf162f50c99d705fda290371815d2e7e5c101f",
       "createdAt": "2026-07-17T07:08:04.897Z",
@@ -7718,9 +7298,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "8af145fd83bd38397bcdcbfa2a6402a32d336f7601e5c31560f3c627a7dad8b9",
       "createdAt": "2026-07-17T07:08:01.456Z",
@@ -7740,9 +7318,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c547d99736a8614f0441a75cc463c37ee4beff3d89242bac38be058994344918",
       "createdAt": "2026-07-17T07:08:11.162Z",
@@ -7762,9 +7338,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "cced8f8e1f999d4ca21d04e2439b639bf3cf139547a71731c430afc70b9732ce",
       "createdAt": "2026-07-17T07:08:09.079Z",
@@ -7784,9 +7358,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "4a19501ef633e53525a8f683a907fddc1604612d6b2809100cf4b3e51326e5d5",
       "createdAt": "2026-07-17T07:08:01.200Z",
@@ -7806,9 +7378,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d56d4786caa1f7551aa8d426708bdec505ee1bf98b9b06adde067626cba0c8d5",
       "createdAt": "2026-07-17T07:08:07.159Z",
@@ -7828,9 +7398,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a502536b9d8b88ddfcf5b124b3cdcc6bc075b1403a96a88cd31d6f24d8e71c49",
       "createdAt": "2026-07-17T07:08:04.487Z",
@@ -7850,9 +7418,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "613c834271b14fbac5cd42b3f061d5a8b8a02336ae1692b6aa7b743edc7c7f4c",
       "createdAt": "2026-07-17T07:08:00.249Z",
@@ -7872,9 +7438,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "ac627752befcfebc3559cf3d9bbf2a6850c92cc2a9930fc8b39dd643357ac3e0",
       "createdAt": "2026-07-17T07:08:00.912Z",
@@ -7894,9 +7458,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6d7436995bdcf708005fce4e07dab486d9afdf0b36e39667428c1c2e5b742f26",
       "createdAt": "2026-07-17T07:08:02.238Z",
@@ -7916,9 +7478,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "60a220b5afec5112a7b0d86334362afeead2f0f14c6dc404f67dd922efaaf7e6",
       "createdAt": "2026-07-17T07:08:00.251Z",
@@ -7938,9 +7498,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "9b9e16bc54563370a3cab8c01a26f90a0fa3e7fcf83da0d936579092092b7b62",
       "createdAt": "2026-07-17T07:08:06.046Z",
@@ -7960,9 +7518,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "47b993009be917b182b10e4a03434ab177754e5512508d546454768092dbdac5",
       "createdAt": "2026-07-17T07:08:07.796Z",
@@ -7982,9 +7538,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6b3bb361b8fce83de4255ff47b3665647daa35ecc66aabf23b8adcc73cb5af61",
       "createdAt": "2026-07-17T07:08:05.494Z",
@@ -8004,9 +7558,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "0d646c367b9a17784a7e6fc2ec17a2a3ab150cd4c005bfc5f32a55bcfc83f4ba",
       "createdAt": "2026-07-17T07:08:05.520Z",
@@ -8026,9 +7578,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "fdd2d4ac482c9d3253764d3b60562897754d4ba01fbc2b36f50ab825ff1606d3",
       "createdAt": "2026-07-17T07:08:01.460Z",
@@ -8048,9 +7598,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "486d2c4f5a984f28ceee4e59401051e51f120e918dcece83599f33b69be709b3",
       "createdAt": "2026-07-17T07:08:00.928Z",
@@ -8070,9 +7618,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "306dfd12139124ad7f58e42e1953147a9dca4597601154fa7d65c03e21de2ede",
       "createdAt": "2026-07-17T07:08:07.789Z",
@@ -8092,9 +7638,7 @@
       "category": "public-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "fbbd43d82f7e0825d4650b0b658eb2dc867c5b3014abf22747ca680f7819b277",
       "createdAt": "2026-07-17T07:08:07.792Z",
@@ -8114,9 +7658,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a76b45969a4eec34a003386699e5ce73143fed906f50e6f65fbb68bf5c555261",
       "createdAt": "2026-07-17T07:08:06.086Z",
@@ -8136,9 +7678,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "de6f5e27e234dad826547d30f7c31c730ba275dcbcb0c81422d3ee3725921ab1",
       "createdAt": "2026-07-17T07:08:04.486Z",
@@ -8158,9 +7698,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "62324acd52f5a9fcfbfed03b44405e1ba9e55b32c8481cb0a7e6e6de3e68943f",
       "createdAt": "2026-07-17T07:08:00.895Z",
@@ -8180,9 +7718,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "aa2958d919d835f23fbcc536283edd6da1935d5b58195414979be63678e4dfde",
       "createdAt": "2026-07-17T07:08:11.876Z",
@@ -8202,9 +7738,7 @@
       "category": "global-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "65360491e90c5a464f8ddfddadea175e6160c1b0048dc7f5c00cb3fb91e385ae",
       "createdAt": "2026-07-17T07:08:00.908Z",
@@ -8224,9 +7758,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a1428e719da2630ca7d8b7ca6fa7e50c4f5effb5129f653490fdaccd5c8a63be",
       "createdAt": "2026-07-17T07:08:05.516Z",
@@ -8246,9 +7778,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f6d57c4009966aa4a97708b5351c2cc7344c2e6dd77cd4e7e90aa0d1d67fa79d",
       "createdAt": "2026-07-17T07:08:06.044Z",
@@ -8268,9 +7798,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "74cd8126a754ff0c3dcecdbb06527394b068290e527e778c511635ece4164333",
       "createdAt": "2026-07-17T07:08:05.436Z",
@@ -8290,9 +7818,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "01ab2e52d351633b96eed0eef92fe4c003b3d39ee17d432b2bf02b56befe77b9",
       "createdAt": "2026-07-17T07:08:04.898Z",
@@ -8312,9 +7838,7 @@
       "category": "real-world-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f10b3cb28dd979c2a139b88d81443f112f080826e83e15516bae3d2467a4aed4",
       "createdAt": "2026-07-17T07:08:01.201Z",
@@ -8334,9 +7858,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7ded6978a647be00cb688893dbcf2c9dd44c20bdb7a0365de72451d0e0ac2f82",
       "createdAt": "2026-07-17T07:08:04.492Z",
@@ -8356,9 +7878,7 @@
       "category": "health-data-exchange",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6d448f5a8c66902319f0add12557a88b2123087a7621ccad748d1a50c4e48aaa",
       "createdAt": "2026-07-17T07:08:07.162Z",
@@ -8378,9 +7898,7 @@
       "category": "clinical-ai",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7b4c8c3f1c18451f87b666e3f5c887b7a5e96bbcda1fe65f70b9d10716829e66",
       "createdAt": "2026-07-17T07:08:02.239Z",
@@ -8400,9 +7918,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "f891b8d96913bd04e5178e30c4b3a369657834e56ee3d4e614771df73b02d7d3",
       "createdAt": "2026-07-17T07:08:05.507Z",
@@ -8422,9 +7938,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "850d7ae607e553a920851ba30229e8d8f51668d12085ae46ce04278aed7546b6",
       "createdAt": "2026-07-17T07:08:00.219Z",
@@ -8444,9 +7958,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "baff7da55b7270faad8d16dbf402a65899d288cff72c298f24af5c1c7d001ca8",
       "createdAt": "2026-07-17T07:08:04.470Z",
@@ -8466,9 +7978,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7126c0aa6293b4abf94929a525f9d7c46bb97ea08eef5620500c5f921649aa28",
       "createdAt": "2026-07-17T07:08:00.258Z",
@@ -8488,9 +7998,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "484ae6cecac1c4105cea61aab361d7ef7d676a9139f6293408d373784a5cd4a3",
       "createdAt": "2026-07-17T07:08:11.161Z",
@@ -8510,9 +8018,7 @@
       "category": "health-policy",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "5e923218f5c971bc3c3f8e2077e19692de678e9239734b8bd48d74e369c2524a",
       "createdAt": "2026-07-17T07:08:04.483Z",
@@ -8532,9 +8038,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "57007033763a8e8dd6909df846aecda6374be100bba40863624ad08a49670316",
       "createdAt": "2026-07-17T07:08:11.162Z",
@@ -8554,9 +8058,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "68e3e71f93d53ea77ab9c18e48b028ec0a3a9aa5e031f99a9a9b289941312980",
       "createdAt": "2026-07-17T07:08:11.167Z",
@@ -8576,9 +8078,7 @@
       "category": "hospital-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "28d6015a723e9bc6b386652df1267c02b2718e95c386c1bcb2a39bc31e2bd413",
       "createdAt": "2026-07-17T07:08:11.882Z",
@@ -8598,9 +8098,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "cd0a2409dbfd548bfa01d8ffa8ce51c8e407919449f83a5e68f07b6186529127",
       "createdAt": "2026-07-17T07:08:09.080Z",
@@ -8620,9 +8118,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "c5317f4ebb7ce74e8266df6ed4213c22ec673bd8c0b0e5a7695fde8db580cc3d",
       "createdAt": "2026-07-17T07:08:11.140Z",
@@ -8642,9 +8138,7 @@
       "category": "fhir",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7ba908a1675483421500f6b52bd777e36a81f774a45b36588027827d5bbd72a8",
       "createdAt": "2026-07-17T07:08:01.993Z",
@@ -8664,9 +8158,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "88d37313aedbec09c3febee6326089bf5cc9866d721d2ec5a13933f0ea20709d",
       "createdAt": "2026-07-17T07:08:11.167Z",
@@ -8686,9 +8178,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "87472fe92194f0fed5fc13905335a152dc39e7d2c145fc425bf9a316c3c114b1",
       "createdAt": "2026-07-17T07:08:05.519Z",
@@ -8708,9 +8198,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "45b7e8baec3cfb90e116e716e6d954c407cfc786c770342887a7757b0d8c301b",
       "createdAt": "2026-07-17T07:08:06.081Z",
@@ -8730,9 +8218,7 @@
       "category": "interoperability",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6747a96b49de288293da67f18836ecd329ddc6f028f1965bbfc2f3c80863c10d",
       "createdAt": "2026-07-17T07:08:01.457Z",
@@ -8752,9 +8238,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6c61500218f3a032a76e864afcd8efa577d62b06b9e991b7ae66009810915de2",
       "createdAt": "2026-07-17T07:08:11.163Z",
@@ -8774,9 +8258,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "6975522abe2aa4e0573d88bca01db0d790e772f5ac114643fbedccc05d77c086",
       "createdAt": "2026-07-17T07:08:05.470Z",
@@ -8796,9 +8278,7 @@
       "category": "digital-health",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "d0c7cbe83be1662fca93b652f4603a5a60bf0a8ba110c33834eedcf5bb184a43",
       "createdAt": "2026-07-17T07:08:04.466Z",
@@ -8818,9 +8298,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "47a6ac1cb01c2e0d2c469c72331c8a36957b0e2228658c864997a0f40cd77841",
       "createdAt": "2026-07-17T07:08:11.144Z",
@@ -8840,9 +8318,7 @@
       "category": "health-data",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "34ee971006d62534e0c68f98e6880bf041b6a793f95397942460be5bd033ca1e",
       "createdAt": "2026-07-17T07:08:11.169Z",
@@ -8862,9 +8338,7 @@
       "category": "pharma-medtech",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "a6da8daba75297df4ed325cf9155ae28cfb59c6a09a9db5fdbdb55b50f2f9277",
       "createdAt": "2026-07-17T07:08:00.230Z",
@@ -8884,9 +8358,7 @@
       "category": "payer-insurance",
       "tags": [],
       "metrics": {
-        "platforms": [
-          "rss"
-        ]
+        "platforms": ["rss"]
       },
       "contentHash": "7da0c5d14da3c5032fe24240e64d759535dcd7348f48121ee3a47258ba4f0ab2",
       "createdAt": "2026-07-17T07:08:05.517Z",
@@ -17208,16 +16680,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "global-health",
       "company": "industry",
-      "keywords": [
-        "africa",
-        "cdc",
-        "who",
-        "launch",
-        "joint",
-        "continental",
-        "ebola",
-        "response"
-      ],
+      "keywords": ["africa", "cdc", "who", "launch", "joint", "continental", "ebola", "response"],
       "confidenceScore": 75,
       "heatScore": 15,
       "impactScore": 55,
@@ -17300,16 +16763,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "fhir",
       "company": "industry",
-      "keywords": [
-        "bridging",
-        "policy",
-        "practice",
-        "mastering",
-        "cms",
-        "0062",
-        "through",
-        "real"
-      ],
+      "keywords": ["bridging", "policy", "practice", "mastering", "cms", "0062", "through", "real"],
       "confidenceScore": 74,
       "heatScore": 15,
       "impactScore": 55,
@@ -17526,15 +16980,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "health-data",
       "company": "industry",
-      "keywords": [
-        "distilling",
-        "tabular",
-        "foundation",
-        "models",
-        "structured",
-        "health",
-        "data"
-      ],
+      "keywords": ["distilling", "tabular", "foundation", "models", "structured", "health", "data"],
       "confidenceScore": 55,
       "heatScore": 15,
       "impactScore": 55,
@@ -17799,16 +17245,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "health-data",
       "company": "industry",
-      "keywords": [
-        "if",
-        "only",
-        "my",
-        "cgm",
-        "could",
-        "speak",
-        "privacy",
-        "preserving"
-      ],
+      "keywords": ["if", "only", "my", "cgm", "could", "speak", "privacy", "preserving"],
       "confidenceScore": 55,
       "heatScore": 15,
       "impactScore": 55,
@@ -17845,16 +17282,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "pharma-medtech",
       "company": "industry",
-      "keywords": [
-        "making",
-        "regulation",
-        "catalyst",
-        "not",
-        "barrier",
-        "uk",
-        "life",
-        "sciences"
-      ],
+      "keywords": ["making", "regulation", "catalyst", "not", "barrier", "uk", "life", "sciences"],
       "confidenceScore": 75,
       "heatScore": 15,
       "impactScore": 55,
@@ -17982,12 +17410,7 @@
       "businessValue": "Vape companies must allocate resources to packaging redesign and regulatory compliance to maintain market access under the new rules.",
       "category": "vaping-regulation",
       "company": "Ministers",
-      "keywords": [
-        "vapes",
-        "plain packaging",
-        "crackdown",
-        "kids"
-      ],
+      "keywords": ["vapes", "plain packaging", "crackdown", "kids"],
       "confidenceScore": 74,
       "heatScore": 17,
       "impactScore": 55,
@@ -18205,16 +17628,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "health-data",
       "company": "industry",
-      "keywords": [
-        "securing",
-        "future",
-        "iomt",
-        "post",
-        "quantum",
-        "era",
-        "edge",
-        "native"
-      ],
+      "keywords": ["securing", "future", "iomt", "post", "quantum", "era", "edge", "native"],
       "confidenceScore": 55,
       "heatScore": 15,
       "impactScore": 55,
@@ -18343,14 +17757,7 @@
       "businessValue": "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
       "category": "health-data",
       "company": "industry",
-      "keywords": [
-        "variational",
-        "consensus",
-        "monte",
-        "carlo",
-        "bayesian",
-        "mixture"
-      ],
+      "keywords": ["variational", "consensus", "monte", "carlo", "bayesian", "mixture"],
       "confidenceScore": 55,
       "heatScore": 15,
       "impactScore": 55,
@@ -18851,10 +18258,7 @@
             "healthyCategories": 4,
             "healthyChina": 0
           },
-          "penalties": [
-            "active 且健康的生产来源不足 50",
-            "生产覆盖尚未经历 3 个自然日验证"
-          ],
+          "penalties": ["active 且健康的生产来源不足 50", "生产覆盖尚未经历 3 个自然日验证"],
           "nextAction": "让 E3 来源完成 20 次健康检查和 7 天观察，再由自动契约验证逐批晋级 E4。"
         },
         {
@@ -18875,10 +18279,7 @@
             "averageObservedQuality": 61,
             "schemaValid": 17
           },
-          "penalties": [
-            "健康样本不足 30",
-            "连续观测不足 3 个自然日"
-          ],
+          "penalties": ["健康样本不足 30", "连续观测不足 3 个自然日"],
           "nextAction": "连续 7 天抽检 100+ 健康源，补原创率、正文完整度和人工准确率标签。"
         },
         {
@@ -18924,10 +18325,7 @@
             "latestRunSuccess": 16,
             "auditWindows": 1
           },
-          "penalties": [
-            "稳定性观察窗不足 3 天",
-            "健康来源不足 30"
-          ],
+          "penalties": ["稳定性观察窗不足 3 天", "健康来源不足 30"],
           "nextAction": "连续运行 7 天，按来源计算成功率、异常空结果、P95 延迟和恢复时间。"
         },
         {
@@ -18949,9 +18347,7 @@
             "averageEvidence": 1,
             "averageSelfReportedConfidence": 75
           },
-          "penalties": [
-            "多源公开事件不足 10"
-          ],
+          "penalties": ["多源公开事件不足 10"],
           "nextAction": "优先把核心事件补成独立多源证据，并建立 claim 级事实错误标注集。"
         },
         {
@@ -18972,9 +18368,7 @@
             "multiSource": 0,
             "outcomeFeedback": 0
           },
-          "penalties": [
-            "缺少真实用户结果反馈，分数上限 55"
-          ],
+          "penalties": ["缺少真实用户结果反馈，分数上限 55"],
           "nextAction": "采集至少 30 条读后帮助度、保存/引用、行动与付费意愿反馈。"
         },
         {
@@ -18995,9 +18389,7 @@
             "activeWithRecentSuccess": 18,
             "endToEndLatencySamples": 0
           },
-          "penalties": [
-            "缺少端到端延迟样本，当前使用成功运行比例估算"
-          ],
+          "penalties": ["缺少端到端延迟样本，当前使用成功运行比例估算"],
           "nextAction": "记录 upstream published→Signal→Event→Pages 四段延迟并建立 P50/P95 SLO。"
         },
         {
@@ -19019,9 +18411,7 @@
             "published": 7,
             "recentPublished": 7
           },
-          "penalties": [
-            "健康来源时效样本不足 30"
-          ],
+          "penalties": ["健康来源时效样本不足 30"],
           "nextAction": "按 cadence 衡量来源 freshness lag，并补齐从事件发生到页面发布的延迟。"
         },
         {
@@ -19041,9 +18431,7 @@
             "outcomeFeedback": 0,
             "completedArtifacts": 0
           },
-          "penalties": [
-            "无 30 日行动结果样本，分数上限 45"
-          ],
+          "penalties": ["无 30 日行动结果样本，分数上限 45"],
           "nextAction": "增加 save/act/complete 反馈，30 日后按机会类型复盘真实产物和收益。"
         },
         {
@@ -19066,9 +18454,7 @@
             "totalEvents": 30,
             "rollbackDrills": 0
           },
-          "penalties": [
-            "无策略回放和回滚演练证据，分数上限 60"
-          ],
+          "penalties": ["无策略回放和回滚演练证据，分数上限 60"],
           "nextAction": "增加 audit log、策略版本、release snapshot hash 与定期回滚演练。"
         }
       ],
