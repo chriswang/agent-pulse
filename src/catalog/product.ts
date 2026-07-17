@@ -9,7 +9,7 @@ export const capabilities = [
     maturity: 44,
     release: "unreleased",
     evidence:
-      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; the latest GitHub no-model audit cleared 18 China and 3 international publishers, while local code and tests now support a bounded 30-day historical backfill, seven-day validation, no-model Chinese fact Events and a pre-threshold evidence funnel; the real GitHub backfill remains the acceptance gate and the model remains paused",
+      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; day one of the GitHub 30+7 validation cleared 18 China and 3 international publishers, achieved 96% collection success, retained 12 in-scope Signals and published 2 Tier 1 fact Events; multi-source Events remain at zero, the model is paused, and six more calendar days plus manual decision-value review remain",
   },
   {
     slug: "source-catalog",
