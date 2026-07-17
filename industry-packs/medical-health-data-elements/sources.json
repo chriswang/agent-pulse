@@ -247,21 +247,21 @@
       "identityHosts": ["zsj.gz.gov.cn"]
     },
     {
-      "slug": "shenzhen-health-commission",
-      "name": "深圳市卫生健康委员会",
-      "homepageUrl": "https://wjw.sz.gov.cn/",
-      "endpoint": "https://wjw.sz.gov.cn/wzx/",
+      "slug": "beijing-health-commission-data",
+      "name": "北京市卫生健康委员会",
+      "homepageUrl": "https://wjw.beijing.gov.cn/",
+      "endpoint": "https://wjw.beijing.gov.cn/",
       "adapter": "web-scraper",
       "tier": 1,
       "role": "policy",
       "region": "CN",
       "language": "zh-CN",
-      "authorityScore": 92,
+      "authorityScore": 94,
       "category": "policy",
       "acquisition": "html",
-      "topics": ["hospital-data", "regional-health", "medical-data-trading"],
-      "purpose": "发现深圳医院数据、区域医疗协同和数据产品实践。",
-      "identityHosts": ["wjw.sz.gov.cn"]
+      "topics": ["hospital-data", "regional-health", "interoperability"],
+      "purpose": "跟踪北京医院数据互联互通、健康医疗数据流通和区域医疗协同。",
+      "identityHosts": ["wjw.beijing.gov.cn"]
     },
     {
       "slug": "shenzhen-data-exchange",
@@ -383,21 +383,21 @@
       "identityHosts": ["www.caict.ac.cn"]
     },
     {
-      "slug": "national-health-commission-info",
-      "name": "国家卫生健康委 · 规划发展与信息化司",
-      "homepageUrl": "https://www.nhc.gov.cn/guihuaxxs/new_index.shtml",
-      "endpoint": "https://www.nhc.gov.cn/guihuaxxs/new_index.shtml",
+      "slug": "beijing-healthcare-security",
+      "name": "北京市医疗保障局 · 政策文件",
+      "homepageUrl": "https://ybj.beijing.gov.cn/",
+      "endpoint": "https://ybj.beijing.gov.cn/zwgk/2024zcwj/index.html",
       "adapter": "web-scraper",
       "tier": 1,
       "role": "policy",
       "region": "CN",
       "language": "zh-CN",
-      "authorityScore": 98,
+      "authorityScore": 94,
       "category": "policy",
       "acquisition": "html",
-      "topics": ["health-informatization", "health-data-policy", "standards"],
-      "purpose": "跟踪卫生健康信息化、医疗数据和行业标准政策。",
-      "identityHosts": ["www.nhc.gov.cn"]
+      "topics": ["health-insurance-data", "commercial-insurance", "health-data-policy"],
+      "purpose": "跟踪医保数据、商保协同、健康医疗数据流通和智慧医保政策。",
+      "identityHosts": ["ybj.beijing.gov.cn"]
     },
     {
       "slug": "weining-health",

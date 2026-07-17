@@ -9,7 +9,7 @@ export const capabilities = [
     maturity: 44,
     release: "unreleased",
     evidence:
-      "the rebuilt isolated pack has 30 governed sources, six tracks, an empty evidence-honest baseline snapshot, deterministic scope and Chinese-output gates, and a local live audit with 22 healthy sources plus 12 China and 3 international independent publishers clearing the 90-day readiness gate; GitHub verification is pending and the model remains paused",
+      "the rebuilt isolated pack has 30 governed sources, six tracks, an empty evidence-honest baseline snapshot, deterministic scope and Chinese-output gates, and a local live audit with 24 healthy sources plus 12 China and 3 international independent publishers clearing the 90-day readiness gate; the first GitHub audit reached 10 of 12 before two failed ready sources were replaced, cloud re-verification is pending, and the model remains paused",
   },
   {
     slug: "source-catalog",

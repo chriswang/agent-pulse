@@ -17,6 +17,36 @@
       "state": {}
     },
     {
+      "slug": "beijing-health-commission-data",
+      "enabled": 1,
+      "observationEnabled": 0,
+      "lifecycleStatus": "active",
+      "healthScore": 100,
+      "consecutiveFailures": 0,
+      "successCount": 0,
+      "failureCount": 0,
+      "lastCollectedAt": null,
+      "lastSuccessAt": null,
+      "lastError": null,
+      "lastVerifiedAt": null,
+      "state": {}
+    },
+    {
+      "slug": "beijing-healthcare-security",
+      "enabled": 1,
+      "observationEnabled": 0,
+      "lifecycleStatus": "active",
+      "healthScore": 100,
+      "consecutiveFailures": 0,
+      "successCount": 0,
+      "failureCount": 0,
+      "lastCollectedAt": null,
+      "lastSuccessAt": null,
+      "lastError": null,
+      "lastVerifiedAt": null,
+      "state": {}
+    },
+    {
       "slug": "cac-data-policy",
       "enabled": 1,
       "observationEnabled": 0,
@@ -272,21 +302,6 @@
       "state": {}
     },
     {
-      "slug": "national-health-commission-info",
-      "enabled": 0,
-      "observationEnabled": 0,
-      "lifecycleStatus": "shadow",
-      "healthScore": 100,
-      "consecutiveFailures": 0,
-      "successCount": 0,
-      "failureCount": 0,
-      "lastCollectedAt": null,
-      "lastSuccessAt": null,
-      "lastError": null,
-      "lastVerifiedAt": null,
-      "state": {}
-    },
-    {
       "slug": "nda-local-dynamics",
       "enabled": 1,
       "observationEnabled": 0,
@@ -378,21 +393,6 @@
     },
     {
       "slug": "shenzhen-data-exchange",
-      "enabled": 0,
-      "observationEnabled": 0,
-      "lifecycleStatus": "shadow",
-      "healthScore": 100,
-      "consecutiveFailures": 0,
-      "successCount": 0,
-      "failureCount": 0,
-      "lastCollectedAt": null,
-      "lastSuccessAt": null,
-      "lastError": null,
-      "lastVerifiedAt": null,
-      "state": {}
-    },
-    {
-      "slug": "shenzhen-health-commission",
       "enabled": 0,
       "observationEnabled": 0,
       "lifecycleStatus": "shadow",
