@@ -1,4 +1,4 @@
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -152,6 +152,9 @@ describe("medical health data elements industry profile", () => {
         counts: { events: 0, signals: 0, actors: 0, sources: 30 },
       });
       expect(integrity.issues).toEqual([]);
+      const policyTrackPage = await readFile(join(config.distDir, "lines/index.html"), "utf8");
+      expect(policyTrackPage).toContain("国家数据局 · 通知公告");
+      expect(policyTrackPage).not.toContain("暂无匹配来源");
     } finally {
       await db.destroy();
     }
