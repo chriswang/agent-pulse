@@ -69,18 +69,22 @@ export function renderStaticPages(model: StaticSiteModel): StaticPage[] {
 function renderPagesForLocale(model: StaticSiteModel, locale: Locale): StaticPage[] {
   const lp = locale === "en" ? "en/" : "";
   const defaultTrack = strategicTracks(model)[0];
+  const industryTitle = model.industryProfile
+    ? `${model.industryProfile.name} · Agent Pulse`
+    : null;
   const pages: StaticPage[] = [
     page(
       model,
       `${lp}index.html`,
       0,
       "home",
-      locale === "en"
-        ? "Evidence-Led AI Industry Shifts · Agent Pulse"
-        : "AI 行业关键变化与证据 · Agent Pulse",
+      industryTitle ??
+        (locale === "en"
+          ? "Evidence-Led AI Industry Shifts · Agent Pulse"
+          : "AI 行业关键变化与证据 · Agent Pulse"),
       home(model, locale),
       locale,
-      undefined,
+      model.industryProfile?.description,
       { jsonLd: homeJsonLd(model, locale) },
     ),
     page(
@@ -94,18 +98,22 @@ function renderPagesForLocale(model: StaticSiteModel, locale: Locale): StaticPag
         : emptyState(t("lines.noJudgment", locale), ""),
       locale,
     ),
-    page(
-      model,
-      `${lp}industry-evolution/index.html`,
-      1,
-      "lines",
-      `${locale === "en" ? "Industry History" : "行业发展历程"} · Agent Pulse`,
-      industryEvolutionPage(model, locale),
-      locale,
-      locale === "en"
-        ? "Trace the major eras, projects, and evidence that shaped the global AI industry."
-        : "按阶段追踪塑造全球 AI 行业的重大项目、关键变化与公开证据。",
-    ),
+    ...(model.industryProfile
+      ? []
+      : [
+          page(
+            model,
+            `${lp}industry-evolution/index.html`,
+            1,
+            "lines",
+            `${locale === "en" ? "Industry History" : "行业发展历程"} · Agent Pulse`,
+            industryEvolutionPage(model, locale),
+            locale,
+            locale === "en"
+              ? "Trace the major eras, projects, and evidence that shaped the global AI industry."
+              : "按阶段追踪塑造全球 AI 行业的重大项目、关键变化与公开证据。",
+          ),
+        ]),
     page(
       model,
       `${lp}timeline/index.html`,
@@ -114,9 +122,13 @@ function renderPagesForLocale(model: StaticSiteModel, locale: Locale): StaticPag
       `${t("nav.timeline", locale)} · Agent Pulse`,
       renderTimeline(model, locale),
       locale,
-      locale === "en"
-        ? "Browse evidence-backed AI events by month, topic, company, and research impact."
-        : "按月份、主题、公司与研究影响浏览经过证据核验的 AI 行业事件。",
+      model.industryProfile
+        ? locale === "en"
+          ? "Browse evidence-backed medical and health data events by date, monitoring track, and original source."
+          : "按时间、观察主线与原始证据浏览医疗健康数据要素事件。"
+        : locale === "en"
+          ? "Browse evidence-backed AI events by month, topic, company, and research impact."
+          : "按月份、主题、公司与研究影响浏览经过证据核验的 AI 行业事件。",
       { jsonLd: timelineJsonLd(model, locale) },
     ),
     page(
@@ -138,20 +150,24 @@ function renderPagesForLocale(model: StaticSiteModel, locale: Locale): StaticPag
       scoutPage(model, locale),
       locale,
     ),
-    toolPage(
-      model,
-      "actors",
-      `${t("tab.actors", locale)} · Agent Pulse`,
-      actorsPage(model, locale),
-      locale,
-    ),
-    toolPage(
-      model,
-      "resources",
-      `${t("tab.resources", locale)} · Agent Pulse`,
-      resourcesPage(model, locale),
-      locale,
-    ),
+    ...(model.industryProfile
+      ? []
+      : [
+          toolPage(
+            model,
+            "actors",
+            `${t("tab.actors", locale)} · Agent Pulse`,
+            actorsPage(model, locale),
+            locale,
+          ),
+          toolPage(
+            model,
+            "resources",
+            `${t("tab.resources", locale)} · Agent Pulse`,
+            resourcesPage(model, locale),
+            locale,
+          ),
+        ]),
     toolPage(
       model,
       "product",
@@ -176,9 +192,13 @@ function renderPagesForLocale(model: StaticSiteModel, locale: Locale): StaticPag
       `${t("footer.sources", locale)} · Agent Pulse`,
       sourcesPage(model, locale),
       locale,
-      locale === "en"
-        ? "Explore the Agent Pulse AI source map by region, category, acquisition channel, lifecycle, and recent health."
-        : "按地域、类别、采集方式、生命周期与近期健康状态查看 Agent Pulse AI 来源地图。",
+      model.industryProfile
+        ? locale === "en"
+          ? "Review the governed source portfolio for the medical and health data-elements pilot."
+          : "查看医疗健康数据要素试跑的信源组合、采集方式、生命周期与近期健康状态。"
+        : locale === "en"
+          ? "Explore the Agent Pulse AI source map by region, category, acquisition channel, lifecycle, and recent health."
+          : "按地域、类别、采集方式、生命周期与近期健康状态查看 Agent Pulse AI 来源地图。",
       { jsonLd: sourcesJsonLd(model, locale) },
     ),
     page(
@@ -239,7 +259,7 @@ function page(
   >,
 ): StaticPage {
   const route = path === "index.html" ? "/" : `/${path.replace(/index\.html$/, "")}`;
-  const defaultDesc = pageDescription(active, locale);
+  const defaultDesc = pageDescription(active, locale, model);
   return {
     path,
     content: pageLayout({
@@ -253,6 +273,14 @@ function page(
       siteUrl: model.siteUrl,
       github: model.github,
       generatedAt: model.generatedAt,
+      ...(model.industryProfile
+        ? {
+            brand: {
+              name: model.industryProfile.shortName,
+              subtitle: "POWERED BY AGENT PULSE",
+            },
+          }
+        : {}),
       ...extra,
     }),
   };
@@ -277,7 +305,34 @@ function toolPage(
   );
 }
 
-function pageDescription(active: PageKey, locale: Locale): string {
+function pageDescription(active: PageKey, locale: Locale, model?: StaticSiteModel): string {
+  if (model?.industryProfile) {
+    const descriptions: Partial<Record<PageKey, [string, string]>> = {
+      home: [model.industryProfile.description, model.industryProfile.description],
+      lines: [
+        "查看医疗健康数据要素政策、基础设施、医保商保、药械、竞品与生态六条主线。",
+        "Follow six tracks across policy, infrastructure, payers, pharma and medtech, competitors, and the wider ecosystem.",
+      ],
+      timeline: [
+        "按时间、观察主线与原始证据浏览医疗健康数据要素事件。",
+        "Browse medical and health data events by date, monitoring track, and original evidence.",
+      ],
+      scout: [
+        "从已核验事件中形成面向医疗健康数据要素客户的可验证行动建议。",
+        "Turn verified events into testable actions for medical and health data stakeholders.",
+      ],
+      product: [
+        "了解试跑如何核对原始证据、聚类事件并区分分析与行动假设。",
+        "Learn how the pilot verifies evidence, clusters events, and separates analysis from action hypotheses.",
+      ],
+      sources: [
+        "查看医疗健康数据要素试跑的信源组合、采集方式、生命周期与运行状态。",
+        "Review the medical and health data pilot source portfolio, acquisition, lifecycle, and runtime health.",
+      ],
+    };
+    const custom = descriptions[active];
+    if (custom) return custom[locale === "en" ? 1 : 0];
+  }
   const descriptions: Record<PageKey, [string, string]> = {
     home: [
       "用一手证据追踪 AI 行业关键变化，连接技术进展、商业影响与下一观察点。",
@@ -328,6 +383,9 @@ function pageDescription(active: PageKey, locale: Locale): string {
 }
 
 function home(model: StaticSiteModel, locale: Locale): string {
+  if (model.industryProfile && model.industryPilot) {
+    return industryPilotHome(model, locale);
+  }
   const orderedEvents = sortEventsByLatestDevelopment(model.events);
   const recent: EnrichedEvent[] = [];
   for (const candidate of orderedEvents.filter((event) => hasPrimaryEvidence(event))) {
@@ -375,6 +433,84 @@ function home(model: StaticSiteModel, locale: Locale): string {
       <span>AGENT PULSE</span><h2>${t("home.manifestoTitle", locale)}</h2><p>${escapeHtml(t("home.manifestoDesc", locale))}</p>
       <div class="principles"><span>${escapeHtml(t("home.principle1", locale))}</span><span>${escapeHtml(t("home.principle2", locale))}</span><span>${escapeHtml(t("home.principle3", locale))}</span></div>
     </div></section>`;
+}
+
+function industryPilotHome(model: StaticSiteModel, locale: Locale): string {
+  const profile = model.industryProfile;
+  const report = model.industryPilot;
+  if (!profile || !report) return emptyState("行业试跑尚未初始化", "请先生成行业报告。");
+  const zh = locale === "zh-CN";
+  const collectionRate = report.collection.successRatePercent;
+  const evidenceRate = report.intelligence.highPriorityEvidenceCoveragePercent;
+  const recentSignals = model.signals.slice(0, 8);
+  const sourceSample = [...model.sources]
+    .sort(
+      (left, right) =>
+        healthOrder(left.healthStatus) - healthOrder(right.healthStatus) ||
+        left.tier - right.tier ||
+        left.name.localeCompare(right.name),
+    )
+    .slice(0, 12);
+  const statusLabel = {
+    collecting: zh ? "正在积累 7 天样本" : "Collecting the seven-day baseline",
+    ready_for_manual_review: zh ? "等待人工评审" : "Ready for manual review",
+    pass: zh ? "试跑通过" : "Pilot passed",
+    fail: zh ? "需要调整后再试" : "Adjust and rerun",
+  }[report.readiness];
+  const manualItems = [
+    {
+      label: zh ? "同一事件聚类准确率" : "Clustering accuracy",
+      value: formatPercent(report.manualReview.clusteringAccuracyPercent, zh),
+    },
+    {
+      label: zh ? "Top 10 有决策价值" : "Decision-useful Top 10",
+      value:
+        report.manualReview.top10DecisionValueCount === null
+          ? zh
+            ? "待评审"
+            : "Pending"
+          : `${report.manualReview.top10DecisionValueCount} / 10`,
+    },
+    {
+      label: zh ? "每日整理时间节省" : "Daily time saved",
+      value:
+        report.manualReview.dailyMinutesSaved === null
+          ? zh
+            ? "待记录"
+            : "Pending"
+          : `${report.manualReview.dailyMinutesSaved} min`,
+    },
+  ];
+  return `<section class="industry-pilot-hero"><div class="shell industry-pilot-hero-grid"><div><span class="section-kicker">${escapeHtml(profile.page.eyebrow)}</span><h1>${escapeHtml(profile.page.headline)}</h1><p>${escapeHtml(profile.page.deck)}</p><div class="industry-pilot-status"><i class="${escapeHtml(report.readiness)}"></i><strong>${escapeHtml(statusLabel)}</strong><span>${zh ? `已观察 ${report.window.observedDays} / ${report.window.targetDays} 天` : `${report.window.observedDays} / ${report.window.targetDays} days observed`}</span></div></div><aside><span>${zh ? "本轮目标" : "Pilot target"}</span><strong>${report.collection.targetPercent}%</strong><p>${zh ? "自动采集成功率，同时验证多来源事件、原始证据、Top 10 决策价值和整理时间节省。" : "Collection success plus multi-source events, original evidence, Top 10 decision value, and time saved."}</p></aside></div></section>
+    <section class="section shell"><header class="section-head"><div><span class="section-kicker">01 / PILOT SCORECARD</span><h2>${zh ? "先看这 7 天是否值得继续" : "Decide whether the pilot is worth continuing"}</h2></div></header><div class="industry-score-grid">
+      ${industryMetric(zh ? "配置信源" : "Configured sources", report.sources.configured, `${report.sources.automated} ${zh ? "个自动候选" : "automated"}`)}
+      ${industryMetric(zh ? "健康信源" : "Healthy sources", report.sources.healthy, `${report.sources.audited} ${zh ? "个已审计" : "audited"} · ${report.sources.healthRatePercent ?? 0}%`)}
+      ${industryMetric(zh ? "采集成功率" : "Collection success", formatPercent(collectionRate, zh), `${report.collection.successfulRuns} / ${report.collection.runs} ${zh ? "次运行" : "runs"}`, report.collection.status)}
+      ${industryMetric(zh ? "规范化信号" : "Normalized signals", report.intelligence.signals, zh ? "最近 7 天" : "last seven days")}
+      ${industryMetric(zh ? "多来源事件" : "Multi-source events", report.intelligence.multiSourceEvents, `${formatPercent(report.intelligence.multiSourceRatePercent, zh)} ${zh ? "事件占比" : "of events"}`)}
+      ${industryMetric(zh ? "高优先级证据覆盖" : "High-priority evidence", formatPercent(evidenceRate, zh), `${report.intelligence.highPriorityEvents} ${zh ? "个高优先级事件" : "high-priority events"}`, evidenceRate === null ? "pending" : evidenceRate === 100 ? "pass" : "fail")}
+    </div></section>
+    <section class="section section-tint"><div class="shell"><header class="section-head"><div><span class="section-kicker">02 / WATCH MAP</span><h2>${zh ? "六条观察主线" : "Six monitoring tracks"}</h2></div></header><div class="industry-track-grid">${profile.tracks.map((track) => `<article style="--track:${escapeHtml(track.color)}"><span>${escapeHtml(track.icon)}</span><div><h3>${escapeHtml(track.name)}</h3><p>${escapeHtml(track.description)}</p></div></article>`).join("")}</div><div class="industry-audiences"><strong>${zh ? "关注对象" : "Audiences"}</strong>${profile.audiences.map((audience) => `<span>${escapeHtml(audience)}</span>`).join("")}</div></div></section>
+    <section class="section shell"><header class="section-head section-head-action"><div><span class="section-kicker">03 / SOURCE HEALTH</span><h2>${zh ? "首批信源是否真的能跑" : "Can the first source set run reliably?"}</h2></div><a class="text-link" href="__PREFIX__sources/">${zh ? "查看全部信源" : "View all sources"} ${icon("arrow-right")}</a></header><div class="industry-source-grid">${sourceSample.map((source) => `<a href="${escapeHtml(source.homepageUrl)}" target="_blank" rel="noopener noreferrer"><i class="${escapeHtml(source.healthStatus)}"></i><div><strong>${escapeHtml(source.name)}</strong><small>Tier ${source.tier} · ${escapeHtml(source.acquisition)} · ${escapeHtml(source.healthStatus)}</small></div>${icon("external-link")}</a>`).join("")}</div></section>
+    <section class="section section-tint"><div class="shell"><header class="section-head"><div><span class="section-kicker">04 / TOP CANDIDATES</span><h2>${zh ? "等待人工判断的 Top 10" : "Top 10 candidates for human review"}</h2></div></header>${report.topCandidates.length ? `<div class="industry-top-list">${report.topCandidates.map((candidate, index) => `<a href="__PREFIX__events/${escapeHtml(candidate.slug)}/"><span>${String(index + 1).padStart(2, "0")}</span><div><small>${escapeHtml(formatDate(candidate.happenedAt, locale))} · ${candidate.sourceCount} ${zh ? "个来源" : "sources"}</small><strong>${escapeHtml(candidate.title)}</strong></div><b>${candidate.priorityScore}</b>${icon("arrow-right")}</a>`).join("")}</div>` : emptyState(zh ? "还没有通过发布门禁的候选" : "No candidate has cleared the publication gate", zh ? "完成首轮审计、采集和模型整理后，这里会出现可回链原始证据的候选。" : "Candidates with original evidence will appear after audit, collection, and model enrichment.")}<div class="industry-manual-grid">${manualItems.map((item) => `<article><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></article>`).join("")}</div></div></section>
+    <section class="section shell"><header class="section-head section-head-action"><div><span class="section-kicker">05 / LATEST OBSERVATIONS</span><h2>${zh ? "最近采集到的公开动态" : "Latest public source observations"}</h2></div><a class="text-link" href="__PREFIX__signals/">${zh ? "查看全部更新" : "View all updates"} ${icon("arrow-right")}</a></header>${recentSignals.length ? `<div class="signal-stream industry-signal-stream">${recentSignals.map((signal) => signalCard(signal, locale)).join("")}</div>` : emptyState(zh ? "尚未形成动态" : "No observations yet", zh ? "行业快照已与上游演示数据隔离，首轮真实采集完成后再显示内容。" : "The industry snapshot is isolated from upstream demo data and will show only live collection results.")}</section>`;
+}
+
+function industryMetric(
+  label: string,
+  value: string | number,
+  detail: string,
+  status: "pending" | "pass" | "fail" = "pending",
+): string {
+  return `<article class="industry-score ${status}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(detail)}</small></article>`;
+}
+
+function formatPercent(value: number | null, zh: boolean): string {
+  return value === null ? (zh ? "待运行" : "Pending") : `${value}%`;
+}
+
+function healthOrder(status: PublicSource["healthStatus"]): number {
+  return { healthy: 0, degraded: 1, failed: 2, unchecked: 3, skipped: 4 }[status];
 }
 
 function trendShiftCandidate(
@@ -518,8 +654,18 @@ export function renderTimeline(model: StaticSiteModel, locale: Locale): string {
         `<button type="button" data-filter-track="${escapeHtml(track.slug)}">${escapeHtml(track.name)}</button>`,
     )
     .join("");
+  const industryTimeline = model.industryProfile
+    ? {
+        title:
+          locale === "en" ? "Medical and Health Data Event Timeline" : "医疗健康数据要素事件时间线",
+        description:
+          locale === "en"
+            ? "Browse verified policy, infrastructure, payer, pharma, medtech, competitor, and ecosystem events with links to original evidence."
+            : "按时间查看经过核验的政策、基础设施、医保商保、药械、竞品与生态事件，并回链原始证据。",
+      }
+    : { title: t("timeline.heroTitle", locale), description: t("timeline.heroDesc", locale) };
   return `<section class="page-hero compact has-motion shell">
-      <span class="section-kicker">EVIDENCE TIMELINE</span><h1>${escapeHtml(t("timeline.heroTitle", locale))}</h1><p>${escapeHtml(t("timeline.heroDesc", locale))}</p>
+      <span class="section-kicker">EVIDENCE TIMELINE</span><h1>${escapeHtml(industryTimeline.title)}</h1><p>${escapeHtml(industryTimeline.description)}</p>
       ${heroMotion("timeline")}
     </section>
     <section class="timeline-shell shell" data-timeline data-timeline-lazy="${lazy}" data-timeline-total="${events.length}">
@@ -630,6 +776,11 @@ function eventPage(model: StaticSiteModel, event: EnrichedEvent, locale: Locale)
 }
 
 function scoutPage(model: StaticSiteModel, locale: Locale): string {
+  if (model.industryProfile) {
+    const zh = locale !== "en";
+    return `<section class="page-hero compact tool-hero has-motion shell"><span class="section-kicker">DECISION SUPPORT</span><h1>${zh ? "行动建议" : "Action Briefs"}</h1><p>${zh ? "只从已核验的医疗健康数据要素事件中形成面向医院、数据集团、保司、TPA、药企和药械企业的可验证行动建议。" : "Generate testable actions for hospitals, data groups, insurers, TPAs, pharma, and medtech only from verified medical and health data events."}</p>${heroMotion("action")}</section>
+      <section class="section shell scout-section"><div class="scout-grid" data-mobile-list data-mobile-limit="4" data-mobile-step="4">${model.scout.map((insight) => scoutCard(insight, locale)).join("") || emptyState(zh ? "尚未形成行动建议" : "No action brief yet", zh ? "首轮事件通过证据门禁后再生成，避免把单一来源动态直接包装成建议。" : "Briefs appear only after the first events pass evidence gates, preventing single-source updates from becoming recommendations.")}</div></section>`;
+  }
   return `${toolHeader("sparkles", t("scout.heroTitle", locale), t("scout.heroDesc", locale), "scout", locale)}
   <section class="section shell scout-section"><div class="filter-toolbar"><button class="active" data-card-filter="all">${t("scout.filterAll", locale)}</button><button data-card-filter="venture">${t("scout.filterVenture", locale)}</button><button data-card-filter="media">${t("scout.filterMedia", locale)}</button><button data-card-filter="work">${t("scout.filterWork", locale)}</button><button data-card-filter="learning">${t("scout.filterLearning", locale)}</button><button data-card-filter="artifact">${t("scout.filterArtifact", locale)}</button><button data-card-filter="influence">${t("scout.filterInfluence", locale)}</button></div>
     <div class="scout-grid" data-filter-grid data-mobile-list data-mobile-limit="4" data-mobile-step="4">${model.scout.map((insight) => scoutCard(insight, locale)).join("") || emptyState(t("scout.empty", locale), "")}</div></section>`;
@@ -651,8 +802,17 @@ function resourcesPage(model: StaticSiteModel, locale: Locale): string {
     <section class="section shell"><div class="resource-grid" data-mobile-list data-mobile-limit="4" data-mobile-step="4">${model.resources.map((resource) => resourceCard(resource, locale)).join("")}</div><p class="legal-note">${escapeHtml(t("resources.legalNote", locale))}</p></section>`;
 }
 
-function productPage(_model: StaticSiteModel, locale: Locale): string {
-  return `${toolHeader("gauge", t("product.heroTitle", locale), t("product.heroDesc", locale), "product", locale)}
+function productPage(model: StaticSiteModel, locale: Locale): string {
+  const header = model.industryProfile
+    ? `<section class="page-hero compact tool-hero has-motion shell"><span class="section-kicker">EVIDENCE METHOD</span><h1>${locale === "en" ? "How We Decide" : "我们怎么判断"}</h1><p>${locale === "en" ? "Review how the medical and health data pilot separates original evidence, event clustering, analysis, and action hypotheses." : "了解医疗健康数据要素试跑如何区分原始证据、事件聚类、分析判断与行动假设。"}</p>${heroMotion("action")}</section>`
+    : toolHeader(
+        "gauge",
+        t("product.heroTitle", locale),
+        t("product.heroDesc", locale),
+        "product",
+        locale,
+      );
+  return `${header}
     <section class="section shell method-page">
       <div class="method-flow">
         ${methodStep("01", locale === "en" ? "Verify facts" : "核对事实", locale === "en" ? "Prefer primary material. A material claim needs one Tier 1 source or two independent Tier 2 sources." : "优先采用官方原始资料。重大事实至少需要一个官方原始来源，或两个相互独立的公开来源。")}
@@ -676,6 +836,7 @@ function changelogPage(model: StaticSiteModel, locale: Locale): string {
 }
 
 function sourcesPage(model: StaticSiteModel, locale: Locale): string {
+  if (model.industryProfile) return industrySourcesPage(model, locale);
   const coverage = model.product.sourceCoverage;
   const technologyCoverage = analyzeTechnologyCoverage(model.sources);
   const portfolio = summarizeSourcePortfolio(model.sources);
@@ -712,6 +873,48 @@ function sourcesPage(model: StaticSiteModel, locale: Locale): string {
       <div class="source-table" data-source-grid data-mobile-list data-mobile-limit="12" data-mobile-step="12">${model.sources.map((src) => sourceRow(src, locale)).join("")}</div>
       <div class="contribute-card"><div>${icon("git-pull-request")}<h2>${escapeHtml(t("sources.contributeTitle", locale))}</h2><p>${escapeHtml(t("sources.contributeDesc", locale))}</p></div><a class="button primary" href="${escapeHtml(model.github.repositoryUrl)}/issues/new/choose" target="_blank" rel="noopener noreferrer">${t("sources.contributeButton", locale)} ${icon("arrow-right")}</a></div>
     </div></section>`;
+}
+
+function industrySourcesPage(model: StaticSiteModel, locale: Locale): string {
+  const profile = model.industryProfile;
+  if (!profile) return "";
+  const report = model.industryPilot;
+  const portfolio = summarizeSourcePortfolio(model.sources);
+  const automated = profile.sources.filter(
+    (source) =>
+      source.adapter !== "manual" && !["manual", "restricted"].includes(source.maintenanceStatus),
+  ).length;
+  const manual = profile.sources.length - automated;
+  const tierOne = profile.sources.filter((source) => source.tier === 1).length;
+  const zh = locale !== "en";
+  const sourceCatalog = `<section class="section section-tint"><div class="shell">
+      ${sectionHead("SOURCE RUNTIME", zh ? "信源运行状态" : "Source Runtime", zh ? "只有通过审计并稳定运行的来源才会进入正式采集。" : "Only audited, stable sources progress into active collection.")}
+      <div class="source-standard">${sourceLevel("E0", zh ? "已收录" : "Cataloged", t("sources.levelE0Desc", locale))}${sourceLevel("E1", zh ? "可访问" : "Reachable", t("sources.levelE1Desc", locale))}${sourceLevel("E2", zh ? "检查通过" : "Checked", t("sources.levelE2Desc", locale))}${sourceLevel("E3", zh ? "观察中" : "Observing", t("sources.levelE3Desc", locale))}${sourceLevel("E4", zh ? "稳定使用" : "In Production", t("sources.levelE4Desc", locale))}</div>
+      <div class="source-toolbar"><label class="search-box">${icon("search")}<input data-source-search type="search" placeholder="${escapeHtml(zh ? "搜索名称、主题或地区" : "Search name, topic, or region")}"></label><div class="chip-row"><button class="active" data-source-filter="all">${zh ? "全部" : "All"}</button><button data-source-filter="healthy">${zh ? "最近健康" : "Healthy"}</button><button data-source-filter="rss">RSS / Atom</button><button data-source-filter="manual">${zh ? "人工核验" : "Manual"}</button><button data-source-filter="CN">${zh ? "中国" : "China"}</button></div></div>
+      <div class="source-table" data-source-grid data-mobile-list data-mobile-limit="12" data-mobile-step="12">${model.sources.map((source) => sourceRow(source, locale)).join("")}</div>
+      <div class="contribute-card"><div>${icon("git-pull-request")}<h2>${zh ? "公开配置，持续校准" : "Public configuration, continuously calibrated"}</h2><p>${zh ? "信源增删、采集方式与运行状态都通过版本记录公开；受限站点保持人工核验，不绕过访问限制。" : "Source changes, collection methods, and runtime status stay versioned and public. Restricted sites remain manual without bypassing access controls."}</p></div><a class="button primary" href="${escapeHtml(model.github.repositoryUrl)}/issues/new/choose" target="_blank" rel="noopener noreferrer">${zh ? "提交信源建议" : "Suggest a source"} ${icon("arrow-right")}</a></div>
+    </div></section>`;
+  return `<section class="page-hero shell"><span class="section-kicker">MEDICAL & HEALTH SOURCE MAP</span><h1>${zh ? "医疗健康数据要素信源" : "Medical and Health Data Sources"}</h1><p>${zh ? "先用 20–30 个高价值公开信源验证采集、聚类和证据链，再决定是否扩大覆盖。" : "Start with 20–30 high-value public sources to validate collection, clustering, and evidence quality before expanding coverage."}</p>${pageStatus(`${profile.sources.length} ${zh ? "个配置信源" : "configured sources"}`, `${automated} ${zh ? "个自动候选" : "automated candidates"}`, `${manual} ${zh ? "个人工核验" : "manual checks"}`)}</section>
+    <section class="section shell source-portfolio-section">
+      ${sectionHead("SOURCE PORTFOLIO", zh ? "信源组合" : "Source Portfolio", zh ? "从类别、地域、采集方式和运行状态判断覆盖是否均衡。" : "Review balance by category, region, acquisition, and runtime state.")}
+      <div class="source-portfolio-grid">
+        ${sourcePortfolioCard(t("sources.portfolioCategory", locale), "category", portfolio.categories, model.sources.length, locale)}
+        ${sourcePortfolioCard(t("sources.portfolioRegion", locale), "region", portfolio.regions, model.sources.length, locale)}
+        ${sourcePortfolioCard(t("sources.portfolioChannel", locale), "acquisition", portfolio.acquisitions, model.sources.length, locale)}
+        ${sourcePortfolioCard(t("sources.portfolioRuntime", locale), "health", portfolio.health, model.sources.length, locale)}
+      </div>
+    </section>
+    <section class="section shell coverage-audit-section">
+      ${sectionHead("PILOT GOVERNANCE", zh ? "试跑治理边界" : "Pilot Governance", zh ? "自动采集、人工核验和正式启用有明确边界。" : "Automated collection, manual review, and activation have explicit boundaries.")}
+      <div class="coverage-summary">${metric(zh ? "Tier 1 来源" : "Tier 1 sources", tierOne)}${metric(zh ? "已审计" : "Audited", report?.sources.audited ?? 0)}${metric(zh ? "健康来源" : "Healthy", report?.sources.healthy ?? 0)}${metric(zh ? "已观察天数" : "Observed days", `${report?.window.observedDays ?? 0} / ${profile.trial.durationDays}`)}</div>
+      <div class="method-flow">
+        ${methodStep("01", zh ? "候选入库" : "Catalog", zh ? "先记录官方入口、授权边界、用途和身份域名，不直接视为可用证据。" : "Record ownership, license boundary, purpose, and identity hosts before treating a source as evidence.")}
+        ${methodStep("02", zh ? "审计与影子运行" : "Audit and shadow", zh ? "验证可访问性、解析契约和漂移情况；受限来源保持人工核验。" : "Verify reachability, parsing contracts, and drift; restricted sources remain manual.")}
+        ${methodStep("03", zh ? "稳定后启用" : "Activate after stability", zh ? "只有稳定形成规范化信号并通过证据门禁后，才进入事件与 Top 10。" : "Only stable normalized signals that pass evidence gates can enter events and the Top 10.")}
+      </div>
+      <div class="industry-audiences"><strong>${zh ? "重点主题" : "Focus topics"}</strong>${profile.topics.map((topic) => `<span>${escapeHtml(topic)}</span>`).join("")}</div>
+    </section>
+    ${sourceCatalog}`;
 }
 
 function sourcePortfolioCard(
@@ -1403,6 +1606,7 @@ function emptyState(title: string, copy: string): string {
 }
 
 function strategicTracks(model: StaticSiteModel): PublicTrack[] {
+  if (model.industryProfile) return model.tracks;
   return STRATEGIC_TRACKS.map((slug) => model.tracks.find((track) => track.slug === slug)).filter(
     (track): track is PublicTrack => Boolean(track),
   );
@@ -1423,9 +1627,9 @@ function homeJsonLd(model: StaticSiteModel, locale: Locale): Record<string, unkn
       "@context": "https://schema.org",
       "@type": "WebSite",
       "@id": `${siteUrl}#website`,
-      name: "Agent Pulse",
+      name: model.industryProfile?.shortName ?? "Agent Pulse",
       url: siteUrl,
-      description: pageDescription("home", locale),
+      description: pageDescription("home", locale, model),
       inLanguage: ["zh-CN", "en"],
       publisher: { "@id": `${siteUrl}#organization` },
     },
@@ -1433,9 +1637,11 @@ function homeJsonLd(model: StaticSiteModel, locale: Locale): Record<string, unkn
       "@context": "https://schema.org",
       "@type": "Organization",
       "@id": `${siteUrl}#organization`,
-      name: "Agent Pulse",
+      name: model.industryProfile?.shortName ?? "Agent Pulse",
       url: siteUrl,
-      sameAs: [model.github.repositoryUrl, "https://x.com/Barret_China"],
+      sameAs: model.industryProfile
+        ? [model.github.repositoryUrl]
+        : [model.github.repositoryUrl, "https://x.com/Barret_China"],
     },
   ];
 }
@@ -1447,8 +1653,14 @@ function timelineJsonLd(model: StaticSiteModel, locale: Locale): Record<string, 
       "@context": "https://schema.org",
       "@type": "CollectionPage",
       "@id": url,
-      name: locale === "en" ? "AI Industry Event Timeline" : "AI 行业事件时间线",
-      description: pageDescription("timeline", locale),
+      name: model.industryProfile
+        ? locale === "en"
+          ? "Medical and Health Data Event Timeline"
+          : "医疗健康数据要素事件时间线"
+        : locale === "en"
+          ? "AI Industry Event Timeline"
+          : "AI 行业事件时间线",
+      description: pageDescription("timeline", locale, model),
       url,
       inLanguage: locale,
       mainEntity: {
@@ -1475,8 +1687,14 @@ function sourcesJsonLd(model: StaticSiteModel, locale: Locale): Record<string, u
       "@context": "https://schema.org",
       "@type": "Dataset",
       "@id": `${url}#dataset`,
-      name: locale === "en" ? "Agent Pulse AI Source Map" : "Agent Pulse AI 来源地图",
-      description: pageDescription("sources", locale),
+      name: model.industryProfile
+        ? locale === "en"
+          ? "Medical and Health Data Source Map"
+          : "医疗健康数据要素信源地图"
+        : locale === "en"
+          ? "Agent Pulse AI Source Map"
+          : "Agent Pulse AI 来源地图",
+      description: pageDescription("sources", locale, model),
       url,
       inLanguage: locale,
       dateModified: model.generatedAt,

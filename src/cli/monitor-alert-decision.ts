@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
-import { DeepSeekClient } from "../ai/deepseek.js";
+import { createJsonModelClient } from "../ai/provider.js";
 import { loadConfig } from "../config/env.js";
 import { decideMonitorAlert, type MonitorIncidentContext } from "../pipeline/monitor-alert.js";
 
@@ -15,15 +15,9 @@ async function main(args = process.argv.slice(2)): Promise<void> {
     : null;
   const useAi = args.includes("--ai");
   const config = useAi ? loadConfig() : null;
-  if (useAi && !config?.DEEPSEEK_API_KEY) {
-    throw new Error("DEEPSEEK_API_KEY is required when --ai is enabled");
-  }
   const client =
-    useAi && config?.DEEPSEEK_API_KEY
-      ? new DeepSeekClient({
-          apiKey: config.DEEPSEEK_API_KEY,
-          baseUrl: config.DEEPSEEK_BASE_URL,
-          model: config.DEEPSEEK_MODEL,
+    useAi && config
+      ? createJsonModelClient(config, {
           timeoutMs: config.AI_ENRICHMENT_TIMEOUT_MS,
           maxAttempts: 2,
         })

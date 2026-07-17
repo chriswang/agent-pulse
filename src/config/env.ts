@@ -26,6 +26,27 @@ const EnvSchema = z.object({
   COLLECTOR_CONCURRENCY: z.coerce.number().int().min(1).max(16).default(4),
   COLLECTOR_PROXY_MODE: z.enum(["off", "env-fallback"]).default("env-fallback"),
   PUBLIC_SITE_URL: z.string().url().default("https://barretlee.github.io/agent-pulse/"),
+  INDUSTRY_PROFILE: z
+    .string()
+    .regex(/^[a-z0-9][a-z0-9-]{1,79}$/)
+    .optional(),
+  REPOSITORY_SNAPSHOT_PATH: z
+    .string()
+    .min(3)
+    .max(240)
+    .refine(
+      (value) =>
+        !value.startsWith("/") &&
+        !/^[a-zA-Z]:[\\/]/.test(value) &&
+        !value.split(/[\\/]/).includes(".."),
+      "Repository snapshot path must stay inside the repository",
+    )
+    .optional(),
+  MODEL_PROVIDER: z.enum(["deepseek", "ark", "openai-compatible"]).optional(),
+  MODEL_API_KEY: z.string().min(16).optional(),
+  MODEL_BASE_URL: z.string().url().optional(),
+  MODEL_NAME: z.string().min(2).optional(),
+  MODEL_JSON_MODE: z.enum(["native", "prompt-only"]).optional(),
   DEEPSEEK_API_KEY: z.string().min(16).optional(),
   DEEPSEEK_BASE_URL: z.string().url().default("https://api.deepseek.com"),
   DEEPSEEK_MODEL: z.string().min(3).default("deepseek-v4-flash"),

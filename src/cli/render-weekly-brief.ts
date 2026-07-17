@@ -397,21 +397,17 @@ export async function runWeeklyBriefCli(args = process.argv.slice(2)): Promise<v
   );
   const input = { timeline, scout, product } as WeeklyBriefInput;
   if (args.includes("--ai")) {
-    const [{ DeepSeekClient }, { loadConfig }] = await Promise.all([
-      import("../ai/deepseek.js"),
+    const [{ createJsonModelClient }, { loadConfig }] = await Promise.all([
+      import("../ai/provider.js"),
       import("../config/env.js"),
     ]);
     const config = loadConfig();
     if (!config.AI_ENRICHMENT_ENABLED)
       throw new Error("AI_ENRICHMENT_ENABLED must be true for --ai");
-    if (!config.DEEPSEEK_API_KEY) throw new Error("DEEPSEEK_API_KEY is required for --ai");
     const result = await renderAiWeeklyBrief(
       input,
       endDate,
-      new DeepSeekClient({
-        apiKey: config.DEEPSEEK_API_KEY,
-        baseUrl: config.DEEPSEEK_BASE_URL,
-        model: config.DEEPSEEK_MODEL,
+      createJsonModelClient(config, {
         timeoutMs: config.AI_ENRICHMENT_TIMEOUT_MS,
       }),
       timeZone,

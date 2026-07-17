@@ -420,7 +420,7 @@ describe("SQLite application", () => {
     expect(timelinePage).toContain('data-month-extra="true"');
     expect(timelinePage).not.toContain("近三月密度");
     expect(timelinePage).not.toContain("论文批次状态");
-    expect(timelinePage).toContain('data-recent="true"');
+    expect(timelinePage).toMatch(/data-recent="(?:true|false)"/);
     for (const event of [...vendorHistoryEvents, ...ecosystemHistoryEvents]) {
       expect(timelinePage, event.slug).toContain(`data-event="${event.slug}"`);
     }

@@ -17,7 +17,11 @@ try {
   const result =
     command === "restore" || command === "merge"
       ? await restoreSnapshot(command === "restore")
-      : await writeRepositorySnapshot(db, config.rootDir, snapshotFile);
+      : await writeRepositorySnapshot(
+          db,
+          config.rootDir,
+          snapshotFile ?? config.REPOSITORY_SNAPSHOT_PATH,
+        );
   console.log(JSON.stringify(result, null, 2));
 } finally {
   await db.destroy();
@@ -25,5 +29,9 @@ try {
 
 async function restoreSnapshot(seed: boolean) {
   if (seed) await seedDatabase(db);
-  return restoreRepositorySnapshot(db, config.rootDir, snapshotFile);
+  return restoreRepositorySnapshot(
+    db,
+    config.rootDir,
+    snapshotFile ?? config.REPOSITORY_SNAPSHOT_PATH,
+  );
 }

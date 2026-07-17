@@ -2,6 +2,16 @@ export const productVersion = "0.11.1";
 
 export const capabilities = [
   {
+    slug: "medical-health-data-elements-pack",
+    name: "医疗健康数据要素行业包",
+    domain: "product",
+    status: "experimental",
+    maturity: 38,
+    release: "unreleased",
+    evidence:
+      "an isolated public pack defines 30 governed sources and six tracks; Day 1 live evidence records 19/21 healthy automated candidates, 264 collected Signals and 30 review Events behind publication gates",
+  },
+  {
     slug: "source-catalog",
     name: "重点来源目录",
     domain: "sensing",

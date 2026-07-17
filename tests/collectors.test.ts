@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { aiHotAdapter } from "../src/collectors/aihot.js";
 import { huggingNewsAdapter } from "../src/collectors/huggingnews.js";
@@ -44,6 +46,45 @@ describe("RSS adapter", () => {
     expect(items).toHaveLength(1);
     expect(items[0]?.summary).toBe("New model");
     expect(items[0]?.rawMeta.dateInferred).toBe(false);
+  });
+
+  it("normalizes RSS 1.0 items with Dublin Core dates and identifiers", async () => {
+    const fixture = readFileSync(
+      fileURLToPath(new URL("./fixtures/sources/rss1-health.xml", import.meta.url)),
+      "utf8",
+    );
+    const items = await rssAdapter.collect(source("rss"), context(fixture));
+    expect(items).toHaveLength(1);
+    expect(items[0]).toMatchObject({
+      externalId: "health-data-space-2026-07",
+      title: "Health data space implementation update",
+      publishedAt: "2026-07-16T08:00:00.000Z",
+      summary: "New implementation guidance is available.",
+      rawMeta: { dateInferred: false },
+    });
+  });
+
+  it("extracts a title nested inside a publisher link", async () => {
+    const items = await rssAdapter.collect(
+      source("rss"),
+      context(
+        '<rss><channel><item><title><a href="https://example.com/nested">Nested health title</a></title><link>https://example.com/nested</link><pubDate>Jul 16, 2026 2:24pm</pubDate></item></channel></rss>',
+      ),
+    );
+    expect(items[0]).toMatchObject({
+      title: "Nested health title",
+      publishedAt: "2026-07-16T14:24:00.000Z",
+    });
+  });
+
+  it("returns no signals when an RSS 1.0 item drifts without a public link", async () => {
+    const items = await rssAdapter.collect(
+      source("rss"),
+      context(
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><item><title>Missing link</title><dc:date>2026-07-16</dc:date></item></rdf:RDF>',
+      ),
+    );
+    expect(items).toEqual([]);
   });
 
   it("discovers an official alternate feed when a configured feed endpoint is stale", async () => {

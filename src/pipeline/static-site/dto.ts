@@ -1,4 +1,6 @@
 import type { PublicEvent } from "../../domain/types.js";
+import type { IndustryPilotReport } from "../../industry/pilot-report.js";
+import type { IndustryProfile } from "../../industry/profile.js";
 import type { ResearchImpactAssessment } from "../research-impact.js";
 
 export interface PublicTrack {
@@ -299,4 +301,6 @@ export interface StaticSiteModel {
   narratives: IndustryNarratives;
   product: ProductData;
   github: GithubData;
+  industryProfile?: IndustryProfile;
+  industryPilot?: IndustryPilotReport;
 }

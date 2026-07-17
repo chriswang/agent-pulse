@@ -20,7 +20,7 @@ export async function bootstrapRepositoryDatabase(
   const snapshot = await restoreRepositorySnapshot(
     db,
     options.snapshotRootDir ?? config.rootDir,
-    options.snapshotFile,
+    options.snapshotFile ?? config.REPOSITORY_SNAPSHOT_PATH,
   );
   if (!snapshot.restored) {
     throw new Error(`Repository snapshot is required for startup: ${snapshot.path}`);

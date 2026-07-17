@@ -35,6 +35,7 @@ export interface PageChrome {
   /** Additional JSON-LD objects beyond the WebSite schema (e.g., Article for events). */
   jsonLd?: Record<string, unknown>[];
   ogType?: "website" | "article";
+  brand?: { name: string; subtitle: string };
 }
 
 export function escapeHtml(value: unknown): string {
@@ -139,6 +140,15 @@ export function pageLayout(input: PageChrome): string {
   const twitterCard = "summary";
   const repository = input.github.repositoryUrl.replace(/\/$/, "");
   const snapshotUrl = `${repository}/commits/main/`;
+  const brandName = input.brand?.name ?? "AGENT PULSE";
+  const brandSubtitle = input.brand?.subtitle ?? t("brand.subtitle", locale);
+  const industryMode = Boolean(input.brand);
+  const footerExplore = industryMode
+    ? `<nav aria-label="${locale === "en" ? "Explore" : "探索"}"><span>${locale === "en" ? "EXPLORE" : "探索"}</span><a href="${prefix}">${locale === "en" ? "Key changes" : "关键变化"}</a><a href="${prefix}lines/">${escapeHtml(t("footer.lines", locale))}</a><a href="${prefix}timeline/">${escapeHtml(t("footer.timeline", locale))}</a><a href="${prefix}signals/">${locale === "en" ? "Source updates" : "来源更新"}</a><a href="${prefix}scout/">${escapeHtml(t("footer.scout", locale))}</a><a href="${prefix}sources/">${escapeHtml(t("footer.sources", locale))}</a></nav>`
+    : `<nav aria-label="${locale === "en" ? "Explore" : "探索"}"><span>${locale === "en" ? "EXPLORE" : "探索"}</span><a href="${prefix}lines/">${escapeHtml(t("footer.lines", locale))}</a><a href="${prefix}industry-evolution/">${locale === "en" ? "Industry History" : "行业发展历程"}</a><a href="${prefix}timeline/">${escapeHtml(t("footer.timeline", locale))}</a><a href="${prefix}signals/">${locale === "en" ? "Source updates" : "来源更新"}</a><a href="${prefix}scout/">${escapeHtml(t("footer.scout", locale))}</a><a href="${prefix}sources/">${escapeHtml(t("footer.sources", locale))}</a></nav>`;
+  const footerMore = industryMode
+    ? `<nav aria-label="${locale === "en" ? "More" : "更多"}"><span>${locale === "en" ? "MORE" : "更多"}</span><a href="${prefix}product/">${locale === "en" ? "Method" : "判断方法"}</a><a href="${prefix}legal/">${escapeHtml(t("footer.legal", locale))}</a><a href="${prefix}changelog/">${escapeHtml(t("footer.changelog", locale))}</a></nav>`
+    : `<nav aria-label="${locale === "en" ? "More" : "更多"}"><span>${locale === "en" ? "MORE" : "更多"}</span><a href="${prefix}actors/">${escapeHtml(t("tab.actors", locale))}</a><a href="${prefix}resources/">${escapeHtml(t("tab.resources", locale))}</a><a href="${prefix}legal/">${escapeHtml(t("footer.legal", locale))}</a><a href="${prefix}changelog/">${escapeHtml(t("footer.changelog", locale))}</a></nav>`;
 
   // ── JSON-LD: page identity and site relationship ───────────
   const webPageJsonLd = {
@@ -153,7 +163,7 @@ export function pageLayout(input: PageChrome): string {
     isPartOf: {
       "@type": "WebSite",
       "@id": `${ensureSlash(input.siteUrl)}#website`,
-      name: "Agent Pulse",
+      name: brandName,
       url: ensureSlash(input.siteUrl),
     },
   };
@@ -179,7 +189,7 @@ export function pageLayout(input: PageChrome): string {
   <meta name="theme-color" content="#eeece5">
   <meta name="robots" content="${escapeHtml(robots)}">
   <meta property="og:type" content="${input.ogType ?? "website"}">
-  <meta property="og:site_name" content="Agent Pulse">
+  <meta property="og:site_name" content="${escapeHtml(brandName)}">
   <meta property="og:title" content="${escapeHtml(input.title)}">
   <meta property="og:description" content="${escapeHtml(input.description)}">
   <meta property="og:url" content="${escapeHtml(canonical)}">
@@ -195,6 +205,7 @@ export function pageLayout(input: PageChrome): string {
   <link rel="alternate" type="text/plain" href="${assetPrefix}llms.txt" title="Agent Pulse llms.txt">
   <link rel="icon" href="${assetPrefix}assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${assetPrefix}assets/app.css">
+  ${industryMode ? `<link rel="stylesheet" href="${assetPrefix}assets/industry.css">` : ""}
   <script type="module" src="${assetPrefix}assets/core.js"></script>
   <script type="application/ld+json">${serializeJsonLd(webPageJsonLd)}</script>
   ${(input.jsonLd ?? []).map((obj) => `<script type="application/ld+json">${serializeJsonLd(obj)}</script>`).join("\n  ")}
@@ -205,7 +216,7 @@ export function pageLayout(input: PageChrome): string {
   <header class="topbar">
     <a class="brand" href="${prefix}" aria-label="${escapeHtml(t("brand.aria", locale))}">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span><strong>AGENT PULSE</strong><small>${escapeHtml(t("brand.subtitle", locale))}</small></span>
+      <span><strong>${escapeHtml(brandName)}</strong><small>${escapeHtml(brandSubtitle)}</small></span>
     </a>
     <nav class="desktop-nav" aria-label="${escapeHtml(t("ui.desktopNav", locale))}">${navHtml}</nav>
     <div class="top-actions">
@@ -217,11 +228,8 @@ export function pageLayout(input: PageChrome): string {
   ${eventDrawerShell(locale, assetPrefix, prefix)}
   <footer class="site-footer">
     <div class="shell footer-grid">
-      <div class="footer-brand"><strong>AGENT PULSE</strong><p>${escapeHtml(t("footer.tagline", locale))}</p>${footerAiAccess(assetPrefix, locale)}${footerSubscriptions(input.github, locale)}${footerContacts(locale)}</div>
-      <div class="footer-links">
-        <nav aria-label="${locale === "en" ? "Explore" : "探索"}"><span>${locale === "en" ? "EXPLORE" : "探索"}</span><a href="${prefix}lines/">${escapeHtml(t("footer.lines", locale))}</a><a href="${prefix}industry-evolution/">${locale === "en" ? "Industry History" : "行业发展历程"}</a><a href="${prefix}timeline/">${escapeHtml(t("footer.timeline", locale))}</a><a href="${prefix}signals/">${locale === "en" ? "Source updates" : "来源更新"}</a><a href="${prefix}scout/">${escapeHtml(t("footer.scout", locale))}</a><a href="${prefix}sources/">${escapeHtml(t("footer.sources", locale))}</a></nav>
-        <nav aria-label="${locale === "en" ? "More" : "更多"}"><span>${locale === "en" ? "MORE" : "更多"}</span><a href="${prefix}actors/">${escapeHtml(t("tab.actors", locale))}</a><a href="${prefix}resources/">${escapeHtml(t("tab.resources", locale))}</a><a href="${prefix}legal/">${escapeHtml(t("footer.legal", locale))}</a><a href="${prefix}changelog/">${escapeHtml(t("footer.changelog", locale))}</a></nav>
-      </div>
+      <div class="footer-brand"><strong>${escapeHtml(brandName)}</strong><p>${escapeHtml(input.brand ? brandSubtitle : t("footer.tagline", locale))}</p>${footerAiAccess(assetPrefix, locale)}${footerSubscriptions(input.github, locale)}${footerContacts(locale, input.github, Boolean(input.brand))}</div>
+      <div class="footer-links">${footerExplore}${footerMore}</div>
     </div>
     <div class="shell footer-meta">
       <p>${escapeHtml(t("footer.principles", locale))}<br><a class="footer-snapshot" href="${escapeHtml(snapshotUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(t("footer.snapshot", locale).replace("{date}", formatDate(input.generatedAt, locale)))}${icon("external-link")}</a></p>
@@ -254,13 +262,15 @@ function footerSubscriptions(github: GithubData, locale: Locale): string {
   return `<nav class="footer-subscriptions" aria-label="${locale === "en" ? "Agent Pulse subscriptions" : "Agent Pulse 订阅入口"}"><a href="${escapeHtml(watchUrl)}" target="_blank" rel="noopener noreferrer">${icon("github")} Watch</a><a href="${escapeHtml(weeklyUrl)}" target="_blank" rel="noopener noreferrer">${icon("route")} ${locale === "en" ? "Weekly brief" : "AI 周报"}</a></nav>`;
 }
 
-function footerContacts(locale: Locale): string {
-  const contacts = [
-    { name: "X", iconName: "x-social", href: "https://x.com/Barret_China" },
-    { name: "Weibo", iconName: "weibo", href: "https://www.weibo.com/u/1812166904" },
-    { name: "GitHub", iconName: "github", href: "https://github.com/barretlee" },
-    { name: "Email", iconName: "mail", href: "mailto:barret.china@gmail.com" },
-  ];
+function footerContacts(locale: Locale, github: GithubData, repositoryOnly: boolean): string {
+  const contacts = repositoryOnly
+    ? [{ name: "GitHub", iconName: "github", href: github.repositoryUrl }]
+    : [
+        { name: "X", iconName: "x-social", href: "https://x.com/Barret_China" },
+        { name: "Weibo", iconName: "weibo", href: "https://www.weibo.com/u/1812166904" },
+        { name: "GitHub", iconName: "github", href: "https://github.com/barretlee" },
+        { name: "Email", iconName: "mail", href: "mailto:barret.china@gmail.com" },
+      ];
   return `<nav class="footer-contacts" aria-label="${escapeHtml(t("footer.contacts", locale))}"><span>${escapeHtml(t("footer.contacts", locale))}</span>${contacts
     .map(
       (contact) =>

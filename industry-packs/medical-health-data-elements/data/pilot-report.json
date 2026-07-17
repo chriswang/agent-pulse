@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "profileSlug": "medical-health-data-elements",
+  "generatedAt": "2026-07-17T07:09:51.539Z",
+  "window": {
+    "start": "2026-07-10T07:09:51.539Z",
+    "end": "2026-07-17T07:09:51.539Z",
+    "targetDays": 7,
+    "observedDays": 1
+  },
+  "sources": {
+    "configured": 30,
+    "automated": 21,
+    "manual": 9,
+    "audited": 21,
+    "healthy": 19,
+    "degraded": 2,
+    "failed": 0,
+    "unchecked": 0,
+    "healthRatePercent": 90.5
+  },
+  "collection": {
+    "runs": 18,
+    "successfulRuns": 18,
+    "failedRuns": 0,
+    "successRatePercent": 100,
+    "targetPercent": 90,
+    "status": "pass"
+  },
+  "intelligence": {
+    "signals": 264,
+    "publishedEvents": 0,
+    "multiSourceEvents": 0,
+    "multiSourceRatePercent": null,
+    "highPriorityEvents": 0,
+    "highPriorityEvidenceCoveragePercent": null
+  },
+  "topCandidates": [],
+  "manualReview": {
+    "clusteringAccuracyPercent": null,
+    "top10DecisionValueCount": null,
+    "dailyMinutesBefore": null,
+    "dailyMinutesAfter": null,
+    "dailyMinutesSaved": null,
+    "status": "pending",
+    "notes": []
+  },
+  "readiness": "collecting"
+}

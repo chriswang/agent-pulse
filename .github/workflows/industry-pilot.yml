@@ -1,0 +1,178 @@
+name: Run medical health data pilot
+
+on:
+  schedule:
+    # Daily at 20:17 Asia/Shanghai during the seven-day pilot.
+    - cron: "17 12 * * *"
+  workflow_dispatch:
+    inputs:
+      backfill:
+        description: Reset collector state and run a bounded backfill
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  actions: write
+  contents: write
+
+concurrency:
+  group: medical-health-data-elements-pilot-main
+  cancel-in-progress: false
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATABASE_URL: sqlite:./var/medical-health-pilot.db
+      INDUSTRY_PROFILE: medical-health-data-elements
+      REPOSITORY_SNAPSHOT_PATH: industry-packs/medical-health-data-elements/data/snapshot.json
+      PUBLIC_SITE_URL: https://chriswang.github.io/agent-pulse/
+      GITHUB_REPOSITORY_URL: https://github.com/chriswang/agent-pulse
+      COLLECTOR_CONCURRENCY: 4
+      MODEL_PROVIDER: ark
+      MODEL_BASE_URL: https://ark.cn-beijing.volces.com/api/v3
+      MODEL_NAME: glm-5.2
+      MODEL_JSON_MODE: prompt-only
+      SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health.json
+      PILOT_REPORT: industry-packs/medical-health-data-elements/data/pilot-report.json
+    steps:
+      - name: Check out the fork main branch
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Restore the isolated industry snapshot
+        run: npm run db:snapshot -- restore
+
+      - name: Audit the configured industry sources
+        run: npm run sources:audit -- --concurrency=4 --report="$SOURCE_HEALTH_REPORT"
+
+      - name: Enable only healthy shadow observations
+        run: npm run observe:sources -- --confirm
+
+      - name: Collect and cluster industry signals
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ inputs.backfill || false }}" == "true" ]]; then
+            npm run collect -- --backfill --drain
+          else
+            npm run collect -- --drain
+          fi
+
+      - name: Enrich evidence-ready Events with Ark GLM-5.2
+        id: enrichment
+        env:
+          AI_ENRICHMENT_ENABLED: "true"
+          AI_ENRICHMENT_MAX_EVENTS: "8"
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${MODEL_API_KEY:-}" ]]; then
+            printf '%s\n' '{"enabled":false,"skipped":"MODEL_API_KEY is not configured"}' > "$RUNNER_TEMP/ai-enrichment.json"
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          set +e
+          npm run --silent ai:enrich -- --require-success | tee "$RUNNER_TEMP/ai-enrichment.json"
+          status="${PIPESTATUS[0]}"
+          set -e
+          if [[ "$status" -eq 0 ]]; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=failed" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Ark enrichment unavailable::Events remain in review; deterministic collection continues."
+          fi
+
+      - name: Publish only Events that clear deterministic gates
+        run: npm run auto:publish
+
+      - name: Generate the seven-day pilot report
+        run: npm run --silent industry:report -- --output="$PILOT_REPORT"
+
+      - name: Export the industry site
+        run: npm run export -- --skip-seed
+
+      - name: Validate the industry public artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run --silent public:validate
+          test -s dist/index.html
+          test -s dist/data/industry-pilot.json
+          test -s dist/data/sources.json
+          grep -F '看清医疗健康数据要素的关键变化' dist/index.html >/dev/null
+          node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/industry-pilot.json
+          node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/sources.json
+          if grep -R -E '"(token|secret|password|cookie|authorization|api[_-]?key)"[[:space:]]*:' dist industry-packs/medical-health-data-elements/data; then
+            echo "Sensitive material detected in public industry output" >&2
+            exit 1
+          fi
+
+      - name: Write the privacy-safe industry snapshot
+        run: npm run db:snapshot -- write
+
+      - name: Commit measured pilot state
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- "$REPOSITORY_SNAPSHOT_PATH" "$PILOT_REPORT" "$SOURCE_HEALTH_REPORT"
+          git diff --check --cached
+          if git diff --cached --quiet; then
+            echo "No measured pilot changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(data): refresh medical health pilot"
+          git pull --rebase origin main
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the refreshed industry site
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run industry-pages.yml --ref main
+
+      - name: Upload bounded pilot evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: medical-health-pilot-${{ github.run_id }}
+          path: |
+            ${{ env.SOURCE_HEALTH_REPORT }}
+            ${{ env.PILOT_REPORT }}
+            ${{ runner.temp }}/ai-enrichment.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Record the pilot summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Medical health data elements pilot"
+            echo "- Ark enrichment: ${{ steps.enrichment.outputs.status || 'not-run' }}"
+            echo "- Snapshot changed: ${{ steps.commit.outputs.changed || 'unknown' }}"
+            if [[ -s "$PILOT_REPORT" ]]; then
+              echo "- Observed days: $(jq -r '.window.observedDays' "$PILOT_REPORT") / 7"
+              echo "- Collection success: $(jq -r '.collection.successRatePercent // "pending"' "$PILOT_REPORT")%"
+              echo "- Multi-source Events: $(jq -r '.intelligence.multiSourceEvents' "$PILOT_REPORT")"
+              echo "- Readiness: $(jq -r '.readiness' "$PILOT_REPORT")"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <item rdf:about="https://example.com/health-data-space">
+    <title>Health data space implementation update</title>
+    <link>https://example.com/health-data-space</link>
+    <description>New &lt;b&gt;implementation guidance&lt;/b&gt; is available.</description>
+    <dc:date>2026-07-16T08:00:00Z</dc:date>
+    <dc:identifier>health-data-space-2026-07</dc:identifier>
+  </item>
+</rdf:RDF>

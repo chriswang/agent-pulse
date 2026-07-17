@@ -7,6 +7,8 @@ import { capabilities, productVersion, releases, roadmap } from "../catalog/prod
 import type { AppConfig } from "../config/env.js";
 import { parseJson, Repository } from "../db/repository.js";
 import type { DatabaseSchema } from "../db/types.js";
+import { buildIndustryPilotReport } from "../industry/pilot-report.js";
+import { loadIndustryProfile } from "../industry/profile.js";
 import { evaluateSystem, latestEvaluation } from "./evaluate.js";
 import { loadResearchImpactReport, researchImpactAssessmentForEvent } from "./research-impact.js";
 import { loadMergedIndustryNarratives } from "./stage-promotion.js";
@@ -88,6 +90,7 @@ function clarifyLegacyScoutCopy(insight: PublicScoutInsight): PublicScoutInsight
 
 export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppConfig) {
   const repository = new Repository(db);
+  const industryProfile = loadIndustryProfile(config.INDUSTRY_PROFILE, config.rootDir);
   const evaluation = (await latestEvaluation(db)) ?? (await evaluateSystem(db));
   const narratives = await loadMergedIndustryNarratives(config.rootDir);
   const [events, tracks, actors, resources, view, scout, latestSourceChecks, signals] =
@@ -232,6 +235,9 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
       categories: [...new Set(sources.map((source) => source.source_category))],
     },
   };
+  const industryPilot = industryProfile
+    ? await buildIndustryPilotReport(db, industryProfile, config.rootDir, generatedAt)
+    : null;
 
   await rm(config.distDir, { recursive: true, force: true });
   await mkdir(join(config.distDir, "data"), { recursive: true });
@@ -284,6 +290,9 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
         : {},
     ),
     writeJson(join(config.distDir, "data/github.json"), github),
+    ...(industryPilot
+      ? [writeJson(join(config.distDir, "data/industry-pilot.json"), industryPilot)]
+      : []),
   ]);
 
   const model: StaticSiteModel = {
@@ -317,6 +326,8 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     } satisfies IndustryNarratives,
     product: productData,
     github,
+    ...(industryProfile ? { industryProfile } : {}),
+    ...(industryPilot ? { industryPilot } : {}),
   };
 
   const allPages = renderStaticPages(model);

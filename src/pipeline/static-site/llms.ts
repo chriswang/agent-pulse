@@ -2,6 +2,7 @@ import type { StaticSiteModel } from "./dto.js";
 
 export function renderLlmsTxt(model: StaticSiteModel): string {
   const baseUrl = ensureSlash(model.siteUrl);
+  if (model.industryProfile) return renderIndustryLlmsTxt(model, baseUrl);
 
   return `# Agent Pulse
 
@@ -52,6 +53,48 @@ Consumption guidance:
 - [Action hypotheses](${baseUrl}data/scout.json): Machine-readable Scout ideas; each remains a hypothesis rather than a fact or investment conclusion.
 - [Actor metadata](${baseUrl}data/actors.json): Machine-readable companies and institutions.
 - [Influencer metadata](${baseUrl}data/influencers.json): Public profiles, focus areas, and whether access is automatic or restricted.
+`;
+}
+
+function renderIndustryLlmsTxt(model: StaticSiteModel, baseUrl: string): string {
+  const profile = model.industryProfile;
+  if (!profile) return "";
+  return `# ${profile.shortName}
+
+> A public medical and health data-elements intelligence pilot powered by Agent Pulse. It monitors policy, data infrastructure, payers and TPAs, pharma and medtech, competitors, standards, conferences, and ecosystem changes.
+
+Snapshot generated at ${model.generatedAt}. The public corpus contains ${model.events.length} published events, ${model.tracks.length} monitoring tracks, ${model.sources.length} governed sources, ${model.signals.length} source observations, and ${model.scout.length} action hypotheses.
+
+Consumption guidance:
+- Start with published Events in \`data/timeline.json\` for factual questions and keep fact summaries separate from analysis and forecasts.
+- Follow original evidence URLs before citing a claim. A high-priority judgment is incomplete without original evidence.
+- Treat \`data/signals.json\` as an observation feed, not as verified facts.
+- Treat trend narratives and action briefs as analysis or hypotheses, not medical, legal, investment, or procurement advice.
+- Prefer the newest \`generatedAt\` value. The Chinese pages are canonical; English pages are under \`/en/\`.
+- The public output contains allowlisted summaries only, never collector payloads, credentials, private notes, or paywalled content.
+
+## Start Here
+
+- [Pilot scorecard](${baseUrl}): Seven-day collection, evidence, clustering, Top 10, and time-saved validation status.
+- [Six monitoring tracks](${baseUrl}lines/): Policy, infrastructure, payer, pharma and medtech, competitor, and ecosystem views.
+- [Event timeline](${baseUrl}timeline/): Published events with stable URLs and original evidence.
+- [Source catalog](${baseUrl}sources/): Source tier, region, acquisition, lifecycle, and public health state.
+- [Decision method](${baseUrl}product/): How evidence, events, analysis, and action hypotheses are separated.
+
+## Core Machine-Readable Data
+
+- [Published events and evidence](${baseUrl}data/timeline.json)
+- [Monitoring tracks](${baseUrl}data/tracks.json)
+- [Source observations](${baseUrl}data/signals.json)
+- [Source metadata](${baseUrl}data/sources.json)
+- [Seven-day pilot report](${baseUrl}data/industry-pilot.json)
+
+## Governance
+
+- [Evidence, copyright, and correction boundary](${baseUrl}legal/)
+- [Product updates](${baseUrl}changelog/)
+- [Sitemap](${baseUrl}sitemap.xml)
+- [GitHub repository](${model.github.repositoryUrl})
 `;
 }
 

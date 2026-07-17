@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "clusteringAccuracyPercent": null,
+  "top10DecisionValueCount": null,
+  "dailyMinutesBefore": null,
+  "dailyMinutesAfter": null,
+  "notes": []
+}

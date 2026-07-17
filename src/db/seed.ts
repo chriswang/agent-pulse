@@ -5,6 +5,7 @@ import { type CuratedEventSeed, historicalEvents } from "../catalog/history.js";
 import { recentDensityEvents } from "../catalog/recent-density.js";
 import { sourceCatalog } from "../catalog/sources.js";
 import { canonicalizeUrl, sha256 } from "../domain/url.js";
+import { industrySources, loadIndustryProfile } from "../industry/profile.js";
 import { Repository } from "./repository.js";
 import type { DatabaseSchema } from "./types.js";
 
@@ -677,11 +678,19 @@ const allEvents = [
   ...events,
 ] as const;
 
-export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
+export async function seedDatabase(
+  db: Kysely<DatabaseSchema>,
+  options: { industryProfileSlug?: string; rootDir?: string } = {},
+): Promise<void> {
   const repository = new Repository(db);
   const timestamp = isoNow();
+  const industryProfile = loadIndustryProfile(
+    options.industryProfileSlug ?? process.env.INDUSTRY_PROFILE,
+    options.rootDir,
+  );
+  const activeSourceCatalog = industryProfile ? industrySources(industryProfile) : sourceCatalog;
 
-  for (const source of sourceCatalog) {
+  for (const source of activeSourceCatalog) {
     await repository.saveCatalogSource({
       id: stableId("source", source.slug),
       slug: source.slug,
@@ -701,6 +710,7 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
         ...(source.slug === "huggingnews" ? { detailTake: 3 } : {}),
         sourceCategory: source.category,
         acquisition: source.acquisition,
+        ...(industryProfile ? { category: source.topics[0] } : {}),
         ...(source.identityHosts ? { identityHosts: source.identityHosts } : {}),
         ...(source.socialHandles ? { socialHandles: source.socialHandles } : {}),
       }),
@@ -719,7 +729,7 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
       last_verified_at: null,
     });
   }
-  const catalogSlugs = new Set(sourceCatalog.map((source) => source.slug));
+  const catalogSlugs = new Set(activeSourceCatalog.map((source) => source.slug));
   const staleSources = (await repository.listSources()).filter(
     (source) => !catalogSlugs.has(source.slug),
   );
@@ -750,7 +760,19 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
       .execute();
   }
 
-  for (const [slug, name, description, kind, perspective, color, icon, order] of tracks) {
+  const activeTracks = industryProfile
+    ? industryProfile.tracks.map((track) => ({ ...track, kind: "main" }))
+    : tracks.map(([slug, name, description, kind, perspective, color, icon, order]) => ({
+        slug,
+        name,
+        description,
+        kind,
+        perspective,
+        color,
+        icon,
+        order,
+      }));
+  for (const { slug, name, description, kind, perspective, color, icon, order } of activeTracks) {
     const existing = await db
       .selectFrom("tracks")
       .select("id")
@@ -779,7 +801,9 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
     else await db.insertInto("tracks").values(value).execute();
   }
 
-  for (const [slug, name, actorType, region, scale, domains, tableScore, website] of actors) {
+  for (const [slug, name, actorType, region, scale, domains, tableScore, website] of industryProfile
+    ? []
+    : actors) {
     const existing = await db
       .selectFrom("actors")
       .select("id")
@@ -818,7 +842,7 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
     planName,
     purchaseUrl,
     sourceUrl,
-  ] of resources) {
+  ] of industryProfile ? [] : resources) {
     const existing = await db
       .selectFrom("model_resources")
       .select("id")
@@ -859,13 +883,15 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
   const viewValue = {
     id: viewId,
     slug: "executive-briefing",
-    name: "CEO / 投资负责人总览",
-    description: "先看模型、Agent、产品、成本、资本与全球创新，再下钻事实与证据。",
+    name: industryProfile ? `${industryProfile.shortName}总览` : "CEO / 投资负责人总览",
+    description: industryProfile
+      ? industryProfile.description
+      : "先看模型、Agent、产品、成本、资本与全球创新，再下钻事实与证据。",
     filters_json: JSON.stringify({ statuses: ["published"], minConfidence: 60 }),
     layout_json: JSON.stringify({
       blocks: ["hero", "track-switcher", "timeline", "china-radar", "resources"],
       density: "comfortable",
-      defaultTrack: "tech-evolution",
+      defaultTrack: industryProfile?.tracks[0]?.slug ?? "tech-evolution",
     }),
     theme_json: JSON.stringify({ theme: "midnight", accent: "#8b5cf6", radius: 20 }),
     is_default: 1,
@@ -886,8 +912,10 @@ export async function seedDatabase(db: Kysely<DatabaseSchema>): Promise<void> {
       .execute();
   else await db.insertInto("views").values(viewValue).execute();
 
-  for (const event of allEvents) await seedEvent(db, repository, event, timestamp);
-  await seedScout(db, timestamp);
+  if (!industryProfile) {
+    for (const event of allEvents) await seedEvent(db, repository, event, timestamp);
+  }
+  if (!industryProfile) await seedScout(db, timestamp);
 }
 
 async function seedScout(db: Kysely<DatabaseSchema>, timestamp: string) {

@@ -32,7 +32,8 @@ export const rssAdapter: SourceAdapter = {
 function extractItems(document: Record<string, unknown>): Record<string, unknown>[] {
   const rss = document.rss as { channel?: { item?: unknown } } | undefined;
   const feed = document.feed as { entry?: unknown } | undefined;
-  const value = rss?.channel?.item ?? feed?.entry ?? [];
+  const rdf = document["rdf:RDF"] as { item?: unknown } | undefined;
+  const value = rss?.channel?.item ?? feed?.entry ?? rdf?.item ?? [];
   return (Array.isArray(value) ? value : [value]).filter(isRecord);
 }
 
@@ -48,11 +49,18 @@ function normalizeItem(
   const summary = stripHtml(
     textValue(item.description) || textValue(item.summary) || textValue(item.content) || title,
   );
-  const published = textValue(item.pubDate) || textValue(item.published) || textValue(item.updated);
+  const published =
+    textValue(item.pubDate) ||
+    textValue(item.published) ||
+    textValue(item.updated) ||
+    textValue(item["dc:date"]) ||
+    textValue(item["prism:publicationDate"]) ||
+    textValue(item["prism:coverDate"]);
   const date = normalizeDate(published);
   return [
     {
-      externalId: textValue(item.guid) || textValue(item.id) || link,
+      externalId:
+        textValue(item.guid) || textValue(item.id) || textValue(item["dc:identifier"]) || link,
       url: link,
       title: stripHtml(title),
       summary: summary.slice(0, 8_000),
@@ -68,7 +76,18 @@ function normalizeItem(
 
 function textValue(value: unknown): string {
   if (typeof value === "string" || typeof value === "number") return String(value);
-  if (isRecord(value)) return textValue(value["#text"] ?? value.__cdata ?? "");
+  if (Array.isArray(value)) {
+    return value.map(textValue).find(Boolean) ?? "";
+  }
+  if (isRecord(value)) {
+    const direct = textValue(value["#text"] ?? value.__cdata ?? "");
+    if (direct) return direct;
+    for (const [key, child] of Object.entries(value)) {
+      if (key.startsWith("@_")) continue;
+      const nested = textValue(child);
+      if (nested) return nested;
+    }
+  }
   return "";
 }
 
@@ -92,7 +111,16 @@ function stripHtml(value: string): string {
 }
 
 function normalizeDate(value: string): { value: string; inferred: boolean } {
-  const date = new Date(value);
+  const publisherDate = value.replace(/(\d)(am|pm)$/i, "$1 $2");
+  const hasTimeZone = /(?:Z|[+-]\d{2}:?\d{2}|\b(?:UTC|GMT|EST|EDT|CST|CDT|MST|MDT|PST|PDT))$/i.test(
+    publisherDate,
+  );
+  const date = new Date(
+    !hasTimeZone &&
+      /^[A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+(?:am|pm)$/i.test(publisherDate)
+      ? `${publisherDate} UTC`
+      : publisherDate,
+  );
   return Number.isNaN(date.getTime())
     ? { value: new Date().toISOString(), inferred: true }
     : { value: date.toISOString(), inferred: false };

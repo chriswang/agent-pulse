@@ -56,6 +56,7 @@
     "auto:publish": "tsx src/cli/auto-publish.ts",
     "ai:enrich": "tsx src/cli/enrich-events.ts",
     "narrative:stage": "tsx src/cli/promote-narrative-stage.ts",
+    "industry:report": "tsx src/cli/industry-pilot-report.ts",
     "check": "npm run lint && npm run typecheck && npm test && npm run export && npm run public:validate"
   },
   "keywords": [
