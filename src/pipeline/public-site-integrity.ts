@@ -337,7 +337,7 @@ async function validateIndustryPublicSite(
   const industry = parse<{
     profileSlug?: string;
     generatedAt?: string;
-    window?: { start?: string };
+    window?: { start?: string; historyStart?: string };
     sources?: { configured?: number };
     intelligence?: { signals?: number; publishedEvents?: number };
   }>(dataPaths.industry, dataText.industry, {});
@@ -378,11 +378,15 @@ async function validateIndustryPublicSite(
       `Expected ${publicSignals.length} signals, received ${industry.intelligence?.signals ?? "missing"}`,
     );
   }
-  const windowStart = industry.window?.start;
+  const windowStart = industry.window?.historyStart;
   const hasValidWindowStart =
     typeof windowStart === "string" && Number.isFinite(Date.parse(windowStart));
   if (!hasValidWindowStart) {
-    add("invalid_industry_report", dataPaths.industry, "Pilot window start is missing or invalid");
+    add(
+      "invalid_industry_report",
+      dataPaths.industry,
+      "Evidence history window start is missing or invalid",
+    );
   }
   const eventsInPilotWindow = hasValidWindowStart
     ? events.filter(

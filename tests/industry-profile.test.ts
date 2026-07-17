@@ -177,11 +177,14 @@ describe("medical health data elements industry profile", () => {
   });
 
   it("keeps a single-source fact out of the high-priority Top 10", async () => {
-    const config = loadConfig({
+    const base = loadConfig({
       NODE_ENV: "test",
       DATABASE_URL: "sqlite::memory:",
       INDUSTRY_PROFILE: profileSlug,
+      PUBLIC_SITE_URL: "https://chriswang.github.io/agent-pulse/",
     });
+    const temp = await mkdtemp(join(tmpdir(), "agent-pulse-industry-history-integrity-"));
+    const config = { ...base, distDir: join(temp, "dist") };
     const db = createDatabase(config);
     try {
       await migrateToLatest(db, config);
@@ -193,10 +196,16 @@ describe("medical health data elements industry profile", () => {
       const rules = loadIndustryRules(profileSlug, config.rootDir);
       if (!source || !rules) throw new Error("top10_fixture_requires_source_and_rules");
       const now = "2026-07-17T00:00:00.000Z";
+      const happenedAt = "2026-06-30T00:00:00.000Z";
       await db
         .insertInto("events")
         .values({
-          ...publishedEvent("single-source-high-score", "医疗健康数据授权运营政策", now, now),
+          ...publishedEvent(
+            "single-source-high-score",
+            "医疗健康数据授权运营政策",
+            happenedAt,
+            now,
+          ),
           confidence_score: 95,
           impact_score: 95,
           value_score: 95,
@@ -211,7 +220,7 @@ describe("medical health data elements industry profile", () => {
         url: "https://www.nda.gov.cn/medical-health-authorized-operation.html",
         ...input,
         language: "zh-CN",
-        publishedAt: now,
+        publishedAt: happenedAt,
         category: "policy",
         metrics: {},
         rawMeta: { industryScope: assessIndustryScope(input, { slug: source.slug }, rules) },
@@ -233,6 +242,11 @@ describe("medical health data elements industry profile", () => {
       expect(report.intelligence.publishedEvents).toBe(1);
       expect(report.intelligence.highPriorityEvents).toBe(0);
       expect(report.topCandidates).toEqual([]);
+
+      await exportStaticSite(db, config);
+      const integrity = await validatePublicSite(config.distDir, now);
+      expect(integrity.ok).toBe(true);
+      expect(integrity.counts.events).toBe(1);
     } finally {
       await db.destroy();
     }
