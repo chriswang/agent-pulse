@@ -28,7 +28,15 @@ export interface IndustryPilotReport {
   schemaVersion: 1;
   profileSlug: string;
   generatedAt: string;
-  window: { start: string; end: string; targetDays: number; observedDays: number };
+  window: {
+    start: string;
+    end: string;
+    targetDays: number;
+    observedDays: number;
+    historyStart: string;
+    historyEnd: string;
+    historyLookbackDays: number;
+  };
   sources: {
     configured: number;
     automated: number;
@@ -93,18 +101,16 @@ export async function buildIndustryPilotReport(
   const reference = new Date(referenceAt);
   const targetDays =
     profile.trial.phase === "baseline" ? profile.trial.baselineDays : profile.trial.durationDays;
-  const start =
+  const validationStart =
     profile.trial.phase === "baseline"
       ? new Date(`${profile.trial.baselineStartDate}T00:00:00.000Z`)
-      : new Date(reference.getTime() - targetDays * 86_400_000);
-  const targetEnd =
-    profile.trial.phase === "baseline"
-      ? new Date(start.getTime() + (targetDays - 1) * 86_400_000)
-      : reference;
-  const windowEndExclusive =
-    profile.trial.phase === "baseline"
-      ? new Date(start.getTime() + targetDays * 86_400_000)
-      : new Date(reference.getTime() + 1);
+      : new Date(`${profile.trial.validationStartDate}T00:00:00.000Z`);
+  const targetEnd = new Date(validationStart.getTime() + (targetDays - 1) * 86_400_000);
+  const validationEndExclusive = new Date(validationStart.getTime() + targetDays * 86_400_000);
+  const historyStart = new Date(
+    validationStart.getTime() - profile.trial.historyLookbackDays * 86_400_000,
+  );
+  const evidenceEndExclusive = new Date(reference.getTime() + 1);
   const [sources, checks, events, runs, signalRows, manualReview] = await Promise.all([
     repository.listSources(),
     repository.latestSourceChecks(),
@@ -118,8 +124,8 @@ export async function buildIndustryPilotReport(
         "source_runs.finished_at as finishedAt",
         "sources.slug as sourceSlug",
       ])
-      .where("source_runs.started_at", ">=", start.toISOString())
-      .where("source_runs.started_at", "<", windowEndExclusive.toISOString())
+      .where("source_runs.started_at", ">=", validationStart.toISOString())
+      .where("source_runs.started_at", "<", validationEndExclusive.toISOString())
       .execute(),
     db
       .selectFrom("signals")
@@ -130,6 +136,7 @@ export async function buildIndustryPilotReport(
         "signals.tags_json",
         "signals.raw_meta_json",
         "signals.created_at as createdAt",
+        "signals.published_at as publishedAt",
         "sources.slug",
         "sources.region",
       ])
@@ -195,8 +202,8 @@ export async function buildIndustryPilotReport(
   );
   const eventsInWindow = (events as EnrichedEvent[]).filter(
     (event) =>
-      event.happenedAt >= start.toISOString() &&
-      event.happenedAt < windowEndExclusive.toISOString() &&
+      event.happenedAt >= historyStart.toISOString() &&
+      event.happenedAt < evidenceEndExclusive.toISOString() &&
       eligibleEventIds.has(event.id),
   );
   const sourceCount = (event: EnrichedEvent) =>
@@ -211,18 +218,33 @@ export async function buildIndustryPilotReport(
     highPriorityImpact: 80,
     highPriorityValue: 70,
   };
+  const meetsHighPriorityEvidenceStandard = (event: EnrichedEvent) => {
+    const rows = sourceRowsByEvent.get(event.id) ?? [];
+    const independentPublishers = new Set(
+      rows.map((row) => sourcePublisherKey(row.homepageUrl, row.sourceSlug)),
+    ).size;
+    const hasPrimary = rows.some(
+      (row) => row.sourceTier === 1 && !["aggregator", "heat"].includes(row.sourceRole),
+    );
+    const independentSecondary = new Set(
+      rows
+        .filter((row) => row.sourceTier === 2 && !["aggregator", "heat"].includes(row.sourceRole))
+        .map((row) => sourcePublisherKey(row.homepageUrl, row.sourceSlug)),
+    ).size;
+    return independentPublishers >= 2 && (hasPrimary || independentSecondary >= 2);
+  };
   const highPriorityEvents = eventsInWindow.filter(
     (event) =>
       event.confidenceScore >= highPriorityThresholds.highPriorityConfidence &&
       event.impactScore >= highPriorityThresholds.highPriorityImpact &&
-      event.valueScore >= highPriorityThresholds.highPriorityValue,
+      event.valueScore >= highPriorityThresholds.highPriorityValue &&
+      meetsHighPriorityEvidenceStandard(event),
   );
   const evidenceReady = highPriorityEvents.filter((event) => {
-    const rows = sourceRowsByEvent.get(event.id) ?? [];
     return (
       event.evidence.length > 0 &&
-      new Set(rows.map((row) => sourcePublisherKey(row.homepageUrl, row.sourceSlug))).size >= 2 &&
-      rows.some((row) => row.sourceTier === 1 && !["aggregator", "heat"].includes(row.sourceRole))
+      event.evidence.every((evidence) => evidence.url.startsWith("https://")) &&
+      meetsHighPriorityEvidenceStandard(event)
     );
   });
   const observedDays = Math.min(
@@ -266,24 +288,26 @@ export async function buildIndustryPilotReport(
     chineseReadyPublishers.size >= profile.trial.minimumChineseReadySources &&
     multiSourceEvents.length > 0 &&
     highPriorityEvents.length > 0;
-  const readiness: IndustryPilotReport["readiness"] =
-    profile.trial.phase === "baseline" || !deterministicReady
-      ? "collecting"
-      : !manualComplete
-        ? "ready_for_manual_review"
-        : collectionStatus === "pass" && evidenceReady.length === highPriorityEvents.length
-          ? "pass"
-          : "fail";
+  const readiness: IndustryPilotReport["readiness"] = !deterministicReady
+    ? "collecting"
+    : !manualComplete
+      ? "ready_for_manual_review"
+      : collectionStatus === "pass" && evidenceReady.length === highPriorityEvents.length
+        ? "pass"
+        : "fail";
 
   return {
     schemaVersion: 1,
     profileSlug: profile.slug,
     generatedAt: reference.toISOString(),
     window: {
-      start: start.toISOString(),
+      start: validationStart.toISOString(),
       end: targetEnd.toISOString(),
       targetDays,
       observedDays,
+      historyStart: historyStart.toISOString(),
+      historyEnd: reference.toISOString(),
+      historyLookbackDays: profile.trial.historyLookbackDays,
     },
     sources: {
       configured: profile.sources.length,
@@ -313,8 +337,8 @@ export async function buildIndustryPilotReport(
       signals: publicIndustrySignalCount(
         signalRows,
         rules?.targetChinaContentPercent ?? 100,
-        start.toISOString(),
-        windowEndExclusive.toISOString(),
+        historyStart.toISOString(),
+        evidenceEndExclusive.toISOString(),
       ),
       publishedEvents: eventsInWindow.length,
       multiSourceEvents: multiSourceEvents.length,
@@ -322,7 +346,7 @@ export async function buildIndustryPilotReport(
       highPriorityEvents: highPriorityEvents.length,
       highPriorityEvidenceCoveragePercent: percent(evidenceReady.length, highPriorityEvents.length),
     },
-    topCandidates: [...eventsInWindow]
+    topCandidates: [...highPriorityEvents]
       .sort(
         (left, right) =>
           priorityScore(right) - priorityScore(left) ||
@@ -377,15 +401,20 @@ function priorityScore(event: EnrichedEvent): number {
 }
 
 function publicIndustrySignalCount(
-  signals: Array<{ raw_meta_json: string; region: string; createdAt: string }>,
+  signals: Array<{
+    raw_meta_json: string;
+    region: string;
+    createdAt: string;
+    publishedAt: string;
+  }>,
   targetChinaPercent: number,
   windowStart: string,
   windowEndExclusive: string,
 ): number {
   const included = signals.filter(
     (signal) =>
-      signal.createdAt >= windowStart &&
-      signal.createdAt < windowEndExclusive &&
+      signal.publishedAt >= windowStart &&
+      signal.publishedAt < windowEndExclusive &&
       scopeAssessmentFromSignal(signal)?.decision === "include",
   );
   const chinaCount = included.filter((signal) => signal.region === "CN").length;

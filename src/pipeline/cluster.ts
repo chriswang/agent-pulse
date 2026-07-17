@@ -12,6 +12,7 @@ import { scoreEvent } from "../domain/scoring.js";
 import { sourcePublisherKey } from "../domain/source-identity.js";
 import type { SignalMetrics } from "../domain/types.js";
 import { slugify } from "../domain/url.js";
+import { deterministicIndustryDraft } from "../industry/event-draft.js";
 import {
   assessStoredIndustryScope,
   type IndustryPolicyContext,
@@ -38,7 +39,8 @@ export async function clusterSignals(
         effectiveEventabilityScore(left, sourcesById.get(left.source_id), industryRules) ||
       right.published_at.localeCompare(left.published_at),
   );
-  const events = await repository.listEvents();
+  const [events, tracks] = await Promise.all([repository.listEvents(), repository.listTracks()]);
+  const trackIds = new Map(tracks.map((track) => [track.slug, track.id]));
   let created = 0;
   let attached = 0;
   let deferred = 0;
@@ -81,6 +83,8 @@ export async function clusterSignals(
       continue;
     }
     let eventCreated = false;
+    const industryDraft =
+      industryRules && source ? deterministicIndustryDraft(signal, source, industryRules) : null;
     let event = events.find((candidate) =>
       belongsToEvent(
         { title: signal.title, publishedAt: signal.published_at },
@@ -108,15 +112,21 @@ export async function clusterSignals(
         id: randomUUID(),
         slug,
         title: signal.title,
-        fact_summary: signal.summary || signal.title,
-        summary: signal.summary || signal.title,
-        technical_insight: "待编辑：这项变化对能力、成本或工程路线意味着什么？",
-        industry_insight: "待编辑：这项变化会如何影响竞争结构与产业分工？",
-        future_outlook: "待编辑：接下来要观察哪些可验证信号？",
-        business_value: "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
-        category: signal.category,
-        company: industryScope?.matchedEntities[0] ?? inferCompany(signal.title),
-        keywords_json: JSON.stringify([...titleTokens(signal.title)].slice(0, 8)),
+        fact_summary: industryDraft?.factSummary ?? (signal.summary || signal.title),
+        summary: industryDraft?.summary ?? (signal.summary || signal.title),
+        technical_insight:
+          industryDraft?.technicalInsight ?? "待编辑：这项变化对能力、成本或工程路线意味着什么？",
+        industry_insight:
+          industryDraft?.industryInsight ?? "待编辑：这项变化会如何影响竞争结构与产业分工？",
+        future_outlook: industryDraft?.futureOutlook ?? "待编辑：接下来要观察哪些可验证信号？",
+        business_value:
+          industryDraft?.businessValue ?? "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
+        category: industryDraft?.category ?? signal.category,
+        company:
+          industryDraft?.company ?? industryScope?.matchedEntities[0] ?? inferCompany(signal.title),
+        keywords_json: JSON.stringify(
+          industryDraft?.keywords ?? [...titleTokens(signal.title)].slice(0, 8),
+        ),
         confidence_score: 0,
         heat_score: 0,
         impact_score: industryRules
@@ -145,6 +155,25 @@ export async function clusterSignals(
       "supporting",
       Math.round(titleSimilarity(signal.title, event.title) * 100),
     );
+    if (eventCreated && industryDraft) {
+      for (const [index, slug] of industryDraft.trackSlugs.entries()) {
+        const trackId = trackIds.get(slug);
+        if (!trackId) continue;
+        await db
+          .insertInto("event_tracks")
+          .values({
+            event_id: event.id,
+            track_id: trackId,
+            node_role: "supporting",
+            narrative: industryDraft.industryInsight,
+            stage: "evidence",
+            order_index: index,
+            created_at: now(),
+          })
+          .onConflict((conflict) => conflict.columns(["event_id", "track_id"]).doNothing())
+          .execute();
+      }
+    }
     if (eventCreated) {
       const candidates = await repository.listDeferredSignalsNear(event.happened_at);
       for (const candidate of candidates) {

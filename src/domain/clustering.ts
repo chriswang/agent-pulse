@@ -58,6 +58,9 @@ export function belongsToEvent(
   if (candidateFingerprint && candidateFingerprint === eventKey) {
     const candidateFacet = eventFacetBucket(eventFacet(candidate.title));
     const existingFacet = eventFacetBucket(eventFacet(event.title));
+    if (candidateFingerprint.startsWith("document:")) {
+      return candidateFacet !== "incident" && existingFacet !== "incident" && hours <= 21 * 24;
+    }
     return (
       candidateFacet === existingFacet && hours <= (candidateFacet === "incident" ? 7 : 21) * 24
     );
@@ -78,6 +81,11 @@ export function eventFingerprint(title: string): string | null {
     .replace(/智谱/g, "zhipu")
     .replace(/阶跃星辰/g, "stepfun")
     .replace(/[–—_]/g, "-");
+  const document = normalized.match(/《([^》]{6,100})》/u)?.[1];
+  if (document) {
+    const key = document.replace(/[^a-z0-9\u4e00-\u9fff]+/g, "").slice(0, 100);
+    if (key.length >= 6) return `document:${key}`;
+  }
   const patterns: Array<[string, RegExp]> = [
     ["openai:gpt", /\bgpt[-\s]?(\d+(?:\.\d+)?(?:[-\s]?(?:mini|nano|pro))?)/],
     ["openai:o", /\bo(\d+(?:[-\s]?mini)?)/],

@@ -29,12 +29,28 @@ export const IndustryRulesSchema = z
         includeThreshold: z.number().int().min(1).max(100),
         holdThreshold: z.number().int().min(0).max(99),
         strong: weightedTermsSchema,
+        genericStrong: z.array(z.string().min(2).max(80)).min(1).max(100),
+        genericStrongRequires: z.array(z.string().min(2).max(80)).min(1).max(100),
         context: weightedTermsSchema,
         action: weightedTermsSchema,
         exclusions: z.array(z.string().min(2).max(80)).max(100),
         sourceBoosts: z.record(z.string(), z.number().int().min(0).max(50)),
       })
       .strict(),
+    tracks: z
+      .array(
+        z
+          .object({
+            slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,79}$/),
+            terms: z.array(z.string().min(2).max(80)).min(1).max(100),
+            technicalInsight: z.string().min(30).max(800),
+            industryInsight: z.string().min(30).max(800),
+            futureOutlook: z.string().min(28).max(600),
+            businessValue: z.string().min(30).max(800),
+          })
+          .strict(),
+      )
+      .length(6),
     entities: z
       .array(
         z
@@ -63,6 +79,17 @@ export const IndustryRulesSchema = z
         path: ["relevance", "holdThreshold"],
         message: "holdThreshold must be lower than includeThreshold",
       });
+    }
+    const trackSlugs = new Set<string>();
+    for (const [index, track] of rules.tracks.entries()) {
+      if (trackSlugs.has(track.slug)) {
+        context.addIssue({
+          code: "custom",
+          path: ["tracks", index, "slug"],
+          message: `Duplicate track rule: ${track.slug}`,
+        });
+      }
+      trackSlugs.add(track.slug);
     }
   });
 
@@ -103,6 +130,8 @@ export function assessIndustryScope(
 ): IndustryScopeAssessment {
   const text = normalize([signal.title, signal.summary, ...signal.tags].join(" "));
   const matchedStrong = matches(text, rules.relevance.strong.terms);
+  const matchedGenericStrong = matches(text, rules.relevance.genericStrong);
+  const matchedRequiredContext = matches(text, rules.relevance.genericStrongRequires);
   const matchedContext = matches(text, rules.relevance.context.terms);
   const matchedActions = matches(text, rules.relevance.action.terms);
   const matchedExclusions = matches(text, rules.relevance.exclusions);
@@ -112,7 +141,7 @@ export function assessIndustryScope(
   const entityScore = rules.entities
     .filter((entity) => matchedEntities.includes(entity.canonical))
     .reduce((sum, entity) => sum + entity.weight, 0);
-  const score = clamp(
+  const rawScore = clamp(
     boundedScore(matchedStrong.length, rules.relevance.strong) +
       boundedScore(matchedContext.length, rules.relevance.context) +
       boundedScore(matchedActions.length, rules.relevance.action) +
@@ -120,6 +149,12 @@ export function assessIndustryScope(
       (rules.relevance.sourceBoosts[source.slug] ?? 0) -
       (matchedExclusions.length > 0 && matchedStrong.length === 0 ? 60 : 0),
   );
+  const genericOnly =
+    matchedStrong.length > 0 &&
+    matchedStrong.every((term) => matchedGenericStrong.includes(term)) &&
+    matchedRequiredContext.length === 0 &&
+    matchedEntities.length === 0;
+  const score = genericOnly ? Math.min(rawScore, rules.relevance.holdThreshold - 1) : rawScore;
   const decision: IndustryScopeDecision =
     score >= rules.relevance.includeThreshold
       ? "include"

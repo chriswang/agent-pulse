@@ -106,10 +106,12 @@
   ],
   "sourcesFile": "sources.json",
   "trial": {
-    "phase": "baseline",
+    "phase": "pilot",
     "durationDays": 7,
     "baselineDays": 30,
+    "historyLookbackDays": 30,
     "baselineStartDate": "2026-07-17",
+    "validationStartDate": "2026-07-17",
     "targetChinaContentPercent": 80,
     "minimumChineseReadySources": 12,
     "maximumReadySourceAgeDays": 90,

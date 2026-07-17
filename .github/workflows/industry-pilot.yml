@@ -1,13 +1,13 @@
-name: Build medical health 30-day evidence baseline
+name: Build medical health 30-day history and 7-day validation
 
 on:
   schedule:
-    # Daily at 20:17 Asia/Shanghai during the 30-day evidence baseline.
-    - cron: "17 12 * * *"
+    # Day 1 is the manual backfill on July 17; these six runs finish the seven-day window.
+    - cron: "17 12 18-23 7 *"
   workflow_dispatch:
     inputs:
       backfill:
-        description: Reset collector state and run a bounded backfill
+        description: Reset old intelligence and backfill the previous 30 days
         required: false
         default: false
         type: boolean
@@ -35,7 +35,7 @@ jobs:
       MODEL_BASE_URL: https://ark.cn-beijing.volces.com/api/coding/v3
       MODEL_NAME: glm-5.2
       MODEL_JSON_MODE: prompt-only
-      BASELINE_MODE: "true"
+      MODEL_ENRICHMENT_ENABLED: "false"
       SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health.json
       PILOT_REPORT: industry-packs/medical-health-data-elements/data/pilot-report.json
     steps:
@@ -63,6 +63,10 @@ jobs:
       - name: Require the China-first source baseline
         run: npm run --silent industry:sources:gate -- --report="$SOURCE_HEALTH_REPORT"
 
+      - name: Reset the previous industry intelligence before the initial backfill
+        if: ${{ inputs.backfill == true }}
+        run: npm run --silent industry:reset -- --confirm
+
       - name: Enable only healthy shadow observations
         run: npm run observe:sources -- --confirm
 
@@ -71,14 +75,14 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ inputs.backfill || false }}" == "true" ]]; then
-            npm run collect -- --backfill --drain
+            npm run collect -- --backfill --lookback-days=30 --max-pages=6 --drain
           else
             npm run collect -- --drain
           fi
 
       - name: Enrich evidence-ready Events with Ark GLM-5.2
         id: enrichment
-        if: ${{ env.BASELINE_MODE == 'false' }}
+        if: ${{ env.MODEL_ENRICHMENT_ENABLED == 'true' }}
         env:
           AI_ENRICHMENT_ENABLED: "true"
           AI_ENRICHMENT_MAX_EVENTS: "8"
@@ -105,7 +109,7 @@ jobs:
       - name: Publish only Events that clear deterministic gates
         run: npm run auto:publish
 
-      - name: Generate the 30-day baseline report
+      - name: Generate the 30-day history and 7-day validation report
         run: npm run --silent industry:report -- --output="$PILOT_REPORT"
 
       - name: Export the industry site

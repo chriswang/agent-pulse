@@ -71,6 +71,63 @@ describe("web-scraper adapter", () => {
     expect(result).toEqual([]);
   });
 
+  it("follows only bounded same-origin pagination during historical backfill", async () => {
+    const pages = new Map([
+      [
+        "https://example.com/news/",
+        `<!doctype html><html><body>
+          <article><a href="/news/one">Medical data policy one</a><time datetime="2026-07-16">2026-07-16</time></article>
+          <a href="/news/?page=2">2</a><a href="https://other.example/news/?page=2">next</a>
+        </body></html>`,
+      ],
+      [
+        "https://example.com/news/?page=2",
+        `<!doctype html><html><body>
+          <article><a href="/news/two">Medical data policy two</a><time datetime="2026-07-10">2026-07-10</time></article>
+          <a href="/news/?page=3">3</a>
+        </body></html>`,
+      ],
+      [
+        "https://example.com/news/?page=3",
+        `<!doctype html><html><body>
+          <article><a href="/news/three">Medical data policy three</a><time datetime="2026-07-05">2026-07-05</time></article>
+        </body></html>`,
+      ],
+    ]);
+    const requested: string[] = [];
+    const source = makeSource({
+      config: { url: "https://example.com/news/", category: "policy", take: 30 },
+    });
+    const context: CollectContext = {
+      ...makeContext(pages.get(source.config.url) ?? ""),
+      mode: "backfill",
+      publishedAfter: "2026-06-17T00:00:00.000Z",
+      maxPages: 2,
+      fetchText: async (url) => {
+        requested.push(url);
+        const body = pages.get(url) ?? "";
+        return {
+          body,
+          status: body ? 200 : 404,
+          headers: new Headers(),
+          attemptCount: 1,
+          responseBytes: body.length,
+          finalUrl: url,
+        };
+      },
+    };
+
+    const result = await adapter.collect(source, context);
+
+    expect(result.map((item) => item.title)).toEqual([
+      "Medical data policy one",
+      "Medical data policy two",
+    ]);
+    expect(requested).toEqual(["https://example.com/news/", "https://example.com/news/?page=2"]);
+    expect(requested).not.toContain("https://other.example/news/?page=2");
+    expect(requested).not.toContain("https://example.com/news/?page=3");
+  });
+
   it("extracts articles from <article> tags", async () => {
     const html = `<!DOCTYPE html><html><body>
       <article>

@@ -44,6 +44,51 @@ describe("event publication readiness", () => {
     expect(readiness.warnings).toContain("single-source fact; cross-source corroboration pending");
   });
 
+  it("accepts two independent Tier 2 publishers without Tier 1 evidence", async () => {
+    const { db, repository } = await setup();
+    const event = (await repository.listEvents("published")).find(
+      (item) => item.slug === "openai-o1-test-time-reasoning",
+    );
+    const sources = await repository.listSources();
+    const openai = sources.find((item) => item.slug === "openai");
+    const anthropic = sources.find((item) => item.slug === "anthropic");
+    expect(event && openai && anthropic).toBeTruthy();
+    await db
+      .updateTable("sources")
+      .set({ tier: 2 })
+      .where("id", "in", [openai?.id ?? "missing", anthropic?.id ?? "missing"])
+      .execute();
+    const signal = await repository.insertSignal(anthropic?.id ?? "missing", {
+      url: "https://www.anthropic.com/research/independent-reasoning-analysis",
+      title: "Independent analysis corroborates the reasoning milestone",
+      summary: "A second publisher independently documents the same public product milestone.",
+      author: "Anthropic",
+      language: "en",
+      publishedAt: "2026-07-12T00:00:00.000Z",
+      category: "industry",
+      tags: [],
+      metrics: {},
+      rawMeta: {},
+    });
+    await repository.attachSignal(
+      event?.id ?? "missing",
+      signal?.id ?? "missing",
+      "supporting",
+      90,
+    );
+
+    const readiness = await evaluateEventReadiness(db, event?.id ?? "missing");
+
+    expect(readiness).toMatchObject({
+      status: "ready",
+      blockers: [],
+      evidenceLevel: "multi-source",
+      independentSources: 2,
+      primaryEvidence: 0,
+      secondaryEvidence: 2,
+    });
+  });
+
   it("does not count two sections of one publisher as independent evidence", async () => {
     const { db, repository } = await setup();
     const event = (await repository.listEvents("published")).find(

@@ -9,7 +9,7 @@ export const capabilities = [
     maturity: 44,
     release: "unreleased",
     evidence:
-      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; the latest GitHub no-model audit cleared 18 China and 3 international publishers, day-one collection passed at 95.7 percent with 21 scoped signals at an 81/19 language mix, and all six baseline tracks expose China-first and health-first governed source pools without treating them as Event evidence; the model remains paused",
+      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; the latest GitHub no-model audit cleared 18 China and 3 international publishers, while local code and tests now support a bounded 30-day historical backfill, seven-day validation, no-model Chinese fact Events and a pre-threshold evidence funnel; the real GitHub backfill remains the acceptance gate and the model remains paused",
   },
   {
     slug: "source-catalog",
@@ -553,6 +553,9 @@ export const releases = [
     name: "Next Evidence Iteration",
     summary: "让公开站更容易理解，并保持自动化来源生命周期证据准确可审计。",
     capabilities: [
+      "医疗健康 30+7 证据验证",
+      "无模型中文事实事件",
+      "趋势门槛前证据漏斗",
       "全站用户语言导航",
       "领域趋势信息层级",
       "目的明确的跨页入口",
@@ -560,6 +563,9 @@ export const releases = [
       "AI 可读站点索引",
     ],
     changes: [
+      "医疗健康数据要素验证改为回填过去 30 天证据并连续运行 7 个日历日；首次回填重置旧情报，按发布日期下界执行同源有界分页",
+      "模型完全停用时，符合领域规则的中文 Tier 1 原始材料仍可生成可回链的普通事实 Event，并确定性关联到六条行业主线",
+      "趋势详情在结论门槛前展示有效 Signal、事实 Event、独立发布机构和原始证据，不再把已有证据隐藏在等待状态后面",
       "直接研究源采集失败时，Actions warning 只陈述本次未采集、生命周期不变与批次继续，不再把实际 quarantined 状态误写成 shadow",
       "Source Audit 与 Data Refresh 在远端快照 merge 后重新执行来源对账，防止旧生命周期覆盖已满足连续健康门槛的隔离来源恢复结果",
       "公开站统一使用领域趋势、事件时间线、来源更新、行动建议、公司与机构、模型价格和信息来源等直白名称",

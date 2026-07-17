@@ -118,4 +118,17 @@ describe("event clustering", () => {
       ),
     ).toBe(false);
   });
+
+  it("groups an official policy and a follow-up that cite the same formal document", () => {
+    const official = "国家数据局关于印发《关于推进行业高质量数据集建设行动的实施方案》的通知";
+    const followUp = "解读《关于推进行业高质量数据集建设行动的实施方案》对医疗数据的影响";
+
+    expect(eventFingerprint(official)).toBe(eventFingerprint(followUp));
+    expect(
+      belongsToEvent(
+        { title: followUp, publishedAt: "2026-07-18T00:00:00.000Z" },
+        { title: official, happenedAt: "2026-07-17T00:00:00.000Z" },
+      ),
+    ).toBe(true);
+  });
 });

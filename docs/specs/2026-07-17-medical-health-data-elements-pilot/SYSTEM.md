@@ -80,22 +80,24 @@ JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 
 事实摘要、行业判断、未来信号和业务价值分别持久化使用的 Evidence URL。相关性不足、中文输出失败、证据映射不完整或评分不可解释时保持 review/triage。
 
-## 6. 30 天基线与领域观察
+## 6. 30 天历史证据与 7 天领域观察
 
-行业包独立 `narratives.json`。30 天基线只引用已审核 Event；六条主线每条至少 3 个 Event、两个独立来源，才显示当前判断、证据、影响对象、反向信号和下一观察点。数据不足时显示 evidence gap。
+行业包独立 `narratives.json`。首次运行从当前日期向前回填 30 天，并从新的验证起始日连续运行 7 天。六条主线每条至少 3 个已审核 Event、两个独立来源，才显示阶段趋势判断、影响对象、反向信号和下一观察点。未达到门槛时不得隐藏已经采集的证据：页面继续显示有效 Signal、候选事实、单一 Tier 1 事实 Event 与缺口说明。
 
 试跑期页面使用“领域观察”语义，不宣称已经计算长期趋势。通过 7 天验收后，再单独建设周度脉冲、趋势强度和阶段晋级。
 
 ## 7. 运行与发布
 
-专用 `industry-pilot.yml` 在 30 天基线期每天执行：
+专用 `industry-pilot.yml` 在首次 30 天回填及后续 7 天验证期间执行：
 
 ```text
 restore industry snapshot
   -> audit configured sources
   -> require 12 China + 3 international independent publishers
   -> collect trial-ready sources / observe new shadow sources
-  -> collect + deterministic cluster
+  -> initial run: bounded same-origin pagination + 30-day publication cutoff
+  -> daily run: incremental collection
+  -> deterministic cluster + track classification + fact extraction
   -> deterministic industry scope
   -> industry cluster / scoring (no model call during baseline)
   -> deterministic readiness / publish
@@ -106,9 +108,9 @@ restore industry snapshot
   -> optional weekly Issue
 ```
 
-30 天基线明确设置 `BASELINE_MODE=true`，Ark 步骤不会执行。完成基线复核并把 profile 切换到 7 天 pilot 后，才允许中文模型整理；AI 失败仍不阻断确定性采集与快照回流。Pages 使用独立 `industry-pages.yml`，从行业快照构建根首页。
+本轮明确设置 `MODEL_ENRICHMENT_ENABLED=false`，Ark 步骤不会执行。首次回填必须有真实的 30 天日期下界，并对同源分页设置页数、响应体和速率上限；不能把“清空游标后重抓首页”称为历史回填。确定性路径负责中文事实摘要、主体、主线和原始证据绑定。后续只有经用户确认才允许模型整理；AI 失败仍不阻断确定性采集与快照回流。Pages 使用独立 `industry-pages.yml`，从行业快照构建根首页。
 
-工作流恢复前必须清理当前偏题公开 Event，保留拒绝原因和原始 Evidence；试跑窗口从新规则首次成功运行重新计时。连续性按七个独立日历日的完整 run 计算，不能只按最早时间推算。
+首次真实回填前必须清理旧基线的 Signal、Event、聚类关系与运行计数，保留来源目录和最新来源审计；验证窗口从新规则首次成功运行重新计时。连续性按七个独立日历日的完整 run 计算，不能只按最早时间推算。
 
 ## 8. 公开首页
 
@@ -121,7 +123,7 @@ restore industry snapshot
 - 聚类准确率、决策价值和节省时间的人工填写状态；
 - 医院、数据集团、保司/TPA、药企、药械等关注对象与六条观察主线。
 
-没有数据时显示真实空状态，不回退展示上游 AI 演示数据。
+没有数据时显示真实空状态，不回退展示上游 AI 演示数据；有 Signal 但没有趋势时必须展示证据漏斗，不能只显示“等待有效证据”。
 
 ## 9. 同步上游
 

@@ -58,6 +58,7 @@
     "narrative:stage": "tsx src/cli/promote-narrative-stage.ts",
     "industry:report": "tsx src/cli/industry-pilot-report.ts",
     "industry:sources:gate": "tsx src/cli/industry-source-gate.ts",
+    "industry:reset": "tsx src/cli/reset-industry-intelligence.ts",
     "check": "npm run lint && npm run typecheck && npm test && npm run export && npm run public:validate"
   },
   "keywords": [

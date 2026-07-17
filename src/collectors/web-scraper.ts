@@ -19,35 +19,14 @@ const MAX_ITEMS = 30;
 export const webScraperAdapter: SourceAdapter = {
   kind: "web-scraper",
   async collect(source, context) {
-    const { body, status } = await context.fetchText(source.config.url);
+    const { body, status, finalUrl } = await context.fetchText(source.config.url);
     if (status === 304) return [];
 
     if (!body || body.length < 100) {
       throw new Error("Web scraper: response body too small or empty");
     }
 
-    const results: CollectedSignal[] = [];
-
-    // Strategy 1: Try JSON-LD structured data first
-    const jsonLdItems = extractJsonLd(body, source);
-    if (jsonLdItems.length > 0) {
-      results.push(...jsonLdItems);
-    }
-
-    // Strategy 2: Extract from <article> or common listing patterns
-    const articleItems = extractArticles(body, source);
-    results.push(...articleItems);
-
-    // Strategy 3: Extract from <li> or card patterns in listing pages
-    const listItems = extractListItems(body, source);
-    results.push(...listItems);
-
-    // Strategy 3b: SSR frameworks often render the link, date, and title as
-    // adjacent siblings instead of one semantic card. Only use this fallback
-    // when the structured strategies have not produced a valid signal.
-    if (!results.some(hasValidScrapedSignal)) {
-      results.push(...extractDateAdjacentLinks(body, source));
-    }
+    const results = extractPageSignals(body, source);
 
     // Strategy 4: Extract from RSS/Atom discovery links. HTML listing cards
     // without a publication date cannot pass the collector contract, so they
@@ -59,6 +38,23 @@ export const webScraperAdapter: SourceAdapter = {
         const feedItems = parseFeed(feedBody, source);
         if (feedItems.some(hasTrustedPublicationDate)) {
           results.splice(0, results.length, ...feedItems);
+        }
+      }
+    }
+
+    if (context.mode === "backfill" && (context.maxPages ?? 1) > 1) {
+      const visited = new Set([normalizePageUrl(finalUrl || source.config.url)]);
+      const queue = discoverPaginationUrls(body, finalUrl || source.config.url);
+      while (queue.length > 0 && visited.size < (context.maxPages ?? 1)) {
+        const pageUrl = queue.shift();
+        if (!pageUrl || visited.has(pageUrl)) continue;
+        visited.add(pageUrl);
+        const page = await context.fetchText(pageUrl);
+        if (page.status !== 200 || page.body.length < 100) continue;
+        const pageSource = { ...source, config: { ...source.config, url: pageUrl } };
+        results.push(...extractPageSignals(page.body, pageSource));
+        for (const discovered of discoverPaginationUrls(page.body, page.finalUrl || pageUrl)) {
+          if (!visited.has(discovered) && !queue.includes(discovered)) queue.push(discovered);
         }
       }
     }
@@ -81,9 +77,62 @@ export const webScraperAdapter: SourceAdapter = {
       if (metaSignal) deduped.push(metaSignal);
     }
 
-    return deduped.slice(0, source.config.take ?? MAX_ITEMS);
+    const pageBudget = context.mode === "backfill" ? Math.max(1, context.maxPages ?? 1) : 1;
+    return deduped.slice(0, Math.min(500, (source.config.take ?? MAX_ITEMS) * pageBudget));
   },
 };
+
+function extractPageSignals(body: string, source: SourceLike): CollectedSignal[] {
+  const results = [...extractJsonLd(body, source), ...extractArticles(body, source)];
+  results.push(...extractListItems(body, source));
+  if (!results.some(hasValidScrapedSignal)) {
+    results.push(...extractDateAdjacentLinks(body, source));
+  }
+  return results;
+}
+
+function discoverPaginationUrls(html: string, currentUrl: string): string[] {
+  const current = new URL(currentUrl);
+  const urls = new Set<string>();
+  const anchors = /<a\b[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of html.matchAll(anchors)) {
+    const href = decodeEntities(match[1] ?? "").trim();
+    const label = stripHtml(decodeEntities(match[2] ?? "")).trim();
+    if (!href || href.startsWith("#") || /^(?:javascript|mailto|tel):/i.test(href)) continue;
+    let candidate: URL;
+    try {
+      candidate = new URL(href, current);
+    } catch {
+      continue;
+    }
+    if (candidate.origin !== current.origin) continue;
+    candidate.hash = "";
+    const normalized = normalizePageUrl(candidate.toString());
+    if (normalized === normalizePageUrl(current.toString())) continue;
+    const paginationHint = `${candidate.pathname}${candidate.search} ${label}`;
+    if (
+      !/(?:[?&](?:page|p|pageindex|pageno|current)=\d+)|(?:index(?:_pc)?|list|page)[_-]?\d+\.html|\/page\/\d+|^(?:下一页|下页|next|\d+)$/i.test(
+        paginationHint,
+      )
+    )
+      continue;
+    urls.add(normalized);
+  }
+  return [...urls].sort((left, right) => pageNumber(left) - pageNumber(right));
+}
+
+function normalizePageUrl(value: string): string {
+  const url = new URL(value);
+  url.hash = "";
+  return url.toString();
+}
+
+function pageNumber(value: string): number {
+  const match = value.match(
+    /(?:[?&](?:page|p|pageindex|pageno|current)=|(?:index(?:_pc)?|list|page)[_-]?|\/page\/)(\d+)/i,
+  );
+  return Number(match?.[1] ?? Number.MAX_SAFE_INTEGER);
+}
 
 function hasTrustedPublicationDate(item: CollectedSignal): boolean {
   return item.rawMeta.dateInferred !== true && Number.isFinite(Date.parse(item.publishedAt));

@@ -39,6 +39,9 @@ export interface CollectionOptions {
   sourceId?: string;
   scope?: CollectionScope;
   resetState?: boolean;
+  lookbackDays?: number;
+  maxPages?: number;
+  referenceAt?: string;
 }
 
 interface SourceResult extends CollectionSummary {
@@ -58,6 +61,10 @@ export async function collectSources(
   const sourceId = options.sourceId;
   const industryRules = loadIndustryRules(config.INDUSTRY_PROFILE, config.rootDir);
   const scope = options.scope ?? "eligible";
+  const referenceAt = options.referenceAt ?? new Date().toISOString();
+  const publishedAfter = options.lookbackDays
+    ? new Date(Date.parse(referenceAt) - options.lookbackDays * 86_400_000).toISOString()
+    : undefined;
   const catalog = sourceId
     ? [await repository.getSourceByIdOrSlug(sourceId)].filter((source): source is SourceRow =>
         Boolean(source),
@@ -97,7 +104,10 @@ export async function collectSources(
       sources,
       Math.min(config.COLLECTOR_CONCURRENCY, Math.max(1, sources.length)),
       (source) =>
-        collectOneSource(repository, config, source, jobId, rateLimiter, cache, industryRules),
+        collectOneSource(repository, config, source, jobId, rateLimiter, cache, industryRules, {
+          ...(publishedAfter ? { publishedAfter, referenceAt } : {}),
+          maxPages: options.maxPages ?? 1,
+        }),
     );
     result = sourceResults.reduce<CollectionSummary>(
       (summary, current) => ({
@@ -165,6 +175,7 @@ async function collectOneSource(
   rateLimiter: RateLimiter,
   cache: ResponseCache,
   industryRules: IndustryRules | null,
+  collectionWindow: { publishedAfter?: string; referenceAt?: string; maxPages: number },
 ): Promise<SourceResult> {
   const started = Date.now();
   const runId = await repository.startSourceRun(row.id, jobId);
@@ -213,11 +224,12 @@ async function collectOneSource(
         await rateLimiter.acquire(domain, row.rate_limit_per_minute);
         let fetched: FetchResult;
         try {
+          const isPrimaryEndpoint = url === source.config.url;
           fetched = await safeFetch(
             url,
             {
-              ...(etag ? { "if-none-match": etag } : {}),
-              ...(lastModified ? { "if-modified-since": lastModified } : {}),
+              ...(isPrimaryEndpoint && etag ? { "if-none-match": etag } : {}),
+              ...(isPrimaryEndpoint && lastModified ? { "if-modified-since": lastModified } : {}),
               ...headers,
             },
             {
@@ -239,8 +251,10 @@ async function collectOneSource(
         responseBytes += fetched.responseBytes;
         httpStatus = fetched.status;
         notModified ||= fetched.status === 304;
-        etag = fetched.headers.get("etag") ?? etag;
-        lastModified = fetched.headers.get("last-modified") ?? lastModified;
+        if (url === source.config.url) {
+          etag = fetched.headers.get("etag") ?? etag;
+          lastModified = fetched.headers.get("last-modified") ?? lastModified;
+        }
         if (fetched.status === 200) {
           cache.set(
             url,
@@ -253,11 +267,21 @@ async function collectOneSource(
         }
         return fetched;
       },
+      mode: collectionWindow.publishedAfter ? "backfill" : "incremental",
+      ...(collectionWindow.publishedAfter
+        ? { publishedAfter: collectionWindow.publishedAfter }
+        : {}),
+      maxPages: collectionWindow.maxPages,
     });
-    result.collected = items.length;
+    const windowedItems = filterSignalsToWindow(
+      items,
+      collectionWindow.publishedAfter,
+      collectionWindow.referenceAt,
+    );
+    result.collected = windowedItems.length;
     const discoveryOnly = isDiscoveryOnlySource(row);
     let qualityRejected = 0;
-    for (const item of items) {
+    for (const item of windowedItems) {
       const rejection = rejectSignal(item, source, discoveryOnly);
       if (rejection) {
         qualityRejected += 1;
@@ -292,7 +316,7 @@ async function collectOneSource(
         else result.skipped += 1;
       }
     }
-    if (items.length > 0 && qualityRejected === items.length) {
+    if (windowedItems.length > 0 && qualityRejected === windowedItems.length) {
       throw new Error("Collector contract drift: every item failed the signal quality gate");
     }
     const health = applySourceSuccess(healthState(row), notModified);
@@ -362,6 +386,24 @@ async function collectOneSource(
     });
   }
   return result;
+}
+
+export function filterSignalsToWindow(
+  items: CollectedSignal[],
+  publishedAfter?: string,
+  referenceAt?: string,
+): CollectedSignal[] {
+  if (!publishedAfter) return items;
+  const lowerBound = Date.parse(publishedAfter);
+  const reference = Date.parse(referenceAt ?? new Date().toISOString());
+  if (!Number.isFinite(lowerBound) || !Number.isFinite(reference)) {
+    throw new Error("invalid_collection_window");
+  }
+  const upperBound = reference;
+  return items.filter((item) => {
+    const published = Date.parse(item.publishedAt);
+    return Number.isFinite(published) && published >= lowerBound && published <= upperBound;
+  });
 }
 
 export function rejectSignal(

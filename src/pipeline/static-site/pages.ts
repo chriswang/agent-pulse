@@ -607,13 +607,41 @@ function lineDetail(
   const narrative = narrativeFor(model, track.slug);
   const events = sortEventsByLatestDevelopment(eventsForTrack(model.events, track.slug));
   const sourcePool = sourcesForTrack(model.sources, track.slug);
+  const signals = signalsForTrack(model, track.slug).slice(0, 12);
+  const independentEventSources = evidenceSourceCountFor(events.flatMap((event) => event.evidence));
+  const multiSourceEvents = events.filter((event) => evidenceSourceCount(event) >= 2).length;
+  const trendReady = events.length >= 3 && independentEventSources >= 2;
+  const evidenceStatus = trendReady
+    ? narrative?.now || track.description
+    : signals.length || events.length
+      ? locale === "en"
+        ? `${signals.length} relevant signals and ${events.length} fact events are visible. A stage-level trend requires at least three reviewed events from two independent publishers.`
+        : `已展示 ${signals.length} 条相关线索和 ${events.length} 个事实事件；达到 3 个审核 Event 和 2 个独立发布方后再形成阶段趋势判断。`
+      : locale === "en"
+        ? "No relevant signal has entered this track yet."
+        : "该主线暂未采集到相关线索。";
   const stages = narrative?.stages ?? [];
   const stagesNewestFirst = stages.map((stage, index) => ({ stage, index })).reverse();
   return `<div class="trend-detail" data-trend-detail style="--track-color:${escapeHtml(track.color)}"><section class="line-hero${defaultRoute ? " default-trend" : ""} shell">
       ${trendSwitcher(model, locale, track.slug, true, defaultRoute)}
-      <div class="line-hero-grid"><div class="line-hero-copy"><span class="section-kicker">${locale === "en" ? "INDUSTRY TREND" : "领域趋势"} · ${t("lines.evidenceNodes", locale).replace("{count}", String(events.length))}</span><h1>${escapeHtml(track.name)}</h1><p class="line-now">${escapeHtml(narrative?.now || track.description)}</p>${defaultRoute ? heroMotion("lines") : ""}</div>
-      <aside><span>${escapeHtml(t("lines.judgmentLabel", locale))}</span><strong>${escapeHtml(narrative?.thesis || track.description)}</strong><div><span>${escapeHtml(t("lines.nextLabel", locale))}</span><p>${escapeHtml(narrative?.next ?? t("lines.waitingNext", locale))}</p></div></aside></div>
+      <div class="line-hero-grid"><div class="line-hero-copy"><span class="section-kicker">${locale === "en" ? "EVIDENCE VIEW" : "证据视图"} · ${signals.length} ${locale === "en" ? "SIGNALS" : "条线索"} · ${events.length} ${locale === "en" ? "EVENTS" : "个事实事件"}</span><h1>${escapeHtml(track.name)}</h1><p class="line-now">${escapeHtml(evidenceStatus)}</p>${defaultRoute ? heroMotion("lines") : ""}</div>
+      <aside><span>${escapeHtml(trendReady ? t("lines.judgmentLabel", locale) : locale === "en" ? "EVIDENCE STATUS" : "证据状态")}</span><strong>${escapeHtml(trendReady ? narrative?.thesis || track.description : locale === "en" ? "Facts are visible before a trend conclusion is justified." : "先展示事实积累，不把证据不足包装为趋势。")}</strong><div><span>${escapeHtml(t("lines.nextLabel", locale))}</span><p>${escapeHtml(narrative?.next ?? t("lines.waitingNext", locale))}</p></div></aside></div>
     </section>
+    <section class="section section-tint"><div class="shell">
+      <header class="section-head"><div><span class="section-kicker">00 / EVIDENCE FUNNEL</span><h2>${locale === "en" ? "Collected evidence before the trend threshold" : "趋势门槛前已经收集到的证据"}</h2></div></header>
+      <div class="coverage-summary">${metric(locale === "en" ? "Relevant signals" : "相关线索", signals.length)}${metric(locale === "en" ? "Fact events" : "事实事件", events.length)}${metric(locale === "en" ? "Multi-source events" : "多来源事件", multiSourceEvents)}${metric(locale === "en" ? "Independent publishers" : "独立发布方", independentEventSources)}</div>
+      <div class="signal-stream track-evidence-stream">${
+        signals
+          .slice(0, 6)
+          .map((signal) => signalCard(signal, locale))
+          .join("") ||
+        emptyState(
+          locale === "en" ? "No relevant source update yet" : "暂未发现相关来源更新",
+          locale === "en" ? "The source remains under observation." : "该主线的来源仍在持续采集。",
+        )
+      }</div>
+      ${signals.length ? `<a class="text-link" href="__PREFIX__signals/">${locale === "en" ? "View all source updates" : "查看全部来源更新"} ${icon("arrow-right")}</a>` : ""}
+    </div></section>
     <section class="section shell" data-module-expand-root>
       <header class="section-head section-head-action"><div><span class="section-kicker">${escapeHtml(t("lines.phases", locale))}</span><h2>${escapeHtml(t("lines.phasesTitle", locale))}</h2></div>${moduleExpandButton(locale === "en" ? "Expand all stages" : "展开全部阶段", locale === "en" ? "Collapse stages" : "收起阶段", "section-module-toggle")}</header>
       <div class="phase-rail" data-stage-order="newest-first" tabindex="0" aria-label="${locale === "en" ? "Scrollable trend history, newest first" : "可横向滚动的趋势变化轨迹，最新阶段优先"}">${stagesNewestFirst.map(({ stage, index }) => phaseCard(stage, eventsInStage(events, stage), locale, index)).join("") || emptyState(t("lines.noStages", locale), "")}</div>
@@ -1318,6 +1346,93 @@ const CHINA_FIRST_SOURCE_TRACKS = new Set([
   "standards-and-conferences",
 ]);
 
+const TRACK_SIGNAL_TERMS: Record<string, string[]> = {
+  "policy-and-compliance": [
+    "政策",
+    "通知",
+    "意见",
+    "办法",
+    "条例",
+    "监管",
+    "合规",
+    "授权运营",
+    "policy",
+    "regulation",
+    "compliance",
+  ],
+  "health-data-infrastructure": [
+    "医疗数据",
+    "健康医疗数据",
+    "医疗健康数据",
+    "高质量数据集",
+    "数据平台",
+    "数据空间",
+    "互联互通",
+    "电子病历",
+    "检查检验",
+    "fhir",
+    "interoperability",
+    "health data",
+    "data sharing",
+  ],
+  "payer-and-insurance": [
+    "医保",
+    "商保",
+    "商业健康保险",
+    "保险科技",
+    "理赔",
+    "支付",
+    "tpa",
+    "payer",
+    "health insurance",
+    "prior authorization",
+  ],
+  "pharma-and-medtech": [
+    "药企",
+    "医药",
+    "药械",
+    "医疗器械",
+    "临床研究",
+    "真实世界",
+    "udi",
+    "pharma",
+    "medtech",
+    "real-world",
+  ],
+  "market-and-competitors": [
+    "产品",
+    "平台",
+    "上线",
+    "推出",
+    "合作",
+    "签约",
+    "中标",
+    "采购",
+    "融资",
+    "并购",
+    "客户",
+    "解决方案",
+    "launch",
+    "partnership",
+    "funding",
+  ],
+  "standards-and-conferences": [
+    "标准",
+    "指南",
+    "会议",
+    "大会",
+    "论坛",
+    "联盟",
+    "研讨会",
+    "standard",
+    "conference",
+    "forum",
+    "alliance",
+    "hl7",
+    "ohdsi",
+  ],
+};
+
 const SOURCE_HEALTH_ORDER: Record<PublicSource["healthStatus"], number> = {
   healthy: 0,
   degraded: 1,
@@ -1347,6 +1462,21 @@ function sourcesForTrack(sources: PublicSource[], slug: string): PublicSource[] 
         left.name.localeCompare(right.name),
     )
     .slice(0, 60);
+}
+
+function signalsForTrack(model: StaticSiteModel, slug: string): PublicSignal[] {
+  const terms = TRACK_SIGNAL_TERMS[slug] ?? [];
+  const sourceSlugs = new Set(sourcesForTrack(model.sources, slug).map((source) => source.slug));
+  return model.signals
+    .filter((signal) => {
+      if (!sourceSlugs.has(signal.sourceSlug)) return false;
+      const haystack = [signal.title, signal.description, signal.category, ...signal.tags]
+        .join(" ")
+        .normalize("NFKC")
+        .toLowerCase();
+      return terms.some((term) => haystack.includes(term.toLowerCase()));
+    })
+    .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt));
 }
 
 function trendSource(source: PublicSource, locale: Locale, extra: boolean): string {

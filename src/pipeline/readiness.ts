@@ -26,6 +26,7 @@ export interface EventReadiness {
   evidenceCount: number;
   independentSources: number;
   primaryEvidence: number;
+  secondaryEvidence: number;
   trackCount: number;
   evidenceLevel: "none" | "single-primary" | "multi-source";
 }
@@ -41,7 +42,7 @@ export async function evaluateEventReadiness(
     .where("id", "=", eventId)
     .executeTakeFirst();
   if (!event) {
-    return result(eventId, ["event_not_found"], 0, 0, 0, 0);
+    return result(eventId, ["event_not_found"], 0, 0, 0, 0, 0);
   }
   const candidate = { ...event, ...candidatePatch };
   const [evidence, tracks] = await Promise.all([
@@ -73,6 +74,14 @@ export async function evaluateEventReadiness(
       )
       .map((item) => item.sourceId),
   ).size;
+  const secondaryEvidence = new Set(
+    evidence
+      .filter(
+        (item) =>
+          item.tier === 2 && item.role !== "aggregator" && item.sourceCategory !== "aggregator",
+      )
+      .map((item) => sourcePublisherKey(item.homepageUrl, item.sourceId)),
+  ).size;
   const trackCount = Number(tracks.count);
   const blockers: ReadinessBlocker[] = [];
   const content = [
@@ -99,7 +108,7 @@ export async function evaluateEventReadiness(
     blockers.push("missing_keywords");
   if (trackCount === 0) blockers.push("missing_track");
   if (evidence.length === 0) blockers.push("missing_evidence");
-  if (primaryEvidence === 0) blockers.push("missing_primary_evidence");
+  if (primaryEvidence === 0 && secondaryEvidence < 2) blockers.push("missing_primary_evidence");
   if (candidate.confidence_score < 60) blockers.push("low_confidence");
   const factors = parseJson<Partial<ScoreFactors>>(candidate.score_factors_json, {});
   if (
@@ -111,7 +120,15 @@ export async function evaluateEventReadiness(
   const warnings =
     independentSources < 2 ? ["single-source fact; cross-source corroboration pending"] : [];
   return {
-    ...result(eventId, blockers, evidence.length, independentSources, primaryEvidence, trackCount),
+    ...result(
+      eventId,
+      blockers,
+      evidence.length,
+      independentSources,
+      primaryEvidence,
+      secondaryEvidence,
+      trackCount,
+    ),
     warnings,
   };
 }
@@ -187,6 +204,14 @@ function evaluateReadinessRow(
       )
       .map((item) => item.sourceId),
   ).size;
+  const secondaryEvidence = new Set(
+    evidence
+      .filter(
+        (item) =>
+          item.tier === 2 && item.role !== "aggregator" && item.sourceCategory !== "aggregator",
+      )
+      .map((item) => sourcePublisherKey(item.homepageUrl, item.sourceId)),
+  ).size;
   const blockers: ReadinessBlocker[] = [];
   const content = [
     candidate.fact_summary,
@@ -212,7 +237,7 @@ function evaluateReadinessRow(
     blockers.push("missing_keywords");
   if (trackCount === 0) blockers.push("missing_track");
   if (evidence.length === 0) blockers.push("missing_evidence");
-  if (primaryEvidence === 0) blockers.push("missing_primary_evidence");
+  if (primaryEvidence === 0 && secondaryEvidence < 2) blockers.push("missing_primary_evidence");
   if (candidate.confidence_score < 60) blockers.push("low_confidence");
   const factors = parseJson<Partial<ScoreFactors>>(candidate.score_factors_json, {});
   if (
@@ -228,6 +253,7 @@ function evaluateReadinessRow(
       evidence.length,
       independentSources,
       primaryEvidence,
+      secondaryEvidence,
       trackCount,
     ),
     warnings:
@@ -260,6 +286,7 @@ function result(
   evidenceCount: number,
   independentSources: number,
   primaryEvidence: number,
+  secondaryEvidence: number,
   trackCount: number,
 ): EventReadiness {
   return {
@@ -270,8 +297,13 @@ function result(
     evidenceCount,
     independentSources,
     primaryEvidence,
+    secondaryEvidence,
     trackCount,
     evidenceLevel:
-      primaryEvidence === 0 ? "none" : independentSources >= 2 ? "multi-source" : "single-primary",
+      primaryEvidence === 0 && secondaryEvidence < 2
+        ? "none"
+        : independentSources >= 2
+          ? "multi-source"
+          : "single-primary",
   };
 }

@@ -74,4 +74,19 @@ describe("medical health industry relevance rules", () => {
     expect(result.decision).toBe("include");
     expect(result.matchedEntities).toContain("镁信健康");
   });
+
+  it("excludes generic data-element activity without a medical or health context", () => {
+    const result = assessIndustryScope(
+      {
+        title: "2026年数据要素大赛交通运输赛道正式启动",
+        summary: "活动聚焦交通运输和气象领域的数据流通与安全治理。",
+        tags: [],
+      },
+      { slug: "national-data-administration" },
+      rules,
+    );
+
+    expect(result.matchedStrong).toContain("数据要素");
+    expect(result.decision).toBe("exclude");
+  });
 });

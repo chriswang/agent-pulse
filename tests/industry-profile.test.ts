@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 import { loadConfig } from "../src/config/env.js";
 import { createDatabase } from "../src/db/database.js";
 import { migrateToLatest } from "../src/db/migrate.js";
+import { Repository } from "../src/db/repository.js";
 import { seedDatabase } from "../src/db/seed.js";
 import { buildIndustryPilotReport } from "../src/industry/pilot-report.js";
 import {
@@ -12,6 +13,7 @@ import {
   industrySources,
   loadIndustryProfile,
 } from "../src/industry/profile.js";
+import { assessIndustryScope, loadIndustryRules } from "../src/industry/rules.js";
 import { exportStaticSite } from "../src/pipeline/export.js";
 import { validatePublicSite } from "../src/pipeline/public-site-integrity.js";
 
@@ -35,9 +37,11 @@ describe("medical health data elements industry profile", () => {
     expect(profile.sources.filter((source) => source.region === "CN")).toHaveLength(24);
     expect(profile.sources.filter((source) => source.region !== "CN")).toHaveLength(6);
     expect(profile.trial).toMatchObject({
-      phase: "baseline",
+      phase: "pilot",
       baselineDays: 30,
+      historyLookbackDays: 30,
       baselineStartDate: "2026-07-17",
+      validationStartDate: "2026-07-17",
       durationDays: 7,
       targetChinaContentPercent: 80,
       minimumChineseReadySources: 12,
@@ -103,6 +107,15 @@ describe("medical health data elements industry profile", () => {
       );
       expect(report).toMatchObject({
         readiness: "collecting",
+        window: {
+          start: "2026-07-17T00:00:00.000Z",
+          end: "2026-07-23T00:00:00.000Z",
+          targetDays: 7,
+          observedDays: 0,
+          historyStart: "2026-06-17T00:00:00.000Z",
+          historyEnd: "2026-07-17T00:00:00.000Z",
+          historyLookbackDays: 30,
+        },
         sources: {
           configured: 30,
           automated: 30,
@@ -158,6 +171,114 @@ describe("medical health data elements industry profile", () => {
       expect(policyTrackPage.indexOf("国家数据局 · 通知公告")).toBeLessThan(
         policyTrackPage.indexOf("European Medicines Agency News"),
       );
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("keeps a single-source fact out of the high-priority Top 10", async () => {
+    const config = loadConfig({
+      NODE_ENV: "test",
+      DATABASE_URL: "sqlite::memory:",
+      INDUSTRY_PROFILE: profileSlug,
+    });
+    const db = createDatabase(config);
+    try {
+      await migrateToLatest(db, config);
+      await seedDatabase(db, { industryProfileSlug: profileSlug, rootDir: config.rootDir });
+      const repository = new Repository(db);
+      const source = (await repository.listSources()).find(
+        (item) => item.slug === "national-data-administration",
+      );
+      const rules = loadIndustryRules(profileSlug, config.rootDir);
+      if (!source || !rules) throw new Error("top10_fixture_requires_source_and_rules");
+      const now = "2026-07-17T00:00:00.000Z";
+      await db
+        .insertInto("events")
+        .values({
+          ...publishedEvent("single-source-high-score", "医疗健康数据授权运营政策", now, now),
+          confidence_score: 95,
+          impact_score: 95,
+          value_score: 95,
+        })
+        .execute();
+      const input = {
+        title: "国家数据局发布医疗健康数据授权运营政策",
+        summary: "正式文件明确医院医疗健康数据的授权运营和合规流通要求。",
+        tags: ["医疗健康", "授权运营"],
+      };
+      const signal = await repository.insertSignal(source.id, {
+        url: "https://www.nda.gov.cn/medical-health-authorized-operation.html",
+        ...input,
+        language: "zh-CN",
+        publishedAt: now,
+        category: "policy",
+        metrics: {},
+        rawMeta: { industryScope: assessIndustryScope(input, { slug: source.slug }, rules) },
+      });
+      await repository.attachSignal(
+        "single-source-high-score",
+        signal?.id ?? "missing",
+        "primary",
+        100,
+      );
+
+      const report = await buildIndustryPilotReport(
+        db,
+        requiredProfile(config.rootDir),
+        config.rootDir,
+        now,
+      );
+
+      expect(report.intelligence.publishedEvents).toBe(1);
+      expect(report.intelligence.highPriorityEvents).toBe(0);
+      expect(report.topCandidates).toEqual([]);
+    } finally {
+      await db.destroy();
+    }
+  });
+
+  it("shows collected signal evidence on a track before a trend conclusion exists", async () => {
+    const base = loadConfig({
+      NODE_ENV: "test",
+      DATABASE_URL: "sqlite::memory:",
+      INDUSTRY_PROFILE: profileSlug,
+      PUBLIC_SITE_URL: "https://chriswang.github.io/agent-pulse/",
+    });
+    const temp = await mkdtemp(join(tmpdir(), "agent-pulse-industry-evidence-"));
+    const config = { ...base, distDir: join(temp, "dist") };
+    const db = createDatabase(config);
+    try {
+      await migrateToLatest(db, config);
+      await seedDatabase(db, { industryProfileSlug: profileSlug, rootDir: config.rootDir });
+      const repository = new Repository(db);
+      const source = (await repository.listSources()).find(
+        (item) => item.slug === "national-data-administration",
+      );
+      const rules = loadIndustryRules(profileSlug, config.rootDir);
+      if (!source || !rules) throw new Error("industry_evidence_fixture_requires_source_and_rules");
+      const signal = {
+        title: "国家数据局发布医疗健康高质量数据集建设行动方案",
+        summary: "方案面向医院和医疗机构，推进医疗健康高质量数据集建设和合规流通。",
+        tags: ["医疗健康", "高质量数据集"],
+      };
+      await repository.insertSignal(source?.id ?? "missing", {
+        url: "https://www.nda.gov.cn/medical-health-dataset-plan.html",
+        ...signal,
+        language: "zh-CN",
+        publishedAt: new Date().toISOString(),
+        category: "data-elements",
+        metrics: {},
+        rawMeta: {
+          industryScope: assessIndustryScope(signal, { slug: source.slug }, rules),
+        },
+      });
+
+      await exportStaticSite(db, config);
+      const policyTrackPage = await readFile(join(config.distDir, "lines/index.html"), "utf8");
+      expect(policyTrackPage).toContain("趋势门槛前已经收集到的证据");
+      expect(policyTrackPage).toContain(signal.title);
+      expect(policyTrackPage).toContain("先展示事实积累，不把证据不足包装为趋势");
     } finally {
       await db.destroy();
     }

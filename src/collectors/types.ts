@@ -4,6 +4,9 @@ import type { CollectedSignal, SourceDescriptor } from "../domain/types.js";
 export interface CollectContext {
   config: AppConfig;
   fetchText: (url: string, headers?: Record<string, string>) => Promise<FetchResult>;
+  mode?: "incremental" | "backfill";
+  publishedAfter?: string;
+  maxPages?: number;
 }
 
 export interface FetchResult {
