@@ -1,11 +1,13 @@
 # 医疗健康数据要素行业试跑
 
-- 状态：本地 Demo 已完成，GitHub 接入中
+- 状态：本地 Demo 与 GitHub 基础接入已完成，等待方舟 Key 后启动 7 天试跑
 - 日期：2026-07-17
 - 目标版本：Unreleased
 - 上游基线：`barretlee/agent-pulse@b86923f`
 
 本规格把 Agent Pulse 作为持续升级的上游产品内核，在不复制其 AI 行业数据、不改写通用采集治理规则的前提下，增加一个公开的“医疗健康数据要素”行业包。行业包拥有独立信源、独立仓库快照、独立首页和独立 GitHub Actions；模型通过 OpenAI-compatible 适配层接入火山方舟 `glm-5.2`。
+
+公开 Fork：<https://github.com/chriswang/agent-pulse>；行业站点配置为 <https://chriswang.github.io/agent-pulse/>。Fork 仅保留 CI、行业试跑和行业页面工作流启用，上游的数据刷新、发布、监控、质量门禁、审计及提案工作流均已关闭。
 
 ## 文档
 

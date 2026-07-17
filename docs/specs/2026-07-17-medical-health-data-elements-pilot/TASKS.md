@@ -13,9 +13,9 @@
 
 ## 2. GitHub 闭环
 
-- [ ] 恢复 `chriswang` 的 GitHub CLI 授权
-- [ ] 创建公开 Fork、推送本地分支并配置 Pages
-- [ ] 禁用 Fork 中的上游数据写入 workflow
+- [x] 恢复 `chriswang` 的 GitHub CLI 授权
+- [x] 创建公开 Fork、推送本地分支并配置 Pages
+- [x] 禁用 Fork 中的上游数据写入 workflow
 - [ ] 由用户在 GitHub Secret 录入标准方舟 `MODEL_API_KEY`
 - [ ] 真实验证 `glm-5.2` model id、JSON 输出与 Token 用量
 - [ ] 手动触发首轮 audit / collect / Pages 并浏览器验收
