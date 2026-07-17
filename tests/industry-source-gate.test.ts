@@ -23,12 +23,12 @@ describe("industry source gate", () => {
 
     expect(result).toMatchObject({
       pass: true,
-      chineseReadyPublishers: 14,
+      chineseReadyPublishers: 19,
       minimumChinesePublishers: 12,
       internationalReadyPublishers: 3,
       minimumInternationalPublishers: 3,
     });
-    expect(result.chineseReadySlugs).toHaveLength(15);
+    expect(result.chineseReadySlugs).toHaveLength(20);
   });
 
   it("keeps the gate open when one Chinese publisher has a transient failure", () => {
@@ -39,7 +39,7 @@ describe("industry source gate", () => {
     const result = evaluateIndustrySourceGate(profile, report);
 
     expect(result.pass).toBe(true);
-    expect(result.chineseReadyPublishers).toBe(13);
+    expect(result.chineseReadyPublishers).toBe(18);
     expect(result.rejectedReadySlugs).toContainEqual({
       slug: "nhsa-policy",
       reason: "content_stale",
@@ -48,7 +48,16 @@ describe("industry source gate", () => {
 
   it("fails closed when redundancy falls below 12 Chinese publishers", () => {
     const report = healthyReport();
-    for (const slug of ["nhsa-policy", "cac-data-policy", "chima"]) {
+    for (const slug of [
+      "nhsa-policy",
+      "cac-data-policy",
+      "chima",
+      "guangzhou-data-bureau",
+      "china-insurance-association",
+      "shanghai-data-exchange",
+      "yidu-tech",
+      "taimei-health",
+    ]) {
       const source = report.results.find((item) => item.slug === slug);
       if (source) source.status = "failed";
     }

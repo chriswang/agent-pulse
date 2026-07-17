@@ -43,9 +43,9 @@ describe("medical health data elements industry profile", () => {
       minimumChineseReadySources: 12,
       maximumReadySourceAgeDays: 90,
     });
-    expect(profile.trial.readySourceSlugs).toHaveLength(18);
-    expect(sources.filter((source) => source.enabled)).toHaveLength(18);
-    expect(sources.filter((source) => source.enabled && source.region === "CN")).toHaveLength(15);
+    expect(profile.trial.readySourceSlugs).toHaveLength(23);
+    expect(sources.filter((source) => source.enabled)).toHaveLength(23);
+    expect(sources.filter((source) => source.enabled && source.region === "CN")).toHaveLength(20);
   });
 
   it("rejects duplicate source slugs", () => {
