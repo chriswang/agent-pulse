@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "jobId": "22665a94-e259-403b-be28-a48a4951d9b7",
-  "startedAt": "2026-07-17T12:22:46.047Z",
-  "finishedAt": "2026-07-17T12:23:18.718Z",
+  "jobId": "d1ceab7e-1afa-411b-a19f-63021e356a4e",
+  "startedAt": "2026-07-17T12:49:25.638Z",
+  "finishedAt": "2026-07-17T12:49:47.741Z",
   "total": 30,
-  "healthy": 24,
-  "degraded": 3,
-  "failed": 3,
+  "healthy": 28,
+  "degraded": 1,
+  "failed": 1,
   "skipped": 0,
   "accessible": 29,
-  "fetched": 27,
-  "withContent": 24,
+  "fetched": 29,
+  "withContent": 28,
   "results": [
     {
       "slug": "ema-news-events",
@@ -31,7 +31,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 639
+      "durationMs": 429
     },
     {
       "slug": "hl7-blog",
@@ -52,7 +52,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 323
+      "durationMs": 336
     },
     {
       "slug": "fda-press-releases",
@@ -73,7 +73,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 91
+      "durationMs": 128
     },
     {
       "slug": "healthit-onc-blog",
@@ -94,7 +94,28 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 431
+      "durationMs": 290
+    },
+    {
+      "slug": "shanghai-government-data-health",
+      "status": "healthy",
+      "accessStatus": "reachable",
+      "fetchStatus": "succeeded",
+      "parseStatus": "succeeded",
+      "schemaStatus": "valid",
+      "policyStatus": "allowed_metadata",
+      "itemCount": 20,
+      "latestItemAt": "2026-07-17T00:00:00.000Z",
+      "duplicateRatio": 0,
+      "qualityScore": 58,
+      "errorType": null,
+      "errorCode": null,
+      "repairAction": "observe_in_shadow",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "keep",
+      "recommendedLifecycle": "active",
+      "durationMs": 10329
     },
     {
       "slug": "shanghai-healthcare-security",
@@ -115,7 +136,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1387
+      "durationMs": 5651
     },
     {
       "slug": "gov-cn-latest-policy",
@@ -136,7 +157,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 775
+      "durationMs": 1097
     },
     {
       "slug": "cac-data-policy",
@@ -157,7 +178,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2210
+      "durationMs": 1877
     },
     {
       "slug": "beijing-healthcare-security",
@@ -178,7 +199,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2547
+      "durationMs": 3022
     },
     {
       "slug": "beijing-health-commission-data",
@@ -199,7 +220,28 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3796
+      "durationMs": 4481
+    },
+    {
+      "slug": "sichuan-health-commission",
+      "status": "failed",
+      "accessStatus": "unreachable",
+      "fetchStatus": "failed",
+      "parseStatus": "not_started",
+      "schemaStatus": "unknown",
+      "policyStatus": "allowed_metadata",
+      "itemCount": 0,
+      "latestItemAt": null,
+      "duplicateRatio": 0,
+      "qualityScore": 0,
+      "errorType": "network",
+      "errorCode": "ADAPTER_ERROR",
+      "repairAction": "verify_network_dns_or_proxy",
+      "proxyHint": "possible",
+      "proxyUsed": false,
+      "retentionDecision": "observe",
+      "recommendedLifecycle": "degraded",
+      "durationMs": 1463
     },
     {
       "slug": "nhsa-policy",
@@ -220,7 +262,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1170
+      "durationMs": 2772
     },
     {
       "slug": "nda-local-dynamics",
@@ -241,7 +283,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2222
+      "durationMs": 587
     },
     {
       "slug": "national-data-administration",
@@ -262,7 +304,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2223
+      "durationMs": 46
     },
     {
       "slug": "nmpa-udi-data",
@@ -283,7 +325,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1260
+      "durationMs": 1440
     },
     {
       "slug": "nfra-insurance-policy",
@@ -304,7 +346,7 @@
       "proxyUsed": false,
       "retentionDecision": "observe",
       "recommendedLifecycle": "shadow",
-      "durationMs": 400
+      "durationMs": 581
     },
     {
       "slug": "guangdong-health-commission",
@@ -325,7 +367,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1906
+      "durationMs": 3115
     },
     {
       "slug": "guangzhou-data-bureau",
@@ -346,7 +388,70 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2009
+      "durationMs": 2629
+    },
+    {
+      "slug": "jiangsu-healthcare-security",
+      "status": "healthy",
+      "accessStatus": "reachable",
+      "fetchStatus": "succeeded",
+      "parseStatus": "succeeded",
+      "schemaStatus": "valid",
+      "policyStatus": "allowed_metadata",
+      "itemCount": 34,
+      "latestItemAt": "2026-07-14T00:00:00.000Z",
+      "duplicateRatio": 0,
+      "qualityScore": 54,
+      "errorType": null,
+      "errorCode": null,
+      "repairAction": "observe_in_shadow",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "keep",
+      "recommendedLifecycle": "active",
+      "durationMs": 3172
+    },
+    {
+      "slug": "jiangsu-health-commission",
+      "status": "healthy",
+      "accessStatus": "reachable",
+      "fetchStatus": "succeeded",
+      "parseStatus": "succeeded",
+      "schemaStatus": "valid",
+      "policyStatus": "allowed_metadata",
+      "itemCount": 50,
+      "latestItemAt": "2026-07-17T00:00:00.000Z",
+      "duplicateRatio": 0,
+      "qualityScore": 54,
+      "errorType": null,
+      "errorCode": null,
+      "repairAction": "observe_in_shadow",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "keep",
+      "recommendedLifecycle": "active",
+      "durationMs": 2052
+    },
+    {
+      "slug": "hubei-health-commission",
+      "status": "healthy",
+      "accessStatus": "reachable",
+      "fetchStatus": "succeeded",
+      "parseStatus": "succeeded",
+      "schemaStatus": "valid",
+      "policyStatus": "allowed_metadata",
+      "itemCount": 8,
+      "latestItemAt": "2026-07-10T00:00:00.000Z",
+      "duplicateRatio": 0,
+      "qualityScore": 55,
+      "errorType": null,
+      "errorCode": null,
+      "repairAction": "observe_in_shadow",
+      "proxyHint": "not_required",
+      "proxyUsed": false,
+      "retentionDecision": "keep",
+      "recommendedLifecycle": "active",
+      "durationMs": 2059
     },
     {
       "slug": "chima",
@@ -367,7 +472,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 5062
+      "durationMs": 4113
     },
     {
       "slug": "datavant",
@@ -388,7 +493,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 133
+      "durationMs": 124
     },
     {
       "slug": "ohdsi-news",
@@ -409,7 +514,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 618
+      "durationMs": 376
     },
     {
       "slug": "shanghai-data-exchange",
@@ -430,7 +535,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 2050
+      "durationMs": 1437
     },
     {
       "slug": "china-insurance-association",
@@ -451,28 +556,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 3876
-    },
-    {
-      "slug": "beijing-data-exchange",
-      "status": "degraded",
-      "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "empty",
-      "schemaStatus": "empty",
-      "policyStatus": "allowed_metadata",
-      "itemCount": 0,
-      "latestItemAt": null,
-      "duplicateRatio": 0,
-      "qualityScore": 0,
-      "errorType": "content",
-      "errorCode": "EMPTY_RESULT",
-      "repairAction": "inspect_endpoint_or_parser",
-      "proxyHint": "not_required",
-      "proxyUsed": false,
-      "retentionDecision": "observe",
-      "recommendedLifecycle": "shadow",
-      "durationMs": 1022
+      "durationMs": 5313
     },
     {
       "slug": "yidu-tech",
@@ -493,7 +577,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1960
+      "durationMs": 2039
     },
     {
       "slug": "weining-health",
@@ -514,7 +598,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 2341
+      "durationMs": 2158
     },
     {
       "slug": "taimei-health",
@@ -535,91 +619,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "active",
-      "durationMs": 1332
-    },
-    {
-      "slug": "hangzhou-data-exchange",
-      "status": "degraded",
-      "accessStatus": "reachable",
-      "fetchStatus": "succeeded",
-      "parseStatus": "empty",
-      "schemaStatus": "empty",
-      "policyStatus": "allowed_metadata",
-      "itemCount": 0,
-      "latestItemAt": null,
-      "duplicateRatio": 0,
-      "qualityScore": 0,
-      "errorType": "content",
-      "errorCode": "EMPTY_RESULT",
-      "repairAction": "inspect_endpoint_or_parser",
-      "proxyHint": "not_required",
-      "proxyUsed": false,
-      "retentionDecision": "observe",
-      "recommendedLifecycle": "shadow",
-      "durationMs": 1703
-    },
-    {
-      "slug": "shenzhen-data-exchange",
-      "status": "failed",
-      "accessStatus": "reachable",
-      "fetchStatus": "failed",
-      "parseStatus": "failed",
-      "schemaStatus": "unknown",
-      "policyStatus": "allowed_metadata",
-      "itemCount": 0,
-      "latestItemAt": null,
-      "duplicateRatio": 0,
-      "qualityScore": 0,
-      "errorType": "permanent_http",
-      "errorCode": "HTTP_418",
-      "repairAction": "replace_or_correct_endpoint",
-      "proxyHint": "not_required",
-      "proxyUsed": false,
-      "retentionDecision": "observe",
-      "recommendedLifecycle": "shadow",
-      "durationMs": 1544
-    },
-    {
-      "slug": "kingmed-health",
-      "status": "failed",
-      "accessStatus": "unreachable",
-      "fetchStatus": "failed",
-      "parseStatus": "not_started",
-      "schemaStatus": "unknown",
-      "policyStatus": "allowed_metadata",
-      "itemCount": 0,
-      "latestItemAt": null,
-      "duplicateRatio": 0,
-      "qualityScore": 0,
-      "errorType": "network",
-      "errorCode": "ADAPTER_ERROR",
-      "repairAction": "verify_network_dns_or_proxy",
-      "proxyHint": "possible",
-      "proxyUsed": false,
-      "retentionDecision": "observe",
-      "recommendedLifecycle": "degraded",
-      "durationMs": 22011
-    },
-    {
-      "slug": "meditrust-health",
-      "status": "failed",
-      "accessStatus": "reachable",
-      "fetchStatus": "failed",
-      "parseStatus": "failed",
-      "schemaStatus": "unknown",
-      "policyStatus": "allowed_metadata",
-      "itemCount": 0,
-      "latestItemAt": null,
-      "duplicateRatio": 0,
-      "qualityScore": 0,
-      "errorType": "permanent_http",
-      "errorCode": "HTTP_405",
-      "repairAction": "replace_or_correct_endpoint",
-      "proxyHint": "not_required",
-      "proxyUsed": false,
-      "retentionDecision": "observe",
-      "recommendedLifecycle": "degraded",
-      "durationMs": 1074
+      "durationMs": 1763
     },
     {
       "slug": "cq-health-information-association",
@@ -640,7 +640,7 @@
       "proxyUsed": false,
       "retentionDecision": "keep",
       "recommendedLifecycle": "shadow",
-      "durationMs": 2462
+      "durationMs": 7334
     }
   ]
 }
