@@ -24,12 +24,16 @@ try {
     resetState: backfill,
   });
   if (backfill) console.log("[collect] bounded backfill enabled for selected sources");
-  let clustering = await clusterSignals(db);
+  const industryContext = {
+    ...(config.INDUSTRY_PROFILE ? { industryProfileSlug: config.INDUSTRY_PROFILE } : {}),
+    rootDir: config.rootDir,
+  };
+  let clustering = await clusterSignals(db, industryContext);
   if (drain) {
     for (let round = 1; round < 100; round += 1) {
       const progress = clustering.created + clustering.attached + clustering.deferred;
       if (progress === 0) break;
-      const next = await clusterSignals(db);
+      const next = await clusterSignals(db, industryContext);
       clustering = {
         created: clustering.created + next.created,
         attached: clustering.attached + next.attached,

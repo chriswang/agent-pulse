@@ -79,16 +79,23 @@ export const IndustryProfileSchema = z
     competitorGroups: z.array(z.string().min(2).max(80)).min(1).max(20),
     keywords: z.array(z.string().min(2).max(80)).min(5).max(100),
     tracks: z.array(industryTrackSchema).length(6),
+    sourcesFile: z
+      .string()
+      .regex(/^[a-z0-9][a-z0-9._-]{1,79}\.json$/)
+      .optional(),
     sources: z.array(industrySourceSchema).min(20).max(30),
     trial: z
       .object({
+        phase: z.enum(["baseline", "pilot"]),
         durationDays: z.literal(7),
+        baselineDays: z.literal(30),
+        baselineStartDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        targetChinaContentPercent: z.literal(80),
+        minimumChineseReadySources: z.number().int().min(12).max(30),
+        maximumReadySourceAgeDays: z.number().int().min(30).max(365),
         minimumCollectionSuccessRate: z.number().min(0).max(100),
         topN: z.number().int().min(1).max(20),
-        readySourceSlugs: z
-          .array(z.string().regex(/^[a-z0-9][a-z0-9-]{1,79}$/))
-          .min(1)
-          .max(30),
+        readySourceSlugs: z.array(z.string().regex(/^[a-z0-9][a-z0-9-]{1,79}$/)).max(30),
       })
       .strict(),
     model: z
@@ -153,7 +160,35 @@ export function loadIndustryProfile(
   if (!slug) return null;
   if (!/^[a-z0-9][a-z0-9-]{1,79}$/.test(slug)) throw new Error("invalid_industry_profile_slug");
   const path = join(repositoryRoot, "industry-packs", slug, "profile.json");
-  return IndustryProfileSchema.parse(JSON.parse(readFileSync(path, "utf8")));
+  const raw = JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
+  if (typeof raw.sourcesFile === "string") {
+    if (!/^[a-z0-9][a-z0-9._-]{1,79}\.json$/.test(raw.sourcesFile)) {
+      throw new Error("invalid_industry_sources_file");
+    }
+    const sourceFile = JSON.parse(
+      readFileSync(join(repositoryRoot, "industry-packs", slug, raw.sourcesFile), "utf8"),
+    ) as unknown;
+    if (Array.isArray(sourceFile)) {
+      raw.sources = sourceFile;
+    } else if (
+      sourceFile &&
+      typeof sourceFile === "object" &&
+      "defaults" in sourceFile &&
+      "sources" in sourceFile &&
+      sourceFile.defaults &&
+      typeof sourceFile.defaults === "object" &&
+      Array.isArray(sourceFile.sources)
+    ) {
+      const packed = sourceFile as { defaults: Record<string, unknown>; sources: unknown[] };
+      raw.sources = packed.sources.map((source) => ({
+        ...packed.defaults,
+        ...(source && typeof source === "object" ? source : {}),
+      }));
+    } else {
+      throw new Error("invalid_industry_sources_file");
+    }
+  }
+  return IndustryProfileSchema.parse(raw);
 }
 
 export function industrySources(profile: IndustryProfile): CatalogSource[] {

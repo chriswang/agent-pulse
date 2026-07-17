@@ -10,6 +10,8 @@ origin   = chriswang/agent-pulse
                             ├─ build / test / collectors / governance
 industry-packs/medical-health-data-elements/
   profile.json              ├─ source and page configuration
+  rules.json                ├─ scope, aliases, scoring and publication policy
+  narratives.json           ├─ 30-day evidence baseline and track judgments
   data/snapshot.json        ├─ fork-only runtime state
   data/pilot-report.json    └─ seven-day acceptance evidence
 ```
@@ -26,9 +28,25 @@ industry-packs/medical-health-data-elements/
 - 六条行业观察主线；
 - 7 天试跑阈值与人工验收字段说明。
 
-行业模式下 fresh database 只 seed 该行业包来源和主线，不 seed 上游 AI 行业历史 Event、Actor 或资源。来源默认 `shadow`；`trial.readySourceSlugs` 只列入本轮已经通过现场审计与内容质量门槛的来源，并在行业试跑中映射为 `active/ready`。新增或失效来源仍走 shadow observation，不改变上游通用 E4 准入规则。
+行业模式下 fresh database 只 seed 该行业包来源和主线，不 seed 上游 AI 行业历史 Event、Actor、资源或 Narrative。来源默认 `shadow`；`trial.readySourceSlugs` 只列入本轮已经通过现场审计、内容相关性和质量门槛的来源，并在行业试跑中映射为 `active/ready`。新增或失效来源仍走 shadow observation，不改变上游通用 E4 准入规则。
 
-## 3. 模型适配
+行业公开信源目标为 80% 中国行业、20% 国际对标。首轮恢复运行至少需要 12 个中国独立发布机构和 3 个国际发布机构同时通过 GitHub 自动审计，且最新有效内容不超过 90 天；同一机构的多个栏目不能重复计数。GitHub 无法稳定访问时先寻找官方 RSS、API、JSON、Sitemap 或栏目入口，不绕过 WAF。仍不足 12 个中国发布机构时保持工作流暂停，并单独请求是否增加境内轻量采集节点。
+
+## 3. 行业相关性与中文规范化
+
+`rules.json` 经过 Zod 校验，包含强相关词、上下文词、排除词、实体别名、竞品、来源栏目映射、Track 规则、行业影响权重和发布门禁。
+
+```text
+normalized Signal
+  -> deterministic scope score
+  -> out-of-scope: triage + audit, not public
+  -> borderline: bounded Ark include|hold|exclude review
+  -> in-scope: industry eventability + cluster
+```
+
+模型可以拒绝候选，不再强制每条内容选择 Track。中文站使用中文 Event 标题与摘要；英文原题保留在 Evidence。相关英文 Signal 只翻译公开短标题和短摘要并缓存，不复制原文。
+
+## 4. 模型适配
 
 新增通用 OpenAI-compatible JSON client 与 factory，保留 `DeepSeekClient` 的兼容导出，避免破坏上游现有调用。
 
@@ -54,27 +72,45 @@ JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 
 `response_format`、DeepSeek `thinking` 和 `reasoning_effort` 只有明确支持时才发送。密钥、prompt、原 completion 和 reasoning 不进入日志、artifact、snapshot 或 Pages。
 
-## 4. 运行与发布
+## 5. 聚类、评分与发布
 
-专用 `industry-pilot.yml` 每天执行：
+行业聚类使用主体、行为、对象、时间窗口、实体别名和原始引用链；上游 AI 模型名称 fingerprint 只在默认行业生效。来源独立性按 original URL、source identity 和引用链计算，不能只按 source slug 计数。
+
+行业影响分由确定性标签映射计算，模型不能直接写总分。高优先级 Event 要求 Tier 1 原始证据和独立辅助证据，或两个独立 Tier 2 证据；单一 Tier 1 Event 可以作为普通事实发布，但明确显示待交叉验证，不能进入高优先级 Top 10。
+
+事实摘要、行业判断、未来信号和业务价值分别持久化使用的 Evidence URL。相关性不足、中文输出失败、证据映射不完整或评分不可解释时保持 review/triage。
+
+## 6. 30 天基线与领域观察
+
+行业包独立 `narratives.json`。30 天基线只引用已审核 Event；六条主线每条至少 3 个 Event、两个独立来源，才显示当前判断、证据、影响对象、反向信号和下一观察点。数据不足时显示 evidence gap。
+
+试跑期页面使用“领域观察”语义，不宣称已经计算长期趋势。通过 7 天验收后，再单独建设周度脉冲、趋势强度和阶段晋级。
+
+## 7. 运行与发布
+
+专用 `industry-pilot.yml` 在 30 天基线期每天执行：
 
 ```text
 restore industry snapshot
   -> audit configured sources
+  -> require 12 China + 3 international independent publishers
   -> collect trial-ready sources / observe new shadow sources
   -> collect + deterministic cluster
-  -> optional Ark event enrichment
+  -> deterministic industry scope
+  -> industry cluster / scoring (no model call during baseline)
   -> deterministic readiness / publish
-  -> generate seven-day pilot report
+  -> generate 30-day baseline report
   -> write privacy-safe industry snapshot
   -> commit fork-only data files
   -> dispatch industry Pages
   -> optional weekly Issue
 ```
 
-AI 失败不阻断确定性采集与快照回流。Pages 使用独立 `industry-pages.yml`，从行业快照构建根首页。
+30 天基线明确设置 `BASELINE_MODE=true`，Ark 步骤不会执行。完成基线复核并把 profile 切换到 7 天 pilot 后，才允许中文模型整理；AI 失败仍不阻断确定性采集与快照回流。Pages 使用独立 `industry-pages.yml`，从行业快照构建根首页。
 
-## 5. 公开首页
+工作流恢复前必须清理当前偏题公开 Event，保留拒绝原因和原始 Evidence；试跑窗口从新规则首次成功运行重新计时。连续性按七个独立日历日的完整 run 计算，不能只按最早时间推算。
+
+## 8. 公开首页
 
 行业首页展示：
 
@@ -87,7 +123,7 @@ AI 失败不阻断确定性采集与快照回流。Pages 使用独立 `industry-
 
 没有数据时显示真实空状态，不回退展示上游 AI 演示数据。
 
-## 6. 同步上游
+## 9. 同步上游
 
 常规同步只合并 `upstream/main`。预期冲突面限制在：
 
@@ -95,5 +131,7 @@ AI 失败不阻断确定性采集与快照回流。Pages 使用独立 `industry-
 - seed 时的行业 profile hook；
 - static export 的行业首页 hook；
 - `CHANGELOG.md` 与产品 Changelog。
+
+医疗关键词、来源、竞品、实体别名、评分权重与 Narrative 必须留在行业包；通用代码只增加可选加载和策略端口。无 `INDUSTRY_PROFILE` 时保持上游默认行为。
 
 行业来源、页面文案、试跑阈值、快照与专用 workflow 都是新增文件，正常上游升级不会覆盖。

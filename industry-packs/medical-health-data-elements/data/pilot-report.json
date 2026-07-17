@@ -1,108 +1,46 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-17T08:26:51.172Z",
+  "generatedAt": "2026-07-17T10:36:13.136Z",
   "window": {
-    "start": "2026-07-10T08:26:51.172Z",
-    "end": "2026-07-17T08:26:51.172Z",
-    "targetDays": 7,
-    "observedDays": 1
+    "start": "2026-07-17T00:00:00.000Z",
+    "end": "2026-08-15T00:00:00.000Z",
+    "targetDays": 30,
+    "observedDays": 0
   },
   "sources": {
     "configured": 30,
-    "automated": 21,
-    "manual": 9,
-    "audited": 21,
-    "healthy": 17,
-    "degraded": 2,
-    "failed": 2,
-    "unchecked": 0,
-    "healthRatePercent": 81
+    "automated": 30,
+    "manual": 0,
+    "audited": 0,
+    "healthy": 0,
+    "degraded": 0,
+    "failed": 0,
+    "unchecked": 30,
+    "healthRatePercent": null,
+    "chineseConfigured": 24,
+    "chineseHealthy": 0,
+    "chineseReadyPublishers": 0,
+    "minimumChineseReady": 12,
+    "chinaContentTargetPercent": 80
   },
   "collection": {
-    "runs": 36,
-    "successfulRuns": 34,
-    "failedRuns": 2,
-    "successRatePercent": 94.4,
+    "runs": 0,
+    "successfulRuns": 0,
+    "failedRuns": 0,
+    "successRatePercent": null,
     "targetPercent": 90,
-    "status": "pass"
+    "status": "pending"
   },
   "intelligence": {
-    "signals": 264,
-    "publishedEvents": 6,
+    "signals": 0,
+    "publishedEvents": 0,
     "multiSourceEvents": 0,
-    "multiSourceRatePercent": 0,
+    "multiSourceRatePercent": null,
     "highPriorityEvents": 0,
     "highPriorityEvidenceCoveragePercent": null
   },
-  "topCandidates": [
-    {
-      "slug": "children-s-health-further-protected-with-energy-drinks-ban-2026-07-17",
-      "title": "Children’s health further protected with energy drinks ban",
-      "company": "UK Department of Health and Social Care",
-      "happenedAt": "2026-07-16T16:39:49.000Z",
-      "priorityScore": 56,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.gov.uk/government/news/childrens-health-further-protected-with-energy-drinks-ban"
-      ]
-    },
-    {
-      "slug": "mhra-delivers-record-performance-as-2025-26-annual-report-and-accounts-confirms-growing-gl-2026-07-17",
-      "title": "MHRA delivers record performance as 2025-26 Annual Report and Accounts confirms growing global influence",
-      "company": "MHRA",
-      "happenedAt": "2026-07-16T10:58:51.000Z",
-      "priorityScore": 56,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.gov.uk/government/news/mhra-delivers-record-performance-as-2025-26-annual-report-and-accounts-confirms-growing-global-influence"
-      ]
-    },
-    {
-      "slug": "care-workers-to-be-represented-in-fair-pay-agreements-2026-07-17",
-      "title": "Care workers to be represented in fair pay agreements",
-      "company": "UK Department of Health and Social Care",
-      "happenedAt": "2026-07-16T08:15:00.000Z",
-      "priorityScore": 56,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.gov.uk/government/news/care-workers-to-be-represented-in-fair-pay-agreements"
-      ]
-    },
-    {
-      "slug": "new-who-guidelines-up-to-45-of-dementia-risk-could-be-prevented-or-delayed-2026-07-17",
-      "title": "New WHO guidelines: up to 45% of dementia risk could be prevented or delayed",
-      "company": "World Health Organization",
-      "happenedAt": "2026-07-15T12:15:58.000Z",
-      "priorityScore": 55,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.who.int/news/item/15-07-2026-new-who-guidelines--up-to-45--of-dementia-risk-could-be-prevented-or-delayed"
-      ]
-    },
-    {
-      "slug": "ema-and-eismea-boost-cooperation-to-accelerate-health-innovations-2026-07-17",
-      "title": "EMA and EISMEA boost cooperation to accelerate health innovations",
-      "company": "EMA and EISMEA",
-      "happenedAt": "2026-07-15T10:45:00.000Z",
-      "priorityScore": 55,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.ema.europa.eu/en/news/ema-eismea-boost-cooperation-accelerate-health-innovations"
-      ]
-    },
-    {
-      "slug": "ministers-launch-crackdown-on-vapes-targeting-kids-2026-07-17",
-      "title": "Ministers launch crackdown on vapes targeting kids",
-      "company": "Ministers",
-      "happenedAt": "2026-07-10T16:58:57.000Z",
-      "priorityScore": 52,
-      "sourceCount": 1,
-      "evidenceUrls": [
-        "https://www.gov.uk/government/news/ministers-launch-crackdown-on-vapes-targeting-kids"
-      ]
-    }
-  ],
+  "topCandidates": [],
   "manualReview": {
     "clusteringAccuracyPercent": null,
     "top10DecisionValueCount": null,

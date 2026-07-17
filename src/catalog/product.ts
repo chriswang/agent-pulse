@@ -6,10 +6,10 @@ export const capabilities = [
     name: "医疗健康数据要素行业包",
     domain: "product",
     status: "experimental",
-    maturity: 38,
+    maturity: 44,
     release: "unreleased",
     evidence:
-      "the isolated 30-source, six-track pack completed its first cloud run at 34/36 successful automated source runs, retained 264 Signals, published 6 in-window evidence-linked Events after Ark GLM-5.2 produced 7/8 schema-valid candidates with 14,177 total tokens, and formats generated public data before bot commits",
+      "the rebuilt isolated pack has 30 governed sources, six tracks, an empty evidence-honest baseline snapshot, deterministic scope and Chinese-output gates, and a local live audit with 22 healthy sources plus 12 China and 3 international independent publishers clearing the 90-day readiness gate; GitHub verification is pending and the model remains paused",
   },
   {
     slug: "source-catalog",
@@ -209,10 +209,10 @@ export const capabilities = [
     name: "事件聚类",
     domain: "understanding",
     status: "experimental",
-    maturity: 48,
+    maturity: 50,
     release: "0.1.0",
     evidence:
-      "eventability gate, model family/facet fingerprints and reviewable merge candidates; multilingual semantic clustering pending",
+      "eventability gate, model family/facet fingerprints, Chinese bigram similarity, publisher-level evidence independence and reviewable merge candidates; real 30-day precision and recall acceptance is pending",
   },
   {
     slug: "reversible-signal-triage",

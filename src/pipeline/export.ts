@@ -7,8 +7,15 @@ import { capabilities, productVersion, releases, roadmap } from "../catalog/prod
 import type { AppConfig } from "../config/env.js";
 import { parseJson, Repository } from "../db/repository.js";
 import type { DatabaseSchema } from "../db/types.js";
+import { loadIndustryNarratives } from "../industry/narratives.js";
 import { buildIndustryPilotReport } from "../industry/pilot-report.js";
 import { loadIndustryProfile } from "../industry/profile.js";
+import {
+  assessStoredIndustryScope,
+  type IndustryRules,
+  loadIndustryRules,
+  scopeAssessmentFromSignal,
+} from "../industry/rules.js";
 import { evaluateSystem, latestEvaluation } from "./evaluate.js";
 import { loadResearchImpactReport, researchImpactAssessmentForEvent } from "./research-impact.js";
 import { loadMergedIndustryNarratives } from "./stage-promotion.js";
@@ -91,8 +98,11 @@ function clarifyLegacyScoutCopy(insight: PublicScoutInsight): PublicScoutInsight
 export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppConfig) {
   const repository = new Repository(db);
   const industryProfile = loadIndustryProfile(config.INDUSTRY_PROFILE, config.rootDir);
+  const industryRules = loadIndustryRules(config.INDUSTRY_PROFILE, config.rootDir);
   const evaluation = (await latestEvaluation(db)) ?? (await evaluateSystem(db));
-  const narratives = await loadMergedIndustryNarratives(config.rootDir);
+  const narratives = industryProfile
+    ? await loadIndustryNarratives(industryProfile, config.rootDir)
+    : await loadMergedIndustryNarratives(config.rootDir);
   const [events, tracks, actors, resources, view, scout, latestSourceChecks, signals] =
     await Promise.all([
       repository.publicEvents(),
@@ -107,13 +117,25 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
   const sources = (await repository.listSources()).filter(
     (source) => source.lifecycle_status !== "retired",
   );
+  const eligibleEventIds = industryRules
+    ? await industryEligibleEventIds(
+        db,
+        events.map((event) => event.id),
+        industryRules,
+      )
+    : null;
+  const visibleEvents = eligibleEventIds
+    ? events.filter((event) => eligibleEventIds.has(event.id))
+    : events;
 
   const generatedAt = new Date().toISOString();
   const researchImpactReport = await loadResearchImpactReport(
     join(config.rootDir, "data/reports/research-impact.json"),
   );
-  const eventRelations = await repository.publicEventRelations(events.map((event) => event.id));
-  const enrichedEvents = events.map((event) => ({
+  const eventRelations = await repository.publicEventRelations(
+    visibleEvents.map((event) => event.id),
+  );
+  const enrichedEvents = visibleEvents.map((event) => ({
     ...event,
     tracks: eventRelations.tracks.get(event.id) ?? [],
     actors: eventRelations.actors.get(event.id) ?? [],
@@ -186,7 +208,8 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     riskLevel: resource.risk_level,
     verifiedAt: resource.verified_at,
   }));
-  const publicSignals: PublicSignal[] = signals
+  const visibleSignals = industryRules ? selectIndustrySignals(signals, industryRules) : signals;
+  const publicSignals: PublicSignal[] = visibleSignals
     .filter((signal) => safePublicUrl(signal.url))
     .map((signal) => ({
       title: signal.title,
@@ -366,6 +389,57 @@ function briefPublicText(value: string): string {
     .replace(/\s+/g, " ")
     .trim();
   return text.length <= 220 ? text : `${text.slice(0, 217).trimEnd()}…`;
+}
+
+function selectIndustrySignals<
+  T extends {
+    rawMetaJson: string;
+    sourceRegion: string;
+    language: string;
+    publishedAt: string;
+  },
+>(signals: T[], rules: IndustryRules): T[] {
+  const included = signals.filter((signal) => {
+    const scope = scopeAssessmentFromSignal({ raw_meta_json: signal.rawMetaJson });
+    return scope?.profileSlug === rules.profileSlug && scope.decision === "include";
+  });
+  const china = included.filter(
+    (signal) => signal.sourceRegion === "CN" || signal.language.toLowerCase().startsWith("zh"),
+  );
+  const global = included.filter((signal) => !china.includes(signal));
+  const maximumGlobal = Math.floor(
+    (china.length * (100 - rules.targetChinaContentPercent)) / rules.targetChinaContentPercent,
+  );
+  return [...china, ...global.slice(0, maximumGlobal)].sort((left, right) =>
+    right.publishedAt.localeCompare(left.publishedAt),
+  );
+}
+
+async function industryEligibleEventIds(
+  db: Kysely<DatabaseSchema>,
+  eventIds: string[],
+  rules: IndustryRules,
+): Promise<Set<string>> {
+  if (eventIds.length === 0) return new Set();
+  const rows = await db
+    .selectFrom("event_signals")
+    .innerJoin("signals", "signals.id", "event_signals.signal_id")
+    .innerJoin("sources", "sources.id", "signals.source_id")
+    .select([
+      "event_signals.event_id as eventId",
+      "signals.title",
+      "signals.summary",
+      "signals.tags_json",
+      "signals.raw_meta_json",
+      "sources.slug",
+    ])
+    .where("event_signals.event_id", "in", eventIds)
+    .execute();
+  return new Set(
+    rows
+      .filter((row) => assessStoredIndustryScope(row, row, rules).decision === "include")
+      .map((row) => row.eventId),
+  );
 }
 
 async function writeAllPages(pages: StaticPage[], distDir: string): Promise<void> {

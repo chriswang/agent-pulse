@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "profileSlug": "medical-health-data-elements",
+  "contentLocale": "zh-CN",
+  "baselineDays": 30,
+  "targetChinaContentPercent": 80,
+  "minimumChineseReadySources": 12,
+  "relevance": {
+    "includeThreshold": 55,
+    "holdThreshold": 30,
+    "strong": {
+      "terms": [
+        "数据要素",
+        "健康医疗数据",
+        "医疗健康数据",
+        "医疗数据",
+        "医保数据",
+        "商保数据",
+        "数据授权运营",
+        "公共数据授权运营",
+        "数据流通",
+        "数据交易",
+        "可信数据空间",
+        "数据资产",
+        "数据产品",
+        "数据资源登记",
+        "高质量数据集",
+        "电子病历共享",
+        "检查检验结果互认",
+        "真实世界数据",
+        "真实世界研究",
+        "真实世界证据",
+        "医疗器械唯一标识",
+        "医保商保融合",
+        "隐私计算",
+        "联邦学习",
+        "多方安全计算",
+        "FHIR",
+        "互联互通",
+        "health data",
+        "healthcare data",
+        "real-world data",
+        "real-world evidence",
+        "health information exchange",
+        "interoperability",
+        "common data model",
+        "data linkage",
+        "data sharing",
+        "patient matching",
+        "privacy-preserving record linkage"
+      ],
+      "weight": 40,
+      "cap": 70
+    },
+    "context": {
+      "terms": [
+        "医院",
+        "医疗机构",
+        "卫生健康",
+        "医保",
+        "商业健康保险",
+        "保险科技",
+        "TPA",
+        "药企",
+        "医药",
+        "医疗器械",
+        "药械",
+        "临床研究",
+        "健康管理",
+        "数据集团",
+        "数据交易所",
+        "hospital",
+        "health system",
+        "payer",
+        "health insurance",
+        "pharma",
+        "medtech",
+        "clinical research",
+        "electronic health record",
+        "EHR"
+      ],
+      "weight": 12,
+      "cap": 24
+    },
+    "action": {
+      "terms": [
+        "政策",
+        "通知",
+        "意见",
+        "办法",
+        "条例",
+        "标准",
+        "试点",
+        "场景",
+        "发布",
+        "上线",
+        "推出",
+        "合作",
+        "签约",
+        "中标",
+        "采购",
+        "融资",
+        "并购",
+        "会议",
+        "大会",
+        "论坛",
+        "指南",
+        "监管",
+        "开放",
+        "policy",
+        "regulation",
+        "standard",
+        "launch",
+        "release",
+        "partnership",
+        "conference"
+      ],
+      "weight": 12,
+      "cap": 24
+    },
+    "exclusions": [
+      "能量饮料",
+      "电子烟",
+      "饮食建议",
+      "运动建议",
+      "儿童肥胖",
+      "痴呆预防",
+      "埃博拉",
+      "传染病通报",
+      "疫苗接种提醒",
+      "临床病例",
+      "患者教育"
+    ],
+    "sourceBoosts": {
+      "national-data-administration": 20,
+      "nda-local-dynamics": 20,
+      "gov-cn-latest-policy": 10,
+      "nhsa-policy": 18,
+      "nmpa-udi-data": 18,
+      "cac-data-policy": 15,
+      "guangzhou-data-bureau": 15,
+      "caict-health-data": 12,
+      "chima": 15,
+      "china-insurance-association": 15,
+      "shanghai-data-exchange": 15,
+      "shenzhen-data-exchange": 15,
+      "beijing-data-exchange": 15,
+      "yidu-tech": 20,
+      "weining-health": 20,
+      "taimei-health": 20,
+      "meditrust-health": 20,
+      "kingmed-health": 20,
+      "hl7-blog": 15,
+      "ohdsi-news": 15,
+      "datavant": 15
+    }
+  },
+  "entities": [
+    {
+      "canonical": "医渡科技",
+      "aliases": ["医渡科技", "Yidu Tech"],
+      "weight": 25
+    },
+    {
+      "canonical": "卫宁健康",
+      "aliases": ["卫宁健康", "Winning Health"],
+      "weight": 25
+    },
+    {
+      "canonical": "嘉和美康",
+      "aliases": ["嘉和美康"],
+      "weight": 25
+    },
+    {
+      "canonical": "太美医疗科技",
+      "aliases": ["太美医疗", "Taimei"],
+      "weight": 25
+    },
+    {
+      "canonical": "镁信健康",
+      "aliases": ["镁信健康", "MediTrust"],
+      "weight": 25
+    },
+    {
+      "canonical": "金域医学",
+      "aliases": ["金域医学", "KingMed"],
+      "weight": 25
+    },
+    {
+      "canonical": "通用技术健康医疗大数据",
+      "aliases": ["通用技术健康医疗大数据", "健康医疗大数据集团"],
+      "weight": 25
+    },
+    {
+      "canonical": "HL7",
+      "aliases": ["HL7", "FHIR"],
+      "weight": 20
+    },
+    {
+      "canonical": "OHDSI",
+      "aliases": ["OHDSI", "OMOP Common Data Model"],
+      "weight": 20
+    },
+    {
+      "canonical": "Datavant",
+      "aliases": ["Datavant"],
+      "weight": 20
+    }
+  ],
+  "publication": {
+    "minimumRelevanceScore": 55,
+    "highPriorityConfidence": 80,
+    "highPriorityImpact": 80,
+    "highPriorityValue": 70
+  }
+}

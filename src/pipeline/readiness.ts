@@ -1,6 +1,7 @@
 import type { Kysely } from "kysely";
 import { parseJson } from "../db/repository.js";
 import type { DatabaseSchema, EventRow } from "../db/types.js";
+import { sourcePublisherKey } from "../domain/source-identity.js";
 import type { ScoreFactors } from "../domain/types.js";
 
 export type ReadinessBlocker =
@@ -50,6 +51,7 @@ export async function evaluateEventReadiness(
       .innerJoin("sources", "sources.id", "signals.source_id")
       .select([
         "sources.id as sourceId",
+        "sources.homepage_url as homepageUrl",
         "sources.tier as tier",
         "sources.role as role",
         "sources.source_category as sourceCategory",
@@ -62,7 +64,7 @@ export async function evaluateEventReadiness(
       .where("event_id", "=", eventId)
       .executeTakeFirstOrThrow(),
   ]);
-  const independentSources = new Set(evidence.map((item) => item.sourceId)).size;
+  const independentSources = independentPublisherCount(evidence);
   const primaryEvidence = new Set(
     evidence
       .filter(
@@ -124,6 +126,7 @@ export async function eventReadinessSummary(db: Kysely<DatabaseSchema>) {
       .select([
         "event_signals.event_id as eventId",
         "sources.id as sourceId",
+        "sources.homepage_url as homepageUrl",
         "sources.tier as tier",
         "sources.role as role",
         "sources.source_category as sourceCategory",
@@ -168,13 +171,14 @@ function evaluateReadinessRow(
   candidate: EventRow,
   evidence: Array<{
     sourceId: string;
+    homepageUrl: string;
     tier: number;
     role: string;
     sourceCategory: string;
   }>,
   trackCount: number,
 ): EventReadiness {
-  const independentSources = new Set(evidence.map((item) => item.sourceId)).size;
+  const independentSources = independentPublisherCount(evidence);
   const primaryEvidence = new Set(
     evidence
       .filter(
@@ -229,6 +233,12 @@ function evaluateReadinessRow(
     warnings:
       independentSources < 2 ? ["single-source fact; cross-source corroboration pending"] : [],
   };
+}
+
+function independentPublisherCount(
+  evidence: Array<{ sourceId: string; homepageUrl: string }>,
+): number {
+  return new Set(evidence.map((item) => sourcePublisherKey(item.homepageUrl, item.sourceId))).size;
 }
 
 function hasPlaceholder(value: string): boolean {

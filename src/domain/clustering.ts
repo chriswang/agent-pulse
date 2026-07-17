@@ -13,12 +13,24 @@ const STOP_WORDS = new Set([
 ]);
 
 export function titleTokens(title: string): Set<string> {
-  const tokens = title
-    .normalize("NFKC")
-    .toLowerCase()
-    .replace(/[^a-z0-9\u4e00-\u9fff]+/g, " ")
-    .split(/\s+/)
-    .filter((token) => token.length > 1 && !STOP_WORDS.has(token));
+  const segments =
+    title
+      .normalize("NFKC")
+      .toLowerCase()
+      .match(/[a-z0-9]+|[\u4e00-\u9fff]+/g) ?? [];
+  const tokens: string[] = [];
+  for (const segment of segments) {
+    if (/^[\u4e00-\u9fff]+$/.test(segment)) {
+      if (segment.length <= 2) tokens.push(segment);
+      else {
+        for (let index = 0; index < segment.length - 1; index += 1) {
+          tokens.push(segment.slice(index, index + 2));
+        }
+      }
+    } else if (segment.length > 1 && !STOP_WORDS.has(segment)) {
+      tokens.push(segment);
+    }
+  }
 
   return new Set(tokens);
 }
@@ -50,7 +62,11 @@ export function belongsToEvent(
       candidateFacet === existingFacet && hours <= (candidateFacet === "incident" ? 7 : 21) * 24
     );
   }
-  return hours <= 96 && titleSimilarity(candidate.title, event.title) >= threshold;
+  return (
+    hours <= 96 &&
+    eventFacetBucket(eventFacet(candidate.title)) === eventFacetBucket(eventFacet(event.title)) &&
+    titleSimilarity(candidate.title, event.title) >= threshold
+  );
 }
 
 export function eventFingerprint(title: string): string | null {
@@ -88,6 +104,12 @@ export function eventFacet(title: string): string {
   if (/outage|incident|breach|漏洞|宕机|故障|事故|诉讼|lawsuit/.test(normalized)) return "incident";
   if (/series [a-z]|funding|融资|估值|ipo|s-1|并购|acqui/.test(normalized)) return "capital";
   if (/price|pricing|降价|涨价|定价|subscription/.test(normalized)) return "pricing";
+  if (/签约|战略合作|合作协议|达成合作|联合共建|成立联盟|中标/.test(normalized))
+    return "partnership";
+  if (/大会|论坛|峰会|研讨会|交流会|会议召开|会议举办|征集参会|开放报名/.test(normalized))
+    return "conference";
+  if (/政策|办法|条例|规范|通知|意见|指南|监管|合规|国家标准|行业标准/.test(normalized))
+    return "policy";
   if (
     /available (?:in|for|on)|integration|integrat|microsoft 365|github copilot|进入.+copilot|接入|集成|分发/.test(
       normalized,

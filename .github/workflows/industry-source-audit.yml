@@ -1,0 +1,65 @@
+name: Verify medical health source baseline
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: sqlite:${{ runner.temp }}/medical-health-source-audit.db
+      INDUSTRY_PROFILE: medical-health-data-elements
+      SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health-github.json
+    steps:
+      - name: Check out the fork main branch
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Audit all configured public sources
+        run: npm run sources:audit -- --concurrency=4 --report="$SOURCE_HEALTH_REPORT"
+
+      - name: Apply the China-first readiness gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run --silent industry:sources:gate -- --report="$SOURCE_HEALTH_REPORT" | tee "$RUNNER_TEMP/industry-source-gate.json"
+
+      - name: Upload source audit evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: medical-health-source-audit-${{ github.run_id }}
+          path: |
+            ${{ env.SOURCE_HEALTH_REPORT }}
+            ${{ runner.temp }}/industry-source-gate.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Record source audit summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Medical health source baseline"
+            if [[ -s "$RUNNER_TEMP/industry-source-gate.json" ]]; then
+              echo "- Gate: $(jq -r 'if .pass then "pass" else "fail" end' "$RUNNER_TEMP/industry-source-gate.json")"
+              echo "- Chinese publishers: $(jq -r '.chineseReadyPublishers' "$RUNNER_TEMP/industry-source-gate.json") / $(jq -r '.minimumChinesePublishers' "$RUNNER_TEMP/industry-source-gate.json")"
+              echo "- International publishers: $(jq -r '.internationalReadyPublishers' "$RUNNER_TEMP/industry-source-gate.json") / $(jq -r '.minimumInternationalPublishers' "$RUNNER_TEMP/industry-source-gate.json")"
+            else
+              echo "- Gate: not reached"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

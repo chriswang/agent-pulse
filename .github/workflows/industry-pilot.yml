@@ -1,8 +1,8 @@
-name: Run medical health data pilot
+name: Build medical health 30-day evidence baseline
 
 on:
   schedule:
-    # Daily at 20:17 Asia/Shanghai during the seven-day pilot.
+    # Daily at 20:17 Asia/Shanghai during the 30-day evidence baseline.
     - cron: "17 12 * * *"
   workflow_dispatch:
     inputs:
@@ -35,6 +35,7 @@ jobs:
       MODEL_BASE_URL: https://ark.cn-beijing.volces.com/api/coding/v3
       MODEL_NAME: glm-5.2
       MODEL_JSON_MODE: prompt-only
+      BASELINE_MODE: "true"
       SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health.json
       PILOT_REPORT: industry-packs/medical-health-data-elements/data/pilot-report.json
     steps:
@@ -59,6 +60,9 @@ jobs:
       - name: Audit the configured industry sources
         run: npm run sources:audit -- --concurrency=4 --report="$SOURCE_HEALTH_REPORT"
 
+      - name: Require the China-first source baseline
+        run: npm run --silent industry:sources:gate -- --report="$SOURCE_HEALTH_REPORT"
+
       - name: Enable only healthy shadow observations
         run: npm run observe:sources -- --confirm
 
@@ -74,6 +78,7 @@ jobs:
 
       - name: Enrich evidence-ready Events with Ark GLM-5.2
         id: enrichment
+        if: ${{ env.BASELINE_MODE == 'false' }}
         env:
           AI_ENRICHMENT_ENABLED: "true"
           AI_ENRICHMENT_MAX_EVENTS: "8"
@@ -100,7 +105,7 @@ jobs:
       - name: Publish only Events that clear deterministic gates
         run: npm run auto:publish
 
-      - name: Generate the seven-day pilot report
+      - name: Generate the 30-day baseline report
         run: npm run --silent industry:report -- --output="$PILOT_REPORT"
 
       - name: Export the industry site
@@ -177,7 +182,7 @@ jobs:
             echo "- Ark enrichment: ${{ steps.enrichment.outputs.status || 'not-run' }}"
             echo "- Snapshot changed: ${{ steps.commit.outputs.changed || 'unknown' }}"
             if [[ -s "$PILOT_REPORT" ]]; then
-              echo "- Observed days: $(jq -r '.window.observedDays' "$PILOT_REPORT") / 7"
+              echo "- Observed days: $(jq -r '.window.observedDays' "$PILOT_REPORT") / $(jq -r '.window.targetDays' "$PILOT_REPORT")"
               echo "- Collection success: $(jq -r '.collection.successRatePercent // "pending"' "$PILOT_REPORT")%"
               echo "- Multi-source Events: $(jq -r '.intelligence.multiSourceEvents' "$PILOT_REPORT")"
               echo "- Readiness: $(jq -r '.readiness' "$PILOT_REPORT")"

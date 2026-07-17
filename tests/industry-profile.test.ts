@@ -18,7 +18,7 @@ import { validatePublicSite } from "../src/pipeline/public-site-integrity.js";
 const profileSlug = "medical-health-data-elements";
 
 describe("medical health data elements industry profile", () => {
-  it("keeps 20-30 governed sources and Ark GLM-5.2 settings in one public pack", () => {
+  it("keeps a China-first governed source pack isolated from the core profile", () => {
     const profile = requiredProfile();
     expect(profile.sources).toHaveLength(30);
     expect(profile.tracks).toHaveLength(6);
@@ -32,15 +32,20 @@ describe("medical health data elements industry profile", () => {
       20,
     );
     expect(new Set(sources.map((source) => source.slug)).size).toBe(sources.length);
-    expect(profile.trial.readySourceSlugs).toHaveLength(18);
-    expect(sources.filter((source) => source.enabled)).toHaveLength(18);
-    expect(
-      sources
-        .filter((source) => source.enabled)
-        .every(
-          (source) => source.lifecycleStatus === "active" && source.maintenanceStatus === "ready",
-        ),
-    ).toBe(true);
+    expect(profile.sources.filter((source) => source.region === "CN")).toHaveLength(24);
+    expect(profile.sources.filter((source) => source.region !== "CN")).toHaveLength(6);
+    expect(profile.trial).toMatchObject({
+      phase: "baseline",
+      baselineDays: 30,
+      baselineStartDate: "2026-07-17",
+      durationDays: 7,
+      targetChinaContentPercent: 80,
+      minimumChineseReadySources: 12,
+      maximumReadySourceAgeDays: 90,
+    });
+    expect(profile.trial.readySourceSlugs).toHaveLength(16);
+    expect(sources.filter((source) => source.enabled)).toHaveLength(16);
+    expect(sources.filter((source) => source.enabled && source.region === "CN")).toHaveLength(13);
   });
 
   it("rejects duplicate source slugs", () => {
@@ -54,7 +59,12 @@ describe("medical health data elements industry profile", () => {
 
   it("rejects manual sources in the pilot-ready collection set", () => {
     const profile = structuredClone(requiredProfile());
-    profile.trial.readySourceSlugs = ["national-health-commission"];
+    const source = profile.sources[0];
+    if (!source) throw new Error("profile_fixture_requires_source");
+    source.adapter = "manual";
+    source.acquisition = "manual";
+    source.maintenanceStatus = "manual";
+    profile.trial.readySourceSlugs = [source.slug];
     expect(() => IndustryProfileSchema.parse(profile)).toThrow(/must be automated/);
   });
 
@@ -95,8 +105,8 @@ describe("medical health data elements industry profile", () => {
         readiness: "collecting",
         sources: {
           configured: 30,
-          automated: 21,
-          manual: 9,
+          automated: 30,
+          manual: 0,
           degraded: 0,
           healthRatePercent: null,
         },
@@ -139,7 +149,7 @@ describe("medical health data elements industry profile", () => {
       const integrity = await validatePublicSite(config.distDir, "2026-07-17T00:00:00.000Z");
       expect(integrity).toMatchObject({
         ok: true,
-        counts: { events: 2, signals: 0, actors: 0, sources: 30 },
+        counts: { events: 0, signals: 0, actors: 0, sources: 30 },
       });
       expect(integrity.issues).toEqual([]);
     } finally {

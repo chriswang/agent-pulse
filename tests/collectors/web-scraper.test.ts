@@ -92,7 +92,7 @@ describe("web-scraper adapter", () => {
     expect(result[0]?.rawMeta.dateInferred).toBe(false);
   });
 
-  it("extracts items from listing cards", async () => {
+  it("does not accept undated listing cards as current signals", async () => {
     const html = `<!DOCTYPE html><html><body>
       <div class="post-card">
         <h2><a href="/news/1">Breaking News</a></h2>
@@ -104,7 +104,7 @@ describe("web-scraper adapter", () => {
       </div>
     </body></html>`;
     const result = await adapter.collect(makeSource(), makeContext(html));
-    expect(result.length).toBeGreaterThanOrEqual(1);
+    expect(result).toEqual([]);
   });
 
   it("extracts explicit human-readable dates from article cards", async () => {
@@ -120,6 +120,31 @@ describe("web-scraper adapter", () => {
 
     expect(result[0]?.publishedAt).toBe("2026-06-23T00:00:00.000Z");
     expect(result[0]?.rawMeta.dateInferred).toBe(false);
+  });
+
+  it("extracts dated Chinese government list items without CSS card classes", async () => {
+    const html = `<!DOCTYPE html><html><body><ul>
+      <li><a href="/policy/202607/t20260715_1.html" title="关于推进健康医疗数据授权运营的通知">关于推进健康医疗数据授权运营的通知</a><span>2026年7月15日</span></li>
+      <li><a href="/policy/202607/t20260710_2.html">医疗保障数据工作要点</a><span>2026-07-10</span></li>
+      <li><a href="/about">机构简介</a></li>
+    </ul></body></html>`;
+
+    const result = await adapter.collect(
+      makeSource({ language: "zh-CN", region: "CN" }),
+      makeContext(html),
+    );
+
+    expect(result.map((item) => ({ title: item.title, date: item.publishedAt }))).toEqual([
+      { title: "关于推进健康医疗数据授权运营的通知", date: "2026-07-15T00:00:00.000Z" },
+      { title: "医疗保障数据工作要点", date: "2026-07-10T00:00:00.000Z" },
+    ]);
+    expect(result[0]).toMatchObject({
+      title: "关于推进健康医疗数据授权运营的通知",
+      url: "https://example.com/policy/202607/t20260715_1.html",
+      publishedAt: "2026-07-15T00:00:00.000Z",
+      rawMeta: { dateInferred: false },
+    });
+    expect(result.map((item) => item.title)).not.toContain("机构简介");
   });
 
   it("extracts JSON-LD structured data", async () => {
@@ -149,8 +174,8 @@ describe("web-scraper adapter", () => {
       {
         "@context": "https://schema.org",
         "@graph": [
-          { "@type": "NewsArticle", "headline": "Graph Article 1", "url": "https://example.com/g1", "description": "First graph article description with details." },
-          { "@type": "NewsArticle", "headline": "Graph Article 2", "url": "https://example.com/g2", "description": "Second graph article description with details." }
+          { "@type": "NewsArticle", "headline": "Graph Article 1", "url": "https://example.com/g1", "description": "First graph article description with details.", "datePublished": "2026-07-01" },
+          { "@type": "NewsArticle", "headline": "Graph Article 2", "url": "https://example.com/g2", "description": "Second graph article description with details.", "datePublished": "2026-07-02" }
         ]
       }
       </script>
@@ -266,15 +291,56 @@ describe("web-scraper adapter", () => {
   it("deduplicates by URL", async () => {
     const html = `<!DOCTYPE html><html><head>
       <script type="application/ld+json">
-      { "@type": "BlogPosting", "headline": "Same Article", "url": "https://example.com/same", "description": "Duplicate." }
+      { "@type": "BlogPosting", "headline": "Same Article", "url": "https://example.com/same", "description": "Duplicate.", "datePublished": "2026-07-01" }
       </script>
     </head><body>
-      <article><h2><a href="https://example.com/same">Same Article</a></h2><p>Duplicate.</p></article>
+      <article><h2><a href="https://example.com/same">Same Article</a></h2><p>Duplicate.</p><time datetime="2026-07-01"></time></article>
     </body></html>`;
     const result = await adapter.collect(makeSource(), makeContext(html));
     const urls = result.map((r) => r.url);
     const sameUrls = urls.filter((u) => u === "https://example.com/same");
     expect(sameUrls.length).toBe(1);
+  });
+
+  it("normalizes dotted dates and unquoted href attributes from Chinese listings", async () => {
+    const html = `<!DOCTYPE html><html><body><ul>
+      <li><a href=/notice/2026-07/15/1001 title="数据要素×医疗健康应用通知">数据要素×医疗健康应用通知</a><span>2026.07.15</span></li>
+    </ul></body></html>`;
+
+    const result = await adapter.collect(
+      makeSource({ language: "zh-CN", region: "CN" }),
+      makeContext(html),
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      title: "数据要素×医疗健康应用通知",
+      url: "https://example.com/notice/2026-07/15/1001",
+      publishedAt: "2026-07-15T00:00:00.000Z",
+      rawMeta: { dateInferred: false },
+    });
+  });
+
+  it("extracts SSR cards whose dated title link is split across sibling elements", async () => {
+    const html = `<!DOCTYPE html><html><body>
+      <div class="framework-grid-column">
+        <a href="/news/201"><img src="/cover.png" alt=""></a>
+        <div class="published-date">2026-07-10</div>
+        <a href="/news/201" class="headline">数据智能驱动商业健康险合作落地</a>
+      </div>
+    </body></html>`;
+
+    const result = await adapter.collect(
+      makeSource({ language: "zh-CN", region: "CN" }),
+      makeContext(html),
+    );
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      title: "数据智能驱动商业健康险合作落地",
+      url: "https://example.com/news/201",
+      publishedAt: "2026-07-10T00:00:00.000Z",
+    });
   });
 
   it("respects take limit", async () => {

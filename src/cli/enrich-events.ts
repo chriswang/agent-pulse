@@ -2,6 +2,7 @@ import { createJsonModelClient, resolveModelIdentity } from "../ai/provider.js";
 import { loadConfig } from "../config/env.js";
 import { createDatabase } from "../db/database.js";
 import { migrateToLatest } from "../db/migrate.js";
+import { loadIndustryProfile } from "../industry/profile.js";
 import { enrichReviewEvents } from "../pipeline/ai-enrichment.js";
 
 const config = loadConfig();
@@ -27,7 +28,12 @@ try {
   const client = createJsonModelClient(config, {
     timeoutMs: config.AI_ENRICHMENT_TIMEOUT_MS,
   });
-  const report = await enrichReviewEvents(db, client, { maxEvents, dryRun });
+  const industryProfile = loadIndustryProfile(config.INDUSTRY_PROFILE, config.rootDir);
+  const report = await enrichReviewEvents(db, client, {
+    maxEvents,
+    dryRun,
+    ...(industryProfile ? { outputLocale: "zh-CN" as const } : {}),
+  });
   console.log(
     JSON.stringify(
       { enabled: true, provider: identity.provider, model: identity.model, ...report },

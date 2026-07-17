@@ -72,6 +72,7 @@ interface Candidate {
 export interface EnrichmentOptions {
   maxEvents?: number;
   dryRun?: boolean;
+  outputLocale?: "zh-CN";
 }
 
 export interface EnrichmentFailure {
@@ -112,7 +113,7 @@ export async function enrichReviewEvents(
 
   for (const candidate of candidates) {
     report.attempted += 1;
-    const prompt = candidatePrompt(candidate);
+    const prompt = candidatePrompt(candidate, options.outputLocale);
     report.inputHashes.push(createHash("sha256").update(prompt).digest("hex"));
     try {
       const completion = await client.completeJson({
@@ -121,7 +122,7 @@ export async function enrichReviewEvents(
         maxTokens: 1_800,
       });
       addUsage(report.usage, completion.usage);
-      const draft = validateDraft(completion.value, candidate);
+      const draft = validateDraft(completion.value, candidate, options.outputLocale);
       if (!report.dryRun) await applyDraft(db, candidate, draft);
       report.succeeded += 1;
       if (report.dryRun) continue;
@@ -184,9 +185,9 @@ async function loadCandidates(db: Kysely<DatabaseSchema>, maxEvents: number): Pr
   return candidates;
 }
 
-function candidatePrompt(candidate: Candidate): string {
+function candidatePrompt(candidate: Candidate, outputLocale?: "zh-CN"): string {
   return JSON.stringify({
-    task: "根据给定证据收敛一个可核验的 AI 行业 Event。只使用 evidence 中的信息。",
+    task: "根据给定证据收敛一个可核验的行业 Event。只使用 evidence 中的信息。",
     rules: [
       "factSummary 与 summary 只能陈述证据直接支持的事实，不得补造数字、日期、融资额或产品能力。",
       "technicalInsight、industryInsight、futureOutlook、businessValue 是判断，使用克制措辞并给出可验证下一信号。",
@@ -195,6 +196,11 @@ function candidatePrompt(candidate: Candidate): string {
       "trackSlugs 必须从 availableTracks.slug 中选择。",
       "category 使用具体英文 kebab-case，不得使用 industry。",
       "company 表示事件主体，必须使用标题或证据中明确出现的公司、实验室、模型、方法、项目或论文名；研究论文没有机构信息时使用论文明确命名的方法，不得使用 industry、unknown 或泛称。",
+      ...(outputLocale === "zh-CN"
+        ? [
+            "除 category、trackSlugs、usedEvidenceUrls 和必要的专有名词外，所有正文与关键词必须使用简体中文；英文证据先准确转述为中文。",
+          ]
+        : []),
     ],
     outputKeys: [
       "factSummary",
@@ -237,8 +243,24 @@ const SYSTEM_PROMPT = [
   "返回严格 JSON，字段完整，不要输出解释、Markdown 或代码围栏。",
 ].join("\n");
 
-function validateDraft(value: unknown, candidate: Candidate): EventEnrichmentDraft {
+function validateDraft(
+  value: unknown,
+  candidate: Candidate,
+  outputLocale?: "zh-CN",
+): EventEnrichmentDraft {
   const draft = enrichmentSchema.parse(value);
+  if (outputLocale === "zh-CN") {
+    for (const [field, text] of [
+      ["factSummary", draft.factSummary],
+      ["summary", draft.summary],
+      ["technicalInsight", draft.technicalInsight],
+      ["industryInsight", draft.industryInsight],
+      ["futureOutlook", draft.futureOutlook],
+      ["businessValue", draft.businessValue],
+    ] as const) {
+      if (!/\p{Script=Han}/u.test(text)) throw new Error(`non_chinese_${field}`);
+    }
+  }
   const evidenceUrls = new Set(candidate.evidence.map((item) => item.url));
   if (draft.usedEvidenceUrls.some((url) => !evidenceUrls.has(url))) {
     throw new Error("unknown_evidence_url");

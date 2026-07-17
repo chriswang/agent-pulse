@@ -13,7 +13,12 @@ describe("medical health industry workflows", () => {
     expect(workflow).not.toContain("data/snapshot/v1.json");
     expect(workflow).toContain("MODEL_PROVIDER: ark");
     expect(workflow).toContain("MODEL_NAME: glm-5.2");
+    expect(workflow).toContain('BASELINE_MODE: "true"');
     expect(workflow).toContain("MODEL_API_KEY: $" + "{{ secrets.MODEL_API_KEY }}");
+    expect(workflow.indexOf("industry:sources:gate")).toBeLessThan(
+      workflow.indexOf("npm run collect"),
+    );
+    expect(workflow).toContain("if: $" + "{{ env.BASELINE_MODE == 'false' }}");
     expect(workflow.indexOf("npm run collect")).toBeLessThan(
       workflow.indexOf("Enrich evidence-ready Events with Ark GLM-5.2"),
     );
@@ -26,6 +31,16 @@ describe("medical health industry workflows", () => {
       workflow.indexOf('git add -- "$REPOSITORY_SNAPSHOT_PATH"'),
     );
     expect(workflow).toContain('git add -- "$REPOSITORY_SNAPSHOT_PATH"');
+  });
+
+  it("can verify the source gate on GitHub without calling a model or deploying", async () => {
+    const workflow = await readWorkflow("industry-source-audit.yml");
+    expect(workflow).toContain("npm run sources:audit");
+    expect(workflow).toContain("industry:sources:gate");
+    expect(workflow).toContain("chineseReadyPublishers");
+    expect(workflow).not.toContain("MODEL_API_KEY");
+    expect(workflow).not.toContain("secrets.");
+    expect(workflow).not.toContain("deploy-pages");
   });
 
   it("deploys only the isolated industry artifact to the personal GitHub Pages site", async () => {

@@ -4,8 +4,14 @@ import type { Kysely } from "kysely";
 import { z } from "zod";
 import { Repository } from "../db/repository.js";
 import type { DatabaseSchema } from "../db/types.js";
+import { sourcePublisherKey } from "../domain/source-identity.js";
 import type { EnrichedEvent } from "../pipeline/static-site/dto.js";
 import type { IndustryProfile } from "./profile.js";
+import {
+  assessStoredIndustryScope,
+  loadIndustryRules,
+  scopeAssessmentFromSignal,
+} from "./rules.js";
 
 const manualReviewSchema = z
   .object({
@@ -33,6 +39,11 @@ export interface IndustryPilotReport {
     failed: number;
     unchecked: number;
     healthRatePercent: number | null;
+    chineseConfigured: number;
+    chineseHealthy: number;
+    chineseReadyPublishers: number;
+    minimumChineseReady: number;
+    chinaContentTargetPercent: number;
   };
   collection: {
     runs: number;
@@ -78,9 +89,23 @@ export async function buildIndustryPilotReport(
   referenceAt = new Date().toISOString(),
 ): Promise<IndustryPilotReport> {
   const repository = new Repository(db);
+  const rules = loadIndustryRules(profile.slug, rootDir);
   const reference = new Date(referenceAt);
-  const start = new Date(reference.getTime() - profile.trial.durationDays * 86_400_000);
-  const [sources, checks, events, runs, signalCount, manualReview] = await Promise.all([
+  const targetDays =
+    profile.trial.phase === "baseline" ? profile.trial.baselineDays : profile.trial.durationDays;
+  const start =
+    profile.trial.phase === "baseline"
+      ? new Date(`${profile.trial.baselineStartDate}T00:00:00.000Z`)
+      : new Date(reference.getTime() - targetDays * 86_400_000);
+  const targetEnd =
+    profile.trial.phase === "baseline"
+      ? new Date(start.getTime() + (targetDays - 1) * 86_400_000)
+      : reference;
+  const windowEndExclusive =
+    profile.trial.phase === "baseline"
+      ? new Date(start.getTime() + targetDays * 86_400_000)
+      : new Date(reference.getTime() + 1);
+  const [sources, checks, events, runs, signalRows, manualReview] = await Promise.all([
     repository.listSources(),
     repository.latestSourceChecks(),
     repository.publicEvents(),
@@ -94,12 +119,21 @@ export async function buildIndustryPilotReport(
         "sources.slug as sourceSlug",
       ])
       .where("source_runs.started_at", ">=", start.toISOString())
+      .where("source_runs.started_at", "<", windowEndExclusive.toISOString())
       .execute(),
     db
       .selectFrom("signals")
-      .select(({ fn }) => fn.countAll<number>().as("count"))
-      .where("created_at", ">=", start.toISOString())
-      .executeTakeFirstOrThrow(),
+      .innerJoin("sources", "sources.id", "signals.source_id")
+      .select([
+        "signals.title",
+        "signals.summary",
+        "signals.tags_json",
+        "signals.raw_meta_json",
+        "signals.created_at as createdAt",
+        "sources.slug",
+        "sources.region",
+      ])
+      .execute(),
     readManualReview(rootDir, profile.slug),
   ]);
   const automatedSlugs = new Set(
@@ -129,8 +163,13 @@ export async function buildIndustryPilotReport(
         .select([
           "event_signals.event_id as eventId",
           "sources.slug as sourceSlug",
+          "sources.homepage_url as homepageUrl",
           "sources.tier as sourceTier",
           "sources.role as sourceRole",
+          "signals.title",
+          "signals.summary",
+          "signals.tags_json",
+          "signals.raw_meta_json",
         ])
         .where(
           "event_signals.event_id",
@@ -145,37 +184,69 @@ export async function buildIndustryPilotReport(
     current.push(row);
     sourceRowsByEvent.set(row.eventId, current);
   }
+  const eligibleEventIds = new Set(
+    eventSourceRows
+      .filter((row) =>
+        rules
+          ? assessStoredIndustryScope(row, { slug: row.sourceSlug }, rules).decision === "include"
+          : true,
+      )
+      .map((row) => row.eventId),
+  );
   const eventsInWindow = (events as EnrichedEvent[]).filter(
-    (event) => event.happenedAt >= start.toISOString(),
+    (event) =>
+      event.happenedAt >= start.toISOString() &&
+      event.happenedAt < windowEndExclusive.toISOString() &&
+      eligibleEventIds.has(event.id),
   );
   const sourceCount = (event: EnrichedEvent) =>
-    new Set(sourceRowsByEvent.get(event.id)?.map((row) => row.sourceSlug) ?? []).size;
+    new Set(
+      (sourceRowsByEvent.get(event.id) ?? []).map((row) =>
+        sourcePublisherKey(row.homepageUrl, row.sourceSlug),
+      ),
+    ).size;
   const multiSourceEvents = eventsInWindow.filter((event) => sourceCount(event) >= 2);
+  const highPriorityThresholds = rules?.publication ?? {
+    highPriorityConfidence: 80,
+    highPriorityImpact: 80,
+    highPriorityValue: 70,
+  };
   const highPriorityEvents = eventsInWindow.filter(
-    (event) => event.confidenceScore >= 80 && event.impactScore >= 80 && event.valueScore >= 70,
+    (event) =>
+      event.confidenceScore >= highPriorityThresholds.highPriorityConfidence &&
+      event.impactScore >= highPriorityThresholds.highPriorityImpact &&
+      event.valueScore >= highPriorityThresholds.highPriorityValue,
   );
   const evidenceReady = highPriorityEvents.filter((event) => {
     const rows = sourceRowsByEvent.get(event.id) ?? [];
     return (
       event.evidence.length > 0 &&
+      new Set(rows.map((row) => sourcePublisherKey(row.homepageUrl, row.sourceSlug))).size >= 2 &&
       rows.some((row) => row.sourceTier === 1 && !["aggregator", "heat"].includes(row.sourceRole))
     );
   });
-  const earliestObservation = [
-    ...runs.map((run) => run.startedAt),
-    ...checks.map((check) => check.finished_at),
-  ]
-    .filter(Boolean)
-    .sort()[0];
-  const observedDays = earliestObservation
-    ? Math.min(
-        profile.trial.durationDays,
-        Math.max(
-          1,
-          Math.ceil((reference.getTime() - Date.parse(earliestObservation)) / 86_400_000),
-        ),
-      )
-    : 0;
+  const observedDays = Math.min(
+    targetDays,
+    new Set(successfulRuns.map((run) => run.startedAt.slice(0, 10))).size,
+  );
+  const chineseSources = automatedSources.filter((source) => source.region === "CN");
+  const chineseHealthy = chineseSources.filter(
+    (source) => checksBySource.get(source.id)?.status === "healthy",
+  );
+  const readySourceSlugs = new Set(profile.trial.readySourceSlugs);
+  const chineseReadyPublishers = new Set(
+    chineseHealthy
+      .filter((source) => {
+        const check = checksBySource.get(source.id);
+        return (
+          readySourceSlugs.has(source.slug) &&
+          check?.latest_item_at &&
+          reference.getTime() - Date.parse(check.latest_item_at) <=
+            profile.trial.maximumReadySourceAgeDays * 86_400_000
+        );
+      })
+      .map((source) => sourcePublisherKey(source.homepage_url, source.slug)),
+  );
   const successRatePercent = percent(successfulRuns.length, automatedRuns.length);
   const collectionStatus =
     successRatePercent === null
@@ -190,17 +261,19 @@ export async function buildIndustryPilotReport(
     manualReview.dailyMinutesAfter,
   ].every((value) => value !== null);
   const deterministicReady =
-    observedDays >= profile.trial.durationDays &&
+    observedDays >= targetDays &&
     automatedRuns.length > 0 &&
+    chineseReadyPublishers.size >= profile.trial.minimumChineseReadySources &&
     multiSourceEvents.length > 0 &&
     highPriorityEvents.length > 0;
-  const readiness: IndustryPilotReport["readiness"] = !deterministicReady
-    ? "collecting"
-    : !manualComplete
-      ? "ready_for_manual_review"
-      : collectionStatus === "pass" && evidenceReady.length === highPriorityEvents.length
-        ? "pass"
-        : "fail";
+  const readiness: IndustryPilotReport["readiness"] =
+    profile.trial.phase === "baseline" || !deterministicReady
+      ? "collecting"
+      : !manualComplete
+        ? "ready_for_manual_review"
+        : collectionStatus === "pass" && evidenceReady.length === highPriorityEvents.length
+          ? "pass"
+          : "fail";
 
   return {
     schemaVersion: 1,
@@ -208,8 +281,8 @@ export async function buildIndustryPilotReport(
     generatedAt: reference.toISOString(),
     window: {
       start: start.toISOString(),
-      end: reference.toISOString(),
-      targetDays: profile.trial.durationDays,
+      end: targetEnd.toISOString(),
+      targetDays,
       observedDays,
     },
     sources: {
@@ -222,6 +295,11 @@ export async function buildIndustryPilotReport(
       failed: failed.length,
       unchecked: automatedSources.length - audited.length,
       healthRatePercent: percent(healthy.length, audited.length),
+      chineseConfigured: chineseSources.length,
+      chineseHealthy: chineseHealthy.length,
+      chineseReadyPublishers: chineseReadyPublishers.size,
+      minimumChineseReady: profile.trial.minimumChineseReadySources,
+      chinaContentTargetPercent: profile.trial.targetChinaContentPercent,
     },
     collection: {
       runs: automatedRuns.length,
@@ -232,7 +310,12 @@ export async function buildIndustryPilotReport(
       status: collectionStatus,
     },
     intelligence: {
-      signals: Number(signalCount.count),
+      signals: publicIndustrySignalCount(
+        signalRows,
+        rules?.targetChinaContentPercent ?? 100,
+        start.toISOString(),
+        windowEndExclusive.toISOString(),
+      ),
       publishedEvents: eventsInWindow.length,
       multiSourceEvents: multiSourceEvents.length,
       multiSourceRatePercent: percent(multiSourceEvents.length, eventsInWindow.length),
@@ -291,6 +374,24 @@ function priorityScore(event: EnrichedEvent): number {
       event.confidenceScore * 0.2 +
       event.heatScore * 0.1,
   );
+}
+
+function publicIndustrySignalCount(
+  signals: Array<{ raw_meta_json: string; region: string; createdAt: string }>,
+  targetChinaPercent: number,
+  windowStart: string,
+  windowEndExclusive: string,
+): number {
+  const included = signals.filter(
+    (signal) =>
+      signal.createdAt >= windowStart &&
+      signal.createdAt < windowEndExclusive &&
+      scopeAssessmentFromSignal(signal)?.decision === "include",
+  );
+  const chinaCount = included.filter((signal) => signal.region === "CN").length;
+  const globalCount = included.length - chinaCount;
+  const maximumGlobal = Math.floor((chinaCount * (100 - targetChinaPercent)) / targetChinaPercent);
+  return chinaCount + Math.min(globalCount, maximumGlobal);
 }
 
 function percent(numerator: number, denominator: number): number | null {

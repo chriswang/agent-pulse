@@ -167,4 +167,31 @@ describe("AI event enrichment", () => {
       .executeTakeFirstOrThrow();
     expect(updated.technical_insight).toContain("待编辑");
   });
+
+  it("rejects English-only prose when an industry profile requires Chinese output", async () => {
+    const db = await database();
+    const event = await db
+      .selectFrom("events")
+      .selectAll()
+      .where("slug", "=", "gemma-4-open-model-efficiency")
+      .executeTakeFirstOrThrow();
+    await db
+      .updateTable("events")
+      .set({
+        status: "review",
+        published_at: null,
+        manual_override: 0,
+        technical_insight: "待编辑：技术判断",
+      })
+      .where("id", "=", event.id)
+      .execute();
+
+    const report = await enrichReviewEvents(db, validClient(), {
+      maxEvents: 1,
+      outputLocale: "zh-CN",
+    });
+
+    expect(report).toMatchObject({ candidates: 1, succeeded: 0 });
+    expect(report.failures[0]?.code).toBe("non_chinese_factSummary");
+  });
 });

@@ -87,4 +87,35 @@ describe("event clustering", () => {
       ),
     ).toBe(true);
   });
+
+  it("groups Chinese reports about the same named industry action", () => {
+    const official = "国家数据局发布医疗健康高质量数据集建设指南";
+    const followUp = "医疗健康高质量数据集建设指南正式发布";
+
+    expect(titleSimilarity(official, followUp)).toBeGreaterThan(0.46);
+    expect(
+      belongsToEvent(
+        { title: followUp, publishedAt: "2026-07-17T06:00:00.000Z" },
+        { title: official, happenedAt: "2026-07-17T00:00:00.000Z" },
+      ),
+    ).toBe(true);
+  });
+
+  it("keeps Chinese policy and partnership actions in separate event facets", () => {
+    expect(eventFacet("国家医保局发布健康数据共享管理办法")).toBe("policy");
+    expect(eventFacet("保险公司与医院签署健康数据共享合作协议")).toBe("partnership");
+    expect(
+      belongsToEvent(
+        {
+          title: "保险公司与医院签署健康数据共享合作协议",
+          publishedAt: "2026-07-17T06:00:00.000Z",
+        },
+        {
+          title: "国家医保局发布健康数据共享管理办法",
+          happenedAt: "2026-07-17T00:00:00.000Z",
+        },
+        0.2,
+      ),
+    ).toBe(false);
+  });
 });

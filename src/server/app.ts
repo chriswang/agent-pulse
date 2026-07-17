@@ -519,7 +519,12 @@ export async function buildApp(db: Kysely<DatabaseSchema>, config: AppConfig) {
     const body = z.object({ sourceId: z.string().uuid().optional() }).parse(request.body ?? {});
     return collectSources(db, config, body.sourceId);
   });
-  app.post("/api/admin/pipeline/cluster", async () => clusterSignals(db));
+  app.post("/api/admin/pipeline/cluster", async () =>
+    clusterSignals(db, {
+      ...(config.INDUSTRY_PROFILE ? { industryProfileSlug: config.INDUSTRY_PROFILE } : {}),
+      rootDir: config.rootDir,
+    }),
+  );
   app.post("/api/admin/pipeline/scout", async (request) => {
     const body = z
       .object({ limit: z.number().int().min(1).max(10).optional() })

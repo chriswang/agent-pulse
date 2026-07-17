@@ -44,6 +44,46 @@ describe("event publication readiness", () => {
     expect(readiness.warnings).toContain("single-source fact; cross-source corroboration pending");
   });
 
+  it("does not count two sections of one publisher as independent evidence", async () => {
+    const { db, repository } = await setup();
+    const event = (await repository.listEvents("published")).find(
+      (item) => item.slug === "openai-o1-test-time-reasoning",
+    );
+    const sources = await repository.listSources();
+    const openai = sources.find((item) => item.slug === "openai");
+    const anthropic = sources.find((item) => item.slug === "anthropic");
+    expect(event && openai && anthropic).toBeTruthy();
+    await db
+      .updateTable("sources")
+      .set({ homepage_url: openai?.homepage_url ?? "https://openai.com/" })
+      .where("id", "=", anthropic?.id ?? "missing")
+      .execute();
+    const signal = await repository.insertSignal(anthropic?.id ?? "missing", {
+      url: "https://openai.com/research/second-section/",
+      title: "A second section covers the same reasoning milestone",
+      summary: "A corroborating page hosted by the same underlying publisher.",
+      author: "OpenAI",
+      language: "en",
+      publishedAt: "2026-07-12T00:00:00.000Z",
+      category: "industry",
+      tags: [],
+      metrics: {},
+      rawMeta: {},
+    });
+    await repository.attachSignal(
+      event?.id ?? "missing",
+      signal?.id ?? "missing",
+      "supporting",
+      90,
+    );
+
+    const readiness = await evaluateEventReadiness(db, event?.id ?? "missing");
+
+    expect(readiness.evidenceCount).toBe(2);
+    expect(readiness.independentSources).toBe(1);
+    expect(readiness.warnings).toContain("single-source fact; cross-source corroboration pending");
+  });
+
   it("blocks placeholder clusters from publication", async () => {
     const { db, repository } = await setup();
     const source = (await repository.listSources()).find((item) => item.slug === "openai");

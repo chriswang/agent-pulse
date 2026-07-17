@@ -42,6 +42,13 @@ export const webScraperAdapter: SourceAdapter = {
     const listItems = extractListItems(body, source);
     results.push(...listItems);
 
+    // Strategy 3b: SSR frameworks often render the link, date, and title as
+    // adjacent siblings instead of one semantic card. Only use this fallback
+    // when the structured strategies have not produced a valid signal.
+    if (!results.some(hasValidScrapedSignal)) {
+      results.push(...extractDateAdjacentLinks(body, source));
+    }
+
     // Strategy 4: Extract from RSS/Atom discovery links. HTML listing cards
     // without a publication date cannot pass the collector contract, so they
     // must not prevent a stable first-party feed from being used.
@@ -56,9 +63,13 @@ export const webScraperAdapter: SourceAdapter = {
       }
     }
 
+    // The industry baseline is evidence-led: cards without an explicit,
+    // parseable publication date are navigation noise, not current signals.
+    const trustedResults = results.filter(hasValidScrapedSignal);
+
     // Deduplicate by URL
     const seen = new Set<string>();
-    const deduped = results.filter((item) => {
+    const deduped = trustedResults.filter((item) => {
       if (seen.has(item.url)) return false;
       seen.add(item.url);
       return true;
@@ -76,6 +87,16 @@ export const webScraperAdapter: SourceAdapter = {
 
 function hasTrustedPublicationDate(item: CollectedSignal): boolean {
   return item.rawMeta.dateInferred !== true && Number.isFinite(Date.parse(item.publishedAt));
+}
+
+function hasValidScrapedSignal(item: CollectedSignal): boolean {
+  if (!hasTrustedPublicationDate(item) || !item.title.trim()) return false;
+  try {
+    const url = new URL(item.url);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 // ─── JSON-LD Extraction ────────────────────────────────────────────────
@@ -169,27 +190,94 @@ function extractArticles(body: string, source: SourceLike): CollectedSignal[] {
 function extractListItems(body: string, source: SourceLike): CollectedSignal[] {
   const results: CollectedSignal[] = [];
   // Match common card/post patterns
-  const cardPatterns = [
-    /<li[^>]*class="[^"]*(?:post|item|card|entry|story|article)[^"]*"[^>]*>([\s\S]*?)<\/li>/gi,
-    /<div[^>]*class="[^"]*(?:post|item|card|entry|story|article)[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
-    /<a[^>]*class="[^"]*(?:post|item|card|entry|story)[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+  const cardPatterns: Array<{
+    pattern: RegExp;
+    hrefCaptured?: boolean;
+    requireTrustedDate?: boolean;
+  }> = [
+    {
+      pattern:
+        /<li[^>]*class="[^"]*(?:post|item|card|entry|story|article)[^"]*"[^>]*>([\s\S]*?)<\/li>/gi,
+    },
+    {
+      pattern:
+        /<div[^>]*class="[^"]*(?:post|item|card|entry|story|article)[^"]*"[^>]*>([\s\S]*?)<\/div>/gi,
+    },
+    {
+      pattern:
+        /<a[^>]*class="[^"]*(?:post|item|card|entry|story)[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi,
+      hrefCaptured: true,
+    },
+    {
+      pattern: /<li\b[^>]*>([\s\S]*?)<\/li>/gi,
+      requireTrustedDate: true,
+    },
+    {
+      pattern: /<tr\b[^>]*>([\s\S]*?)<\/tr>/gi,
+      requireTrustedDate: true,
+    },
   ];
 
-  for (const pattern of cardPatterns) {
+  for (const { pattern, hrefCaptured, requireTrustedDate } of cardPatterns) {
     for (const match of body.matchAll(pattern)) {
-      if (pattern.source.includes("href=")) {
+      let signal: CollectedSignal | null;
+      if (hrefCaptured) {
         // Pattern 3: the URL is captured in group 1
         const href = match[1] ?? "";
         const innerHtml = match[2] ?? "";
-        const signal = extractCardSignal(innerHtml, source, href);
-        if (signal) results.push(signal);
+        signal = extractCardSignal(innerHtml, source, href);
       } else {
         const block = match[1] ?? "";
-        const signal = extractCardSignal(block, source);
-        if (signal) results.push(signal);
+        signal = extractCardSignal(block, source);
+      }
+      if (signal && (!requireTrustedDate || hasTrustedPublicationDate(signal))) {
+        results.push(signal);
       }
     }
     if (results.length >= 5) break;
+  }
+  return results;
+}
+
+function extractDateAdjacentLinks(body: string, source: SourceLike): CollectedSignal[] {
+  const results: CollectedSignal[] = [];
+  const datePattern = /(?:19|20)\d{2}[-/.]\d{1,2}[-/.]\d{1,2}|(?:19|20)\d{2}年\d{1,2}月\d{1,2}日/g;
+  const anchorPattern =
+    /<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))[^>]*>([\s\S]*?)<\/a>/gi;
+
+  for (const dateMatch of body.matchAll(datePattern)) {
+    if (results.length >= MAX_ITEMS) break;
+    const dateIndex = dateMatch.index ?? 0;
+    const windowStart = Math.max(0, dateIndex - 1_200);
+    const window = body.slice(windowStart, Math.min(body.length, dateIndex + 1_200));
+    const localDateIndex = dateIndex - windowStart;
+    let best: { href: string; inner: string; distance: number } | undefined;
+
+    for (const anchor of window.matchAll(anchorPattern)) {
+      const href = anchor[1] ?? anchor[2] ?? anchor[3] ?? "";
+      const inner = anchor[4] ?? "";
+      const title = extractTextContent(inner);
+      if (title.length < 4 || title.length > 300 || /^(?:查看)?更多|^read more$/i.test(title)) {
+        continue;
+      }
+      const start = anchor.index ?? 0;
+      const end = start + anchor[0].length;
+      const distance =
+        localDateIndex < start
+          ? start - localDateIndex
+          : localDateIndex > end
+            ? localDateIndex - end
+            : 0;
+      if (!best || distance < best.distance) best = { href, inner, distance };
+    }
+
+    if (!best) continue;
+    const signal = extractCardSignal(
+      `${best.inner}<time datetime="${dateMatch[0]}"></time>`,
+      source,
+      best.href,
+    );
+    if (signal && hasValidScrapedSignal(signal)) results.push(signal);
   }
   return results;
 }
@@ -214,7 +302,7 @@ function extractCardSignal(
   return {
     externalId: link ?? title ?? sha256Short(summary),
     url: link ?? "",
-    title: stripHtml(decodeEntities(title ?? summary.slice(0, 100))),
+    title: stripHtml(decodeEntities(title || summary.slice(0, 100))),
     summary: summary.slice(0, 8_000),
     language: source.language,
     publishedAt: date.value,
@@ -349,14 +437,21 @@ function extractMetaTag(html: string, property: string): string {
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
 function extractFirstLink(html: string): string {
-  const match = html.match(/<a[^>]+href="([^"]+)"[^>]*>/i);
-  return match?.[1] ?? "";
+  const match = html.match(/<a\b[^>]*\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+))/i);
+  return match?.[1] ?? match?.[2] ?? match?.[3] ?? "";
 }
 
 function extractFirstHeading(html: string): string {
   for (const tag of ["h1", "h2", "h3", "h4"]) {
     const match = html.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
     if (match?.[1]) return match[1].trim();
+  }
+  const titledLink = html.match(/<a[^>]+title=["']([^"']+)["'][^>]*>/i)?.[1];
+  if (titledLink) return titledLink.trim();
+  const linkedText = html.match(/<a\b[^>]*>([\s\S]*?)<\/a>/i)?.[1];
+  if (linkedText) {
+    const text = extractTextContent(linkedText);
+    if (text.length >= 4) return text;
   }
   return "";
 }
@@ -379,7 +474,9 @@ function extractPublishedDate(html: string): string {
   if (monthName) return monthName;
   const isoDate = text.match(/\b(?:19|20)\d{2}-\d{2}-\d{2}\b/)?.[0];
   if (isoDate) return isoDate;
-  const chineseDate = text.match(/\b(?:19|20)\d{2}年\d{1,2}月\d{1,2}日\b/)?.[0];
+  const numericDate = `${text} ${html}`.match(/(?:19|20)\d{2}[-/.]\d{1,2}[-/.]\d{1,2}/)?.[0];
+  if (numericDate) return numericDate;
+  const chineseDate = text.match(/(?:19|20)\d{2}年\d{1,2}月\d{1,2}日/)?.[0];
   return chineseDate ?? "";
 }
 
@@ -420,13 +517,16 @@ function decodeEntities(value: string): string {
 function normalizeDate(value: string): { value: string; inferred: boolean } {
   if (!value) return { value: new Date().toISOString(), inferred: true };
   const chinese = value.match(/((?:19|20)\d{2})年(\d{1,2})月(\d{1,2})日/);
+  const numeric = value.trim().match(/^((?:19|20)\d{2})[-/.](\d{1,2})[-/.](\d{1,2})$/);
   const normalized = chinese
     ? `${chinese[1]}-${chinese[2]?.padStart(2, "0")}-${chinese[3]?.padStart(2, "0")}`
-    : /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/i.test(
-          value.trim(),
-        )
-      ? `${value.trim()} UTC`
-      : value;
+    : numeric
+      ? `${numeric[1]}-${numeric[2]?.padStart(2, "0")}-${numeric[3]?.padStart(2, "0")}`
+      : /^(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}$/i.test(
+            value.trim(),
+          )
+        ? `${value.trim()} UTC`
+        : value;
   const date = new Date(normalized);
   return Number.isNaN(date.getTime())
     ? { value: new Date().toISOString(), inferred: true }

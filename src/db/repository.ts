@@ -306,6 +306,7 @@ export class Repository {
         "signals.collected_at as collectedAt",
         "signals.category",
         "signals.tags_json as tagsJson",
+        "signals.raw_meta_json as rawMetaJson",
         "signals.language",
         "sources.slug as sourceSlug",
         "sources.name as sourceName",
@@ -1186,6 +1187,7 @@ export class Repository {
     Array<{
       sourceId: string;
       sourceSlug: string;
+      homepageUrl: string;
       authorityScore: number;
       tier: number;
       role: string;
@@ -1201,6 +1203,7 @@ export class Repository {
       .select([
         "sources.id as sourceId",
         "sources.slug as sourceSlug",
+        "sources.homepage_url as homepageUrl",
         "sources.authority_score as authorityScore",
         "sources.tier as tier",
         "sources.role as role",
@@ -1213,6 +1216,7 @@ export class Repository {
     return rows.map((row) => ({
       sourceId: row.sourceId,
       sourceSlug: row.sourceSlug,
+      homepageUrl: row.homepageUrl,
       authorityScore: row.authorityScore,
       tier: row.tier,
       role: row.role,

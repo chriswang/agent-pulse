@@ -14,6 +14,7 @@ import {
   transitionSource,
 } from "../domain/source-lifecycle.js";
 import type { CollectedSignal, SourceDescriptor } from "../domain/types.js";
+import { assessIndustryScope, type IndustryRules, loadIndustryRules } from "../industry/rules.js";
 import { releaseObservationTriage } from "./observation.js";
 import { scoreSignal } from "./quality.js";
 
@@ -55,6 +56,7 @@ export async function collectSources(
   const options: CollectionOptions =
     typeof sourceOrOptions === "string" ? { sourceId: sourceOrOptions } : (sourceOrOptions ?? {});
   const sourceId = options.sourceId;
+  const industryRules = loadIndustryRules(config.INDUSTRY_PROFILE, config.rootDir);
   const scope = options.scope ?? "eligible";
   const catalog = sourceId
     ? [await repository.getSourceByIdOrSlug(sourceId)].filter((source): source is SourceRow =>
@@ -94,7 +96,8 @@ export async function collectSources(
     const sourceResults = await concurrentMap(
       sources,
       Math.min(config.COLLECTOR_CONCURRENCY, Math.max(1, sources.length)),
-      (source) => collectOneSource(repository, config, source, jobId, rateLimiter, cache),
+      (source) =>
+        collectOneSource(repository, config, source, jobId, rateLimiter, cache, industryRules),
     );
     result = sourceResults.reduce<CollectionSummary>(
       (summary, current) => ({
@@ -161,6 +164,7 @@ async function collectOneSource(
   jobId: string,
   rateLimiter: RateLimiter,
   cache: ResponseCache,
+  industryRules: IndustryRules | null,
 ): Promise<SourceResult> {
   const started = Date.now();
   const runId = await repository.startSourceRun(row.id, jobId);
@@ -261,8 +265,12 @@ async function collectOneSource(
         continue;
       }
       const quality = scoreSignal(item, source);
+      const compactedItem = normalizeCollectedSignal(item);
+      const industryScope = industryRules
+        ? assessIndustryScope(compactedItem, source, industryRules)
+        : null;
       const normalizedItem: CollectedSignal = {
-        ...normalizeCollectedSignal(item),
+        ...compactedItem,
         rawMeta: {
           ...item.rawMeta,
           quality: {
@@ -271,6 +279,7 @@ async function collectOneSource(
             dimensions: quality.dimensions,
             flags: quality.flags,
           },
+          ...(industryScope ? { industryScope } : {}),
         },
       };
       if (discoveryOnly) {

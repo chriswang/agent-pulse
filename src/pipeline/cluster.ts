@@ -9,13 +9,24 @@ import {
   titleTokens,
 } from "../domain/clustering.js";
 import { scoreEvent } from "../domain/scoring.js";
+import { sourcePublisherKey } from "../domain/source-identity.js";
 import type { SignalMetrics } from "../domain/types.js";
 import { slugify } from "../domain/url.js";
+import {
+  assessStoredIndustryScope,
+  type IndustryPolicyContext,
+  type IndustryRules,
+  industryEventabilityScore,
+  initialIndustryImpactScore,
+  loadIndustryRules,
+} from "../industry/rules.js";
 
 export async function clusterSignals(
   db: Kysely<DatabaseSchema>,
+  context: IndustryPolicyContext = {},
 ): Promise<{ created: number; attached: number; deferred: number }> {
   const repository = new Repository(db);
+  const industryRules = loadIndustryRules(context.industryProfileSlug, context.rootDir);
   const [signals, sources] = await Promise.all([
     repository.listUnclusteredSignals(),
     repository.listSources(),
@@ -23,8 +34,8 @@ export async function clusterSignals(
   const sourcesById = new Map(sources.map((source) => [source.id, source]));
   signals.sort(
     (left, right) =>
-      eventabilityScore(right, sourcesById.get(right.source_id)) -
-        eventabilityScore(left, sourcesById.get(left.source_id)) ||
+      effectiveEventabilityScore(right, sourcesById.get(right.source_id), industryRules) -
+        effectiveEventabilityScore(left, sourcesById.get(left.source_id), industryRules) ||
       right.published_at.localeCompare(left.published_at),
   );
   const events = await repository.listEvents();
@@ -36,11 +47,30 @@ export async function clusterSignals(
     // Skip signals with empty or whitespace-only titles — they produce unusable events.
     if (!signal.title?.trim()) continue;
     const source = sourcesById.get(signal.source_id);
+    const industryScope =
+      industryRules && source ? assessStoredIndustryScope(signal, source, industryRules) : null;
+    if (industryScope && industryScope.decision !== "include") {
+      await repository.deferSignal(
+        signal.id,
+        industryScope.decision === "hold" ? "industry_scope_hold" : "industry_scope_exclude",
+        industryScope.score,
+        {
+          profileSlug: industryScope.profileSlug,
+          matchedStrong: industryScope.matchedStrong,
+          matchedContext: industryScope.matchedContext,
+          matchedActions: industryScope.matchedActions,
+          matchedEntities: industryScope.matchedEntities,
+          matchedExclusions: industryScope.matchedExclusions,
+        },
+      );
+      deferred += 1;
+      continue;
+    }
     if (source?.lifecycle_status === "shadow") {
       await repository.deferSignal(
         signal.id,
         "shadow_observation",
-        eventabilityScore(signal, source),
+        effectiveEventabilityScore(signal, source, industryRules),
         {
           sourceSlug: source.slug,
           latestLifecycle: source.lifecycle_status,
@@ -58,7 +88,7 @@ export async function clusterSignals(
       ),
     );
     if (!event) {
-      const score = eventabilityScore(signal, source);
+      const score = effectiveEventabilityScore(signal, source, industryRules);
       if (score < 70) {
         await repository.deferSignal(signal.id, "insufficient_eventability", score, {
           sourceSlug: source?.slug ?? null,
@@ -85,11 +115,13 @@ export async function clusterSignals(
         future_outlook: "待编辑：接下来要观察哪些可验证信号？",
         business_value: "待编辑：CEO、投资负责人或业务负责人应采取什么动作？",
         category: signal.category,
-        company: inferCompany(signal.title),
+        company: industryScope?.matchedEntities[0] ?? inferCompany(signal.title),
         keywords_json: JSON.stringify([...titleTokens(signal.title)].slice(0, 8)),
         confidence_score: 0,
         heat_score: 0,
-        impact_score: 55,
+        impact_score: industryRules
+          ? initialIndustryImpactScore(signal, source, industryRules)
+          : 55,
         value_score: 0,
         score_factors_json: "{}",
         status: "review",
@@ -173,6 +205,16 @@ export function eventabilityScore(signal: SignalRow, source?: SourceRow): number
   return Math.min(100, score);
 }
 
+function effectiveEventabilityScore(
+  signal: SignalRow,
+  source: SourceRow | undefined,
+  industryRules: IndustryRules | null,
+): number {
+  return industryRules
+    ? industryEventabilityScore(signal, source, industryRules)
+    : eventabilityScore(signal, source);
+}
+
 export function isDecisionRelevantResearch(signal: SignalRow): boolean {
   const content = `${signal.title} ${signal.summary}`;
   const hasResearchContribution =
@@ -196,7 +238,9 @@ export async function rescoreEvent(repository: Repository, event: EventRow): Pro
       (item) =>
         item.tier === 1 && item.role !== "aggregator" && item.sourceCategory !== "aggregator",
     ).length,
-    independentSourceCount: new Set(context.map((item) => item.sourceId)).size,
+    independentSourceCount: new Set(
+      context.map((item) => sourcePublisherKey(item.homepageUrl, item.sourceId)),
+    ).size,
     metrics: context.map((item) => item.metrics as SignalMetrics),
     ageHours,
     impactHint: event.impact_score,
