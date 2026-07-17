@@ -9,7 +9,7 @@ export const capabilities = [
     maturity: 38,
     release: "unreleased",
     evidence:
-      "an isolated public pack defines 30 governed sources and six tracks, routes GLM-5.2 through the Ark Coding API, and records Day 1 live evidence of 19/21 healthy automated candidates, 264 collected Signals and 30 review Events behind publication gates",
+      "an isolated public pack defines 30 governed sources and six tracks, routes GLM-5.2 through the Ark Coding API, validates seven-day metrics separately from cumulative history, and records Day 1 live evidence of 19/21 healthy automated candidates, 264 collected Signals and 30 review Events behind publication gates",
   },
   {
     slug: "source-catalog",

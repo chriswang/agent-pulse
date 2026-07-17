@@ -32,6 +32,7 @@
 - 多来源 Event 按不同非聚合 source slug 计数；
 - 高优先级 Event 的证据 URL 必须全部来自公开 Evidence；
 - Top 10 排序稳定并保留证据链接；
+- 公开完整性校验只比较 7 天窗口内 Event，窗口外历史 Event 可继续保留在累计时间线；
 - 人工指标未填写时显示 pending，不自动判定通过；
 - 报告不包含 raw payload、秘密、内部错误全文或本机路径。
 

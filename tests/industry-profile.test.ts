@@ -122,11 +122,24 @@ describe("medical health data elements industry profile", () => {
     try {
       await migrateToLatest(db, config);
       await seedDatabase(db, { industryProfileSlug: profileSlug, rootDir: config.rootDir });
+      const now = new Date().toISOString();
+      await db
+        .insertInto("events")
+        .values([
+          publishedEvent("industry-recent-event", "Recent industry event", now, now),
+          publishedEvent(
+            "industry-old-event",
+            "Older industry event",
+            "2020-01-01T00:00:00.000Z",
+            now,
+          ),
+        ])
+        .execute();
       await exportStaticSite(db, config);
       const integrity = await validatePublicSite(config.distDir, "2026-07-17T00:00:00.000Z");
       expect(integrity).toMatchObject({
         ok: true,
-        counts: { events: 0, signals: 0, actors: 0, sources: 30 },
+        counts: { events: 2, signals: 0, actors: 0, sources: 30 },
       });
       expect(integrity.issues).toEqual([]);
     } finally {
@@ -134,6 +147,35 @@ describe("medical health data elements industry profile", () => {
     }
   });
 });
+
+function publishedEvent(id: string, title: string, happenedAt: string, now: string) {
+  return {
+    id,
+    slug: id,
+    title,
+    fact_summary: title,
+    summary: title,
+    technical_insight: "Validated technical insight.",
+    industry_insight: "Validated industry insight.",
+    future_outlook: "Continue monitoring the original evidence.",
+    business_value: "Supports the industry pilot validation.",
+    category: "policy",
+    company: "Test institution",
+    keywords_json: "[]",
+    confidence_score: 80,
+    heat_score: 60,
+    impact_score: 70,
+    value_score: 70,
+    score_factors_json: "{}",
+    status: "published",
+    featured: 0,
+    manual_override: 0,
+    happened_at: happenedAt,
+    published_at: now,
+    created_at: now,
+    updated_at: now,
+  };
+}
 
 function requiredProfile(rootDir?: string) {
   const profile = loadIndustryProfile(profileSlug, rootDir);

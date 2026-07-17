@@ -320,7 +320,7 @@ async function validateIndustryPublicSite(
   const timeline = parse<{
     generatedAt?: string;
     siteUrl?: string;
-    events?: Array<{ slug?: string }>;
+    events?: Array<{ slug?: string; happenedAt?: string }>;
   }>(dataPaths.timeline, dataText.timeline, {});
   const signals = parse<{ generatedAt?: string; signals?: unknown[] }>(
     dataPaths.signals,
@@ -337,6 +337,7 @@ async function validateIndustryPublicSite(
   const industry = parse<{
     profileSlug?: string;
     generatedAt?: string;
+    window?: { start?: string };
     sources?: { configured?: number };
     intelligence?: { signals?: number; publishedEvents?: number };
   }>(dataPaths.industry, dataText.industry, {});
@@ -377,11 +378,28 @@ async function validateIndustryPublicSite(
       `Expected ${publicSignals.length} signals, received ${industry.intelligence?.signals ?? "missing"}`,
     );
   }
-  if (industry.intelligence?.publishedEvents !== events.length) {
+  const windowStart = industry.window?.start;
+  const hasValidWindowStart =
+    typeof windowStart === "string" && Number.isFinite(Date.parse(windowStart));
+  if (!hasValidWindowStart) {
+    add("invalid_industry_report", dataPaths.industry, "Pilot window start is missing or invalid");
+  }
+  const eventsInPilotWindow = hasValidWindowStart
+    ? events.filter(
+        (event) =>
+          typeof event.happenedAt === "string" &&
+          Number.isFinite(Date.parse(event.happenedAt)) &&
+          event.happenedAt >= windowStart,
+      )
+    : [];
+  if (
+    hasValidWindowStart &&
+    industry.intelligence?.publishedEvents !== eventsInPilotWindow.length
+  ) {
     add(
       "industry_count_mismatch",
       dataPaths.industry,
-      `Expected ${events.length} published Events, received ${industry.intelligence?.publishedEvents ?? "missing"}`,
+      `Expected ${eventsInPilotWindow.length} published Events in the pilot window, received ${industry.intelligence?.publishedEvents ?? "missing"}`,
     );
   }
 
