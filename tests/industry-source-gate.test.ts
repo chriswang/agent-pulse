@@ -23,26 +23,39 @@ describe("industry source gate", () => {
 
     expect(result).toMatchObject({
       pass: true,
-      chineseReadyPublishers: 12,
+      chineseReadyPublishers: 14,
       minimumChinesePublishers: 12,
       internationalReadyPublishers: 3,
       minimumInternationalPublishers: 3,
     });
-    expect(result.chineseReadySlugs).toHaveLength(13);
+    expect(result.chineseReadySlugs).toHaveLength(15);
   });
 
-  it("fails closed when one required Chinese publisher becomes stale", () => {
+  it("keeps the gate open when one Chinese publisher has a transient failure", () => {
     const report = healthyReport();
     const source = report.results.find((item) => item.slug === "nhsa-policy");
     if (source) source.latestItemAt = "2025-01-01T00:00:00.000Z";
 
     const result = evaluateIndustrySourceGate(profile, report);
 
-    expect(result.pass).toBe(false);
-    expect(result.chineseReadyPublishers).toBe(11);
+    expect(result.pass).toBe(true);
+    expect(result.chineseReadyPublishers).toBe(13);
     expect(result.rejectedReadySlugs).toContainEqual({
       slug: "nhsa-policy",
       reason: "content_stale",
     });
+  });
+
+  it("fails closed when redundancy falls below 12 Chinese publishers", () => {
+    const report = healthyReport();
+    for (const slug of ["nhsa-policy", "cac-data-policy", "chima"]) {
+      const source = report.results.find((item) => item.slug === slug);
+      if (source) source.status = "failed";
+    }
+
+    const result = evaluateIndustrySourceGate(profile, report);
+
+    expect(result.pass).toBe(false);
+    expect(result.chineseReadyPublishers).toBe(11);
   });
 });
