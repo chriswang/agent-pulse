@@ -3,9 +3,9 @@ import { createJsonModelClient, resolveModelIdentity } from "../src/ai/provider.
 import { loadConfig } from "../src/config/env.js";
 
 describe("provider-neutral JSON model client", () => {
-  it("uses Ark standard Chat Completions without DeepSeek-only parameters", async () => {
+  it("uses Ark Coding Chat Completions without DeepSeek-only parameters", async () => {
     const request = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
-      expect(String(url)).toBe("https://ark.cn-beijing.volces.com/api/v3/chat/completions");
+      expect(String(url)).toBe("https://ark.cn-beijing.volces.com/api/coding/v3/chat/completions");
       expect(new Headers(init?.headers).get("authorization")).toBe("Bearer ark-secret-value");
       const body = JSON.parse(String(init?.body));
       expect(body.model).toBe("glm-5.2");
@@ -32,7 +32,7 @@ describe("provider-neutral JSON model client", () => {
       DATABASE_URL: "sqlite::memory:",
       MODEL_PROVIDER: "ark",
       MODEL_API_KEY: "ark-secret-value",
-      MODEL_BASE_URL: "https://ark.cn-beijing.volces.com/api/v3",
+      MODEL_BASE_URL: "https://ark.cn-beijing.volces.com/api/coding/v3",
       MODEL_NAME: "glm-5.2",
       MODEL_JSON_MODE: "prompt-only",
     });

@@ -24,7 +24,7 @@ describe("medical health data elements industry profile", () => {
     expect(profile.tracks).toHaveLength(6);
     expect(profile.model).toEqual({
       provider: "ark",
-      baseUrl: "https://ark.cn-beijing.volces.com/api/v3",
+      baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3",
       name: "glm-5.2",
     });
     const sources = industrySources(profile);

@@ -42,11 +42,11 @@ MODEL_NAME        fallback DEEPSEEK_MODEL
 MODEL_JSON_MODE   native | prompt-only
 ```
 
-方舟默认：
+方舟 Coding API 默认：
 
 ```text
 provider: ark
-base URL: https://ark.cn-beijing.volces.com/api/v3
+base URL: https://ark.cn-beijing.volces.com/api/coding/v3
 model: glm-5.2
 endpoint: POST /chat/completions
 JSON mode: prompt-only, followed by strict local JSON parse and Zod validation

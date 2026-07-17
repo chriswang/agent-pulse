@@ -15,7 +15,7 @@
 ### 开发中
 
 - 新增可独立升级的“医疗健康数据要素”公开行业包：30 个治理信源、六条行业主线、独立快照与 GitHub Pages 工作流；Day 1 实测 21 个自动候选中 19 个健康（90.5%），18 个通过质量门槛的来源完成 264 条零错误采集并形成 30 个待审 Event，未接入模型密钥时全部停留在发布门禁内。
-- AI 事件整理改为通用 OpenAI-compatible provider factory，保留 DeepSeek 兼容路径，并支持火山方舟标准 API、`glm-5.2` 与 prompt-only JSON；RSS 适配器补充 RSS 1.0 / RDF、Dublin Core 日期、嵌套标题和非标准 AM/PM 日期兼容。
+- AI 事件整理改为通用 OpenAI-compatible provider factory，保留 DeepSeek 兼容路径，并支持火山方舟 Coding API、`glm-5.2` 与 prompt-only JSON；RSS 适配器补充 RSS 1.0 / RDF、Dublin Core 日期、嵌套标题和非标准 AM/PM 日期兼容。
 - 新增根路径 `llms.txt`，为 AI Agent 提供站点说明、事实边界、核心页面与公开 JSON DTO 索引；Footer 增加轻量高亮入口，并通过页面元数据提升机器发现能力。
 - 修复事件时间线筛选 tabs 在桌面端无法用鼠标拖拽、页面加载时又会自动滚动居中的问题；现在拖拽只滚动筛选条，且仅在用户点击筛选项后自动居中。
 - 本地 `dev`、`start`、`db:seed` 与默认静态导出统一执行“迁移 -> catalog seed -> 仓库快照合并”，全新 clone 或旧 SQLite 启动时都会恢复 `main` 中最新完整数据，不再静默停留在仅含 292 条 Signal 的 seed 基线。

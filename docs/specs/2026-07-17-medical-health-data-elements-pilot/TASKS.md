@@ -4,7 +4,7 @@
 
 ## 1. 本地最小 Demo
 
-- [ ] 建立 `origin/upstream` 隔离与行业包规格
+- [x] 建立 `origin/upstream` 隔离与行业包规格
 - [x] 增加 profile schema、医疗健康数据要素来源与行业主线
 - [x] 增加方舟 OpenAI-compatible client 与旧 DeepSeek 兼容层
 - [x] 增加独立 snapshot、7 天试跑报告和行业首页
@@ -16,7 +16,7 @@
 - [x] 恢复 `chriswang` 的 GitHub CLI 授权
 - [x] 创建公开 Fork、推送本地分支并配置 Pages
 - [x] 禁用 Fork 中的上游数据写入 workflow
-- [ ] 由用户在 GitHub Secret 录入标准方舟 `MODEL_API_KEY`
+- [x] 由用户在 GitHub Secret 录入方舟 Coding API `MODEL_API_KEY`
 - [ ] 真实验证 `glm-5.2` model id、JSON 输出与 Token 用量
 - [ ] 手动触发首轮 audit / collect / Pages 并浏览器验收
 

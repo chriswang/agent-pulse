@@ -1,6 +1,6 @@
 # 医疗健康数据要素行业试跑
 
-- 状态：本地 Demo 与 GitHub 基础接入已完成，等待方舟 Key 后启动 7 天试跑
+- 状态：本地 Demo、GitHub 基础接入与方舟 Secret 已完成，准备启动 7 天试跑
 - 日期：2026-07-17
 - 目标版本：Unreleased
 - 上游基线：`barretlee/agent-pulse@b86923f`
@@ -22,7 +22,7 @@
 upstream product kernel + isolated public industry pack + private runtime secrets
 ```
 
-行业包和公开结果可进入仓库；模型密钥只进入 GitHub Actions Secret。方舟默认使用标准模型 API，Coding Plan Key 不作为通用应用 API Key 使用。
+行业包和公开结果可进入仓库；模型密钥只进入 GitHub Actions Secret。方舟使用 Coding API `https://ark.cn-beijing.volces.com/api/coding/v3`，Coding Plan Key 不进入仓库、快照、日志或公开页面。
 
 ## Day 1 实测基线
 

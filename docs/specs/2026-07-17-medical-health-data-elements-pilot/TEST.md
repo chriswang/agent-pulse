@@ -11,7 +11,7 @@
 ## 2. 模型契约
 
 - DeepSeek 兼容路径保持原 `response_format`、thinking 与 retry 行为；
-- Ark 请求使用标准 `/api/v3/chat/completions`、Bearer key 和 `glm-5.2`；
+- Ark 请求使用 Coding API `/api/coding/v3/chat/completions`、Bearer key 和 `glm-5.2`；
 - Ark 默认不发送 `response_format`、`thinking`、`reasoning_effort`；
 - 支持纯 JSON 和 fenced JSON，非 JSON、截断、空 choice 与认证失败产生安全错误码；
 - `MODEL_API_KEY` 优先，旧 `DEEPSEEK_API_KEY` 继续可用；

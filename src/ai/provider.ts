@@ -21,7 +21,9 @@ export function resolveModelIdentity(config: AppConfig): ModelIdentity {
   const provider = config.MODEL_PROVIDER ?? "deepseek";
   const baseUrl =
     config.MODEL_BASE_URL ??
-    (provider === "ark" ? "https://ark.cn-beijing.volces.com/api/v3" : config.DEEPSEEK_BASE_URL);
+    (provider === "ark"
+      ? "https://ark.cn-beijing.volces.com/api/coding/v3"
+      : config.DEEPSEEK_BASE_URL);
   const model = config.MODEL_NAME ?? config.DEEPSEEK_MODEL;
   const jsonMode = config.MODEL_JSON_MODE ?? (provider === "deepseek" ? "native" : "prompt-only");
   return { provider, baseUrl, model, jsonMode };
