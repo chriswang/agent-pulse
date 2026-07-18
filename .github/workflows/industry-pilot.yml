@@ -1,6 +1,10 @@
 name: Build medical health 30-day history and 7-day validation
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/industry-pilot-trigger
   schedule:
     # Day 1 is the manual backfill on July 18; these six runs finish the seven-day window.
     - cron: "17 12 19-24 7 *"
