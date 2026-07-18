@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-18T00:43:25.924Z",
+  "generatedAt": "2026-07-18T01:56:36.021Z",
   "window": {
     "start": "2026-07-18T00:00:00.000Z",
     "end": "2026-07-24T00:00:00.000Z",
     "targetDays": 7,
     "observedDays": 1,
     "historyStart": "2026-06-18T00:00:00.000Z",
-    "historyEnd": "2026-07-18T00:43:25.924Z",
+    "historyEnd": "2026-07-18T01:56:36.021Z",
     "historyLookbackDays": 30
   },
   "sources": {
@@ -28,10 +28,10 @@
     "chinaContentTargetPercent": 80
   },
   "collection": {
-    "runs": 26,
-    "successfulRuns": 25,
+    "runs": 51,
+    "successfulRuns": 50,
     "failedRuns": 1,
-    "successRatePercent": 96.2,
+    "successRatePercent": 98,
     "targetPercent": 90,
     "status": "pass"
   },

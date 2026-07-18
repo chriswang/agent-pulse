@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-18T00:39:59.360Z",
+  "generatedAt": "2026-07-18T01:54:44.683Z",
   "model": {
     "provider": "ark",
     "name": "glm-5.2",
     "status": "failed",
-    "inputHash": "cc79390e79ef3fba3c9249db43d3eef5d6f7e32d24247117cf1e9bf29c49e7de",
+    "inputHash": "1286f211d27711bc6b3b589c04335f4a50e8b63bac92bda9b787a06546a0fda2",
     "usage": {
       "promptTokens": 0,
       "completionTokens": 0,
@@ -17,15 +17,15 @@
     {
       "date": "2026-07-18",
       "status": "failed",
-      "candidates": 40,
+      "candidates": 16,
       "clusters": 0,
-      "inputHash": "cc79390e79ef3fba3c9249db43d3eef5d6f7e32d24247117cf1e9bf29c49e7de",
+      "inputHash": "1286f211d27711bc6b3b589c04335f4a50e8b63bac92bda9b787a06546a0fda2",
       "usage": {
         "promptTokens": 0,
         "completionTokens": 0,
         "totalTokens": 0
       },
-      "errorCode": "network_error"
+      "errorCode": "truncated_response"
     }
   ],
   "viewpoints": []
