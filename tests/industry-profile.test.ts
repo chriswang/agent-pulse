@@ -7,7 +7,7 @@ import { createDatabase } from "../src/db/database.js";
 import { migrateToLatest } from "../src/db/migrate.js";
 import { Repository } from "../src/db/repository.js";
 import { seedDatabase } from "../src/db/seed.js";
-import { buildIndustryPilotReport } from "../src/industry/pilot-report.js";
+import { buildIndustryPilotReport, selectDecisionTopItems } from "../src/industry/pilot-report.js";
 import {
   IndustryProfileSchema,
   industrySources,
@@ -20,6 +20,51 @@ import { validatePublicSite } from "../src/pipeline/public-site-integrity.js";
 const profileSlug = "medical-health-data-elements";
 
 describe("medical health data elements industry profile", () => {
+  it("deduplicates exact fact and viewpoint evidence without dropping broader synthesis", () => {
+    const sharedUrl = "https://example.com/shared-evidence";
+    const common = {
+      summary: "summary",
+      happenedAt: "2026-07-18T00:00:00.000Z",
+      sourceCount: 1,
+      rankingReason: "reason",
+      href: "#item",
+    } as const;
+    const selected = selectDecisionTopItems(
+      [
+        {
+          ...common,
+          id: "fact-shared",
+          kind: "fact",
+          title: "Shared fact",
+          priorityScore: 67,
+          evidenceStatus: "primary_only",
+          evidenceUrls: [sharedUrl],
+        },
+        {
+          ...common,
+          id: "viewpoint-shared",
+          kind: "viewpoint",
+          title: "Shared viewpoint",
+          priorityScore: 40,
+          evidenceStatus: "viewpoint_evidence",
+          evidenceUrls: [sharedUrl],
+        },
+        {
+          ...common,
+          id: "viewpoint-synthesis",
+          kind: "viewpoint",
+          title: "Broader synthesis",
+          priorityScore: 41,
+          evidenceStatus: "viewpoint_evidence",
+          evidenceUrls: [sharedUrl, "https://example.com/second-evidence"],
+        },
+      ],
+      10,
+    );
+
+    expect(selected.map((entry) => entry.id)).toEqual(["fact-shared", "viewpoint-synthesis"]);
+  });
+
   it("keeps a China-first governed source pack isolated from the core profile", () => {
     const profile = requiredProfile();
     expect(profile.sources).toHaveLength(30);

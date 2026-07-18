@@ -115,6 +115,24 @@ export interface IndustryPilotReport {
   readiness: "collecting" | "ready_for_manual_review" | "pass" | "fail";
 }
 
+type DecisionTopItem = IndustryPilotReport["topItems"][number];
+
+export function selectDecisionTopItems(items: DecisionTopItem[], limit: number): DecisionTopItem[] {
+  const selected: DecisionTopItem[] = [];
+  const ranked = [...items].sort(
+    (left, right) =>
+      right.priorityScore - left.priorityScore || right.happenedAt.localeCompare(left.happenedAt),
+  );
+  for (const item of ranked) {
+    if (selected.some((existing) => sameEvidenceSet(existing.evidenceUrls, item.evidenceUrls))) {
+      continue;
+    }
+    selected.push(item);
+    if (selected.length >= limit) break;
+  }
+  return selected;
+}
+
 export async function buildIndustryPilotReport(
   db: Kysely<DatabaseSchema>,
   profile: IndustryProfile,
@@ -422,42 +440,39 @@ export async function buildIndustryPilotReport(
         sourceCount: sourceCount(event),
         evidenceUrls: event.evidence.map((evidence) => evidence.url),
       })),
-    topItems: [
-      ...eventsInWindow.map((event) => ({
-        id: event.slug,
-        kind: "fact" as const,
-        title: event.title,
-        summary: event.factSummary,
-        happenedAt: event.happenedAt,
-        priorityScore: priorityScore(event),
-        sourceCount: sourceCount(event),
-        evidenceStatus: (sourceCount(event) >= 2 ? "independently_corroborated" : "primary_only") as
-          | "independently_corroborated"
-          | "primary_only",
-        rankingReason: `影响 ${event.impactScore} · 业务价值 ${event.valueScore} · 可信度 ${event.confidenceScore} · 关注度 ${event.heatScore}`,
-        evidenceUrls: event.evidence.map((evidence) => evidence.url),
-        href: `events/${event.slug}/`,
-      })),
-      ...currentViewpointReport.viewpoints.map((viewpoint) => ({
-        id: viewpoint.id,
-        kind: "viewpoint" as const,
-        title: viewpoint.claim,
-        summary: viewpoint.whyItMatters,
-        happenedAt: viewpoint.publishedAt,
-        priorityScore: viewpointPriorityScore(viewpoint),
-        sourceCount: viewpoint.sourceCount,
-        evidenceStatus: "viewpoint_evidence" as const,
-        rankingReason: `关注度 ${viewpoint.heatScore} · ${viewpoint.sourceCount} 个独立发布方 · ${viewpoint.authorCount} 位作者`,
-        evidenceUrls: viewpoint.evidence.map((evidence) => evidence.url),
-        href: `#${viewpoint.id}`,
-      })),
-    ]
-      .sort(
-        (left, right) =>
-          right.priorityScore - left.priorityScore ||
-          right.happenedAt.localeCompare(left.happenedAt),
-      )
-      .slice(0, profile.trial.topN),
+    topItems: selectDecisionTopItems(
+      [
+        ...eventsInWindow.map((event) => ({
+          id: event.slug,
+          kind: "fact" as const,
+          title: event.title,
+          summary: event.factSummary,
+          happenedAt: event.happenedAt,
+          priorityScore: priorityScore(event),
+          sourceCount: sourceCount(event),
+          evidenceStatus: (sourceCount(event) >= 2
+            ? "independently_corroborated"
+            : "primary_only") as "independently_corroborated" | "primary_only",
+          rankingReason: `影响 ${event.impactScore} · 业务价值 ${event.valueScore} · 可信度 ${event.confidenceScore} · 关注度 ${event.heatScore}`,
+          evidenceUrls: event.evidence.map((evidence) => evidence.url),
+          href: `events/${event.slug}/`,
+        })),
+        ...currentViewpointReport.viewpoints.map((viewpoint) => ({
+          id: viewpoint.id,
+          kind: "viewpoint" as const,
+          title: viewpoint.claim,
+          summary: viewpoint.whyItMatters,
+          happenedAt: viewpoint.publishedAt,
+          priorityScore: viewpointPriorityScore(viewpoint),
+          sourceCount: viewpoint.sourceCount,
+          evidenceStatus: "viewpoint_evidence" as const,
+          rankingReason: `关注度 ${viewpoint.heatScore} · ${viewpoint.sourceCount} 个独立发布方 · ${viewpoint.authorCount} 位作者`,
+          evidenceUrls: viewpoint.evidence.map((evidence) => evidence.url),
+          href: `#${viewpoint.id}`,
+        })),
+      ],
+      profile.trial.topN,
+    ),
     manualReview: {
       clusteringAccuracyPercent: manualReview.clusteringAccuracyPercent,
       top10DecisionValueCount: manualReview.top10DecisionValueCount,
@@ -472,6 +487,16 @@ export async function buildIndustryPilotReport(
     },
     readiness,
   };
+}
+
+function sameEvidenceSet(left: string[], right: string[]): boolean {
+  const leftSet = new Set(left);
+  const rightSet = new Set(right);
+  return (
+    leftSet.size > 0 &&
+    leftSet.size === rightSet.size &&
+    [...leftSet].every((url) => rightSet.has(url))
+  );
 }
 
 export async function writeIndustryPilotReport(
