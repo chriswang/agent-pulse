@@ -12,7 +12,7 @@ import {
   loadIndustryRules,
   scopeAssessmentFromSignal,
 } from "./rules.js";
-import { loadIndustryViewpoints } from "./viewpoints.js";
+import { loadIndustryViewpoints, reconcileIndustryViewpoints } from "./viewpoints.js";
 
 const manualReviewSchema = z
   .object({
@@ -161,6 +161,7 @@ export async function buildIndustryPilotReport(
           "signals.summary",
           "signals.tags_json",
           "signals.raw_meta_json",
+          "signals.canonical_url as url",
           "signals.created_at as createdAt",
           "signals.published_at as publishedAt",
           "sources.slug",
@@ -170,20 +171,10 @@ export async function buildIndustryPilotReport(
       readManualReview(rootDir, profile.slug),
       loadIndustryViewpoints(profile.slug, rootDir),
     ]);
-  const currentViewpointReport = signalRows.length
-    ? viewpointReport
-    : {
-        ...viewpointReport,
-        model: {
-          provider: profile.model.provider,
-          name: "not-run",
-          status: "skipped" as const,
-          inputHash: null,
-          usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
-        },
-        runs: [],
-        viewpoints: [],
-      };
+  const currentViewpointReport = reconcileIndustryViewpoints(
+    viewpointReport,
+    signalRows.map((signal) => signal.url),
+  );
   const automatedSlugs = new Set(
     profile.sources
       .filter(

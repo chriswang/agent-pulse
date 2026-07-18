@@ -185,7 +185,7 @@ export async function analyzeIndustryViewpoints(
       const completion = await client.completeJson({
         system: SYSTEM_PROMPT,
         user: prompt,
-        maxTokens: 2_600,
+        maxTokens: 4_000,
       });
       Object.assign(usage, completion.usage);
       const parsed = validateModelOutput(completion.value, candidates, profile);
@@ -243,6 +243,31 @@ export async function resetIndustryViewpoints(profileSlug: string, rootDir: stri
   const path = join(rootDir, "industry-packs", profileSlug, "data", "viewpoints.json");
   await mkdir(dirname(path), { recursive: true });
   await writeFile(path, `${JSON.stringify(emptyReport(profileSlug), null, 2)}\n`, "utf8");
+}
+
+export function reconcileIndustryViewpoints(
+  report: IndustryViewpointReport,
+  signalUrls: Iterable<string>,
+): IndustryViewpointReport {
+  const allowedUrls = new Set(signalUrls);
+  const viewpoints = report.viewpoints.filter((viewpoint) =>
+    viewpoint.evidence.every((evidence) => allowedUrls.has(evidence.url)),
+  );
+  if (allowedUrls.size > 0 && (report.model.status !== "success" || viewpoints.length > 0)) {
+    return IndustryViewpointReportSchema.parse({ ...report, viewpoints });
+  }
+  return IndustryViewpointReportSchema.parse({
+    ...report,
+    model: {
+      provider: report.model.provider,
+      name: "not-run",
+      status: "skipped",
+      inputHash: null,
+      usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+    },
+    runs: [],
+    viewpoints: [],
+  });
 }
 
 function emptyReport(profileSlug: string): IndustryViewpointReport {
@@ -366,6 +391,8 @@ function buildPrompt(candidates: Candidate[], profile: IndustryProfile): string 
       "evidenceUrls 必须是 inputs.url 的子集。",
       "trackSlugs 必须来自 availableTracks.slug，audiences 必须来自 availableAudiences。",
       "不要判断观点是真实 Event，不要输出热度分数；热度由程序按真实传播证据计算。",
+      "最多输出 5 个最有决策价值且彼此不同的观点聚类，不为覆盖数量拆分相近观点。",
+      "保持精炼：claim 不超过 60 字，summary 不超过 160 字，whyItMatters 不超过 120 字，counterpoint 和 nextSignal 各不超过 100 字。",
       "只输出 JSON object，不要输出 Markdown。",
     ],
     outputShape: {
