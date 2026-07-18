@@ -73,7 +73,7 @@ endpoint: POST /chat/completions
 JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 ```
 
-`response_format`、DeepSeek `thinking` 和 `reasoning_effort` 只有明确支持时才发送。方舟观点聚类显式使用 `reasoning_effort=low`，避免结构化短输出被内部推理耗尽完成预算；其他 Ark 请求未声明时不发送该参数。密钥、prompt、原 completion 和 reasoning 不进入日志、artifact、snapshot 或 Pages。
+`response_format`、DeepSeek `thinking` 和 `reasoning_effort` 只有明确支持时才发送。方舟观点聚类显式使用 `reasoning_effort=low`，避免结构化短输出被内部推理耗尽完成预算；其他 Ark 请求未声明时不发送该参数。prompt-only 响应先按严格 JSON 解析；如果模型只在单一 JSON 对象外增加说明文字或 Markdown 围栏，客户端只提取该对象并继续本地 Schema 校验，不接受多个对象或不可解析片段。密钥、prompt、原 completion 和 reasoning 不进入日志、artifact、snapshot 或 Pages。
 
 ## 5. 聚类、评分与发布
 
@@ -93,7 +93,7 @@ JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 - 独立发布机构、独立作者、平台、互动数据、时间衰减和热度状态；
 - 模型名、输入哈希、Token 用量和运行状态，不保存 prompt、原 completion 或 reasoning。
 
-方舟只读取最近 30 天、通过 `include` 或进入观点候选规则的最多 40 条短摘录；首轮默认按相关度、来源角色与中国优先排序后选 16 条，单一来源最多 5 条，单条摘要不超过 480 字。观点请求单次最多等待 90 秒、最多尝试两次，避免短超时产生重复长请求；提示模型最多输出 3 个精炼聚类，使用低推理强度和 8,000 Token 完成预算，为模型内部推理与严格 JSON 正文共同留出边界，本地 Schema 最多接受 3 个聚类。模型返回的 URL 必须是输入 URL 子集，中文字段和枚举经过 Zod 校验；模型提示与本地关键词门禁共同要求观点直接涉及医疗健康数据的治理、授权、流通、开发利用、标准互操作或支付保险应用，纯 AI 编程、一般医院 IT 或无数据机制的国产化观点不能公开。热度分由程序根据真实传播证据计算：有互动指标才可显示“实测热门”；至少两个独立发布方可显示“多源关注”；其余只能显示“新出现观点”。
+方舟只读取最近 30 天、通过 `include` 或进入观点候选规则的最多 40 条短摘录；首轮默认按相关度、来源角色与中国优先排序后选 16 条，单一来源最多 5 条，单条摘要不超过 480 字。观点请求单次最多等待 90 秒，网络级最多尝试两次，避免短超时产生无界重复请求；提示模型最多输出 3 个精炼聚类，使用低推理强度、零温度和 8,000 Token 完成预算，为模型内部推理与严格 JSON 正文共同留出边界。如果完成响应在安全提取后仍是 `invalid_json`，观点任务只允许再生成一次，并累计成功与失败响应中可获得的 Token 用量；本地 Schema 最多接受 3 个聚类。模型返回的 URL 必须是输入 URL 子集，中文字段和枚举经过 Zod 校验；模型提示与本地关键词门禁共同要求观点直接涉及医疗健康数据的治理、授权、流通、开发利用、标准互操作或支付保险应用，纯 AI 编程、一般医院 IT 或无数据机制的国产化观点不能公开。热度分由程序根据真实传播证据计算：有互动指标才可显示“实测热门”；至少两个独立发布方可显示“多源关注”；其余只能显示“新出现观点”。
 
 统一 Top 10 合并已发布 Event 与 Viewpoint，保留 `fact` / `viewpoint` 类型、证据状态和原文入口。Event 按确定性影响、价值、置信度和热度排序；Viewpoint 按可审计关注度、来源权威、时效和目标受众覆盖排序。没有合格对象时不凑数。
 
