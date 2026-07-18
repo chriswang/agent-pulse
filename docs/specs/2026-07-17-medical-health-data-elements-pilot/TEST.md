@@ -92,6 +92,9 @@
 - 中文根首页 title、description、canonical 与行业名称一致；
 - 390px 与 1440px 下首页可读，无横向溢出；
 - 根首页不出现上游 AI 行业 Hero 或演示 Event；
+- 根首页首屏展示真实的重点 Event 或 Viewpoint；存在事实 Event 时依次展示正在形成的方向、重点事件、观点与文章和最新来源动态；
+- 根首页不出现 `BASELINE SCORECARD`、`SOURCE HEALTH`、采集成功率、Token 用量或“先验证这 7 天”等试跑过程内容；
+- 热点事件进入站内详情，观点和最新文章可回链原始资料；无传播证据时不得使用“实测热门”；
 - 试跑阶段页面使用“领域观察”，不把 30 天历史证据描述为长期趋势计算；
 - 当前 7 个偏题 Event 不再进入 timeline、Top 10 或领域观察；
 - 专用 workflow 使用行业 snapshot；完整验证设置 `MODEL_ENRICHMENT_ENABLED=true`，只向方舟发送通过门禁的有界短摘录；

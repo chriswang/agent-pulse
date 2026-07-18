@@ -454,8 +454,18 @@ async function validateIndustryPublicSite(
       }
     }
   }
-  if (!(pageHtml.get("index.html") ?? "").includes("industry-pilot-hero")) {
-    add("missing_industry_home", "index.html", "Industry pilot scorecard is missing");
+  const industryHome = pageHtml.get("index.html") ?? "";
+  if (!industryHome.includes("industry-intelligence-hero")) {
+    add("missing_industry_home", "index.html", "Industry intelligence home is missing");
+  }
+  for (const forbidden of ["BASELINE SCORECARD", "SOURCE HEALTH", "采集成功率", "tokens"]) {
+    if (industryHome.includes(forbidden)) {
+      add(
+        "operational_content_on_home",
+        "index.html",
+        `Operational content leaked onto home: ${forbidden}`,
+      );
+    }
   }
   assertCount(
     "index.html",
