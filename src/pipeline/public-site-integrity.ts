@@ -455,7 +455,7 @@ async function validateIndustryPublicSite(
     }
   }
   const industryHome = pageHtml.get("index.html") ?? "";
-  if (!industryHome.includes("industry-intelligence-hero")) {
+  if (!industryHome.includes("industry-lead-hero")) {
     add("missing_industry_home", "index.html", "Industry intelligence home is missing");
   }
   for (const forbidden of ["BASELINE SCORECARD", "SOURCE HEALTH", "采集成功率", "tokens"]) {
