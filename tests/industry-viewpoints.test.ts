@@ -102,6 +102,46 @@ describe("industry viewpoint analysis", () => {
     expect(report.runs[0]?.errorCode).toBe("unknown_evidence_url");
     expect(report.viewpoints).toEqual([]);
   });
+
+  it("bounds a request to 16 ranked candidates and no more than 5 per source", async () => {
+    const { db, config, profile } = await fixture();
+    await insertManyViewpointSignals(db, config.rootDir);
+    let promptInputs: Array<{ url: string; sourceSlug: string; summary: string }> = [];
+    const client: JsonModelClient = {
+      async completeJson(request) {
+        const input = JSON.parse(request.user) as { inputs: typeof promptInputs };
+        promptInputs = input.inputs;
+        return {
+          model: "glm-5.2",
+          usage: { promptTokens: 100, completionTokens: 80, totalTokens: 180 },
+          value: { viewpoints: [validViewpoint([input.inputs[0]?.url ?? ""])] },
+        };
+      },
+    };
+    const outputPath = join(
+      await mkdtemp(join(tmpdir(), "viewpoints-bounded-")),
+      "viewpoints.json",
+    );
+
+    const report = await analyzeIndustryViewpoints(
+      db,
+      profile,
+      config.rootDir,
+      client,
+      {
+        provider: "ark",
+        baseUrl: profile.model.baseUrl,
+        model: profile.model.name,
+        jsonMode: "prompt-only",
+      },
+      { referenceAt: "2026-07-18T12:00:00.000Z", outputPath },
+    );
+
+    expect(report.model.status).toBe("success");
+    expect(promptInputs).toHaveLength(16);
+    expect(Math.max(...sourceCounts(promptInputs))).toBeLessThanOrEqual(5);
+    expect(promptInputs.every((item) => item.summary.length <= 480)).toBe(true);
+  });
 });
 
 async function fixture() {
@@ -144,6 +184,63 @@ async function insertViewpointSignals(
       rawMeta: { industryScope: assessIndustryScope(input, { slug }, rules) },
     });
   }
+}
+
+async function insertManyViewpointSignals(
+  db: ReturnType<typeof createDatabase>,
+  rootDir: string,
+): Promise<void> {
+  const repository = new Repository(db);
+  const rules = loadIndustryRules("medical-health-data-elements", rootDir);
+  if (!rules) throw new Error("missing_industry_rules");
+  const sources = await repository.listSources();
+  const slugs = ["nda-expert-interpretation", "chima", "36kr-healthcare-feed", "hit180-health-it"];
+  for (const [sourceIndex, slug] of slugs.entries()) {
+    const source = sources.find((item) => item.slug === slug);
+    if (!source) throw new Error(`missing_${slug}`);
+    for (let index = 0; index < 7; index += 1) {
+      const input = {
+        title: `医疗健康数据要素授权运营与应用闭环观察 ${sourceIndex}-${index}`,
+        summary:
+          "医疗健康数据要素行业分析关注医院数据授权运营、可信流通、保险应用与可验证业务闭环。".repeat(
+            8,
+          ),
+        tags: ["医疗健康数据", "数据授权运营"],
+      };
+      await repository.insertSignal(source.id, {
+        url: `https://example.com/${slug}/viewpoint-${index}`,
+        ...input,
+        language: "zh-CN",
+        publishedAt: `2026-07-${String(10 + index).padStart(2, "0")}T08:00:00.000Z`,
+        category: "analysis",
+        metrics: { platforms: ["web"] },
+        rawMeta: { industryScope: assessIndustryScope(input, { slug }, rules) },
+      });
+    }
+  }
+}
+
+function validViewpoint(evidenceUrls: string[]) {
+  return {
+    claim: "医疗健康数据流通的关键正在从平台建设转向可验证的授权与应用闭环",
+    summary: "行业材料认为平台建设需要与授权链路、使用边界和可复核业务结果结合。",
+    nature: "analysis",
+    stance: "cautionary",
+    trackSlugs: ["health-data-infrastructure"],
+    audiences: ["医院", "数据集团"],
+    whyItMatters: "这会影响医院和数据运营方的平台能力与场景运营投入优先级。",
+    counterpoint: "当前公开材料仍不足以代替项目运行数据和客户采用证据。",
+    nextSignal: "继续观察公开采购、授权运营项目和可量化的数据产品调用结果。",
+    evidenceUrls,
+  };
+}
+
+function sourceCounts(inputs: Array<{ sourceSlug: string }>): number[] {
+  const counts = new Map<string, number>();
+  for (const input of inputs) {
+    counts.set(input.sourceSlug, (counts.get(input.sourceSlug) ?? 0) + 1);
+  }
+  return [...counts.values()];
 }
 
 function invalidClient(): JsonModelClient {
