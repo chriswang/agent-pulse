@@ -106,10 +106,24 @@ describe("medical health data elements industry profile", () => {
         language: "zh-CN",
         publishedAt: `2026-07-${String(10 + index).padStart(2, "0")}T00:00:00.000Z`,
       }));
+    const [outsideWindow] = makeSignals("CN", 1);
+    if (!outsideWindow) throw new Error("missing_window_fixture");
 
     const selected = selectIndustrySignals(
-      [...makeSignals("CN", 8), ...makeSignals("GLOBAL", 8)],
+      [
+        ...makeSignals("CN", 8),
+        ...makeSignals("GLOBAL", 8),
+        {
+          ...outsideWindow,
+          id: "CN-outside-window",
+          publishedAt: "2026-05-01T00:00:00.000Z",
+        },
+      ],
       rules,
+      {
+        windowStart: "2026-06-18T00:00:00.000Z",
+        windowEndExclusive: "2026-07-18T00:00:00.001Z",
+      },
     );
 
     expect(selected).toHaveLength(10);

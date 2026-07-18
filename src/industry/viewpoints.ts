@@ -391,6 +391,7 @@ function buildPrompt(candidates: Candidate[], profile: IndustryProfile): string 
       "evidenceUrls 必须是 inputs.url 的子集。",
       "trackSlugs 必须来自 availableTracks.slug，audiences 必须来自 availableAudiences。",
       "不要判断观点是真实 Event，不要输出热度分数；热度由程序按真实传播证据计算。",
+      "只输出直接涉及医疗健康数据治理、授权、流通、开发利用、标准互操作或支付保险数据应用的观点；纯 AI 编程、一般医院 IT 建设或未说明数据机制的国产化观点不要输出。",
       "最多输出 5 个最有决策价值且彼此不同的观点聚类，不为覆盖数量拆分相近观点。",
       "保持精炼：claim 不超过 60 字，summary 不超过 160 字，whyItMatters 不超过 120 字，counterpoint 和 nextSignal 各不超过 100 字。",
       "只输出 JSON object，不要输出 Markdown。",
@@ -456,7 +457,23 @@ function validateModelOutput(value: unknown, candidates: Candidate[], profile: I
       throw new Error("unknown_audience");
     }
   }
-  return parsed;
+  const viewpoints = parsed.viewpoints.filter(isDirectIndustryViewpoint);
+  if (viewpoints.length === 0) throw new Error("no_relevant_viewpoints");
+  return { viewpoints };
+}
+
+function isDirectIndustryViewpoint(
+  viewpoint: z.infer<typeof modelOutputSchema>["viewpoints"][number],
+): boolean {
+  const text = [
+    viewpoint.claim,
+    viewpoint.summary,
+    viewpoint.whyItMatters,
+    viewpoint.nextSignal,
+  ].join(" ");
+  return /数据要素|医疗(?:健康)?数据|健康数据|医保数据|医药数据|保险数据|理赔数据|数据(?:治理|授权|流通|资产|产品|空间|平台|中枢)|隐私计算|可信数据|互操作|事前授权|\bFHIR\b|\bHL7\b/i.test(
+    text,
+  );
 }
 
 function buildViewpoint(

@@ -48,6 +48,18 @@ describe("industry viewpoint analysis", () => {
                 nextSignal: "继续观察公开采购、授权运营项目及可量化的数据产品调用结果。",
                 evidenceUrls: input.inputs.map((item) => item.url),
               },
+              {
+                claim: "AI编程工具将提升医院信息科的软件交付效率",
+                summary: "医院信息科可以使用AI编程工具缓解工程师短缺并加快一般软件开发。",
+                nature: "opinion",
+                stance: "supportive",
+                trackSlugs: ["health-data-infrastructure"],
+                audiences: ["医院"],
+                whyItMatters: "医院信息科可能改变通用软件开发和人员配置方式。",
+                counterpoint: "生成代码仍存在安全和维护风险，需要专业人员审核。",
+                nextSignal: "观察更多医院公开AI编程项目的交付周期。",
+                evidenceUrls: [input.inputs[0]?.url ?? ""],
+              },
             ],
           },
         };
@@ -72,6 +84,7 @@ describe("industry viewpoint analysis", () => {
     expect(candidateCount).toBe(2);
     expect(report.model).toMatchObject({ status: "success", name: "glm-5.2" });
     expect(report.model.usage.totalTokens).toBe(180);
+    expect(report.viewpoints).toHaveLength(1);
     expect(report.viewpoints[0]).toMatchObject({
       sourceCount: 2,
       engagement: { measured: false },
