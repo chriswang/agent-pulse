@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-17T14:30:44.175Z",
+  "generatedAt": "2026-07-18T00:43:25.924Z",
   "window": {
-    "start": "2026-07-17T00:00:00.000Z",
-    "end": "2026-07-23T00:00:00.000Z",
+    "start": "2026-07-18T00:00:00.000Z",
+    "end": "2026-07-24T00:00:00.000Z",
     "targetDays": 7,
     "observedDays": 1,
-    "historyStart": "2026-06-17T00:00:00.000Z",
-    "historyEnd": "2026-07-17T14:30:44.175Z",
+    "historyStart": "2026-06-18T00:00:00.000Z",
+    "historyEnd": "2026-07-18T00:43:25.924Z",
     "historyLookbackDays": 30
   },
   "sources": {
@@ -23,27 +23,84 @@
     "healthRatePercent": 93.3,
     "chineseConfigured": 24,
     "chineseHealthy": 22,
-    "chineseReadyPublishers": 18,
+    "chineseReadyPublishers": 16,
     "minimumChineseReady": 12,
     "chinaContentTargetPercent": 80
   },
   "collection": {
-    "runs": 125,
-    "successfulRuns": 120,
-    "failedRuns": 5,
-    "successRatePercent": 96,
+    "runs": 26,
+    "successfulRuns": 25,
+    "failedRuns": 1,
+    "successRatePercent": 96.2,
     "targetPercent": 90,
     "status": "pass"
   },
   "intelligence": {
-    "signals": 12,
-    "publishedEvents": 2,
+    "signals": 13,
+    "publishedEvents": 3,
     "multiSourceEvents": 0,
     "multiSourceRatePercent": 0,
     "highPriorityEvents": 0,
-    "highPriorityEvidenceCoveragePercent": null
+    "highPriorityEvidenceCoveragePercent": null,
+    "viewpoints": 0,
+    "multiSourceViewpoints": 0,
+    "measuredHotViewpoints": 0
+  },
+  "modelAnalysis": {
+    "provider": "ark",
+    "name": "glm-5.2",
+    "status": "failed",
+    "successfulDays": 0,
+    "targetDays": 7,
+    "totalTokens": 0
   },
   "topCandidates": [],
+  "topItems": [
+    {
+      "id": "国家数据要素综合试验区医疗数据流通利用专题现场会在北京召开-2026-07-18",
+      "kind": "fact",
+      "title": "国家数据要素综合试验区医疗数据流通利用专题现场会在北京召开",
+      "summary": "据国家数据局 · 地方动态公开材料：国家数据要素综合试验区医疗数据流通利用专题现场会在北京召开 2026.07.06",
+      "happenedAt": "2026-07-06T00:00:00.000Z",
+      "priorityScore": 74,
+      "sourceCount": 1,
+      "evidenceStatus": "primary_only",
+      "rankingReason": "影响 93 · 业务价值 59 · 可信度 87 · 关注度 15",
+      "evidenceUrls": [
+        "https://www.nda.gov.cn/sjj/jgsz/jld/llh/llhldhd/0706/20260706114019419701529_pc.html",
+        "https://www.nda.gov.cn/sjj/swdt/sjdt/0706/20260706114019419701529_pc.html"
+      ],
+      "href": "events/国家数据要素综合试验区医疗数据流通利用专题现场会在北京召开-2026-07-18/"
+    },
+    {
+      "id": "国家金融监督管理总局上海监管局-上海市医疗保障局等7部门印发-关于促进商业健康保险高质量发展助力生物医药产业创新的若干措施-的通知-2026-07-18",
+      "kind": "fact",
+      "title": "国家金融监督管理总局上海监管局、上海市医疗保障局等7部门印发《关于促进商业健康保险高质量发展助力生物医药产业创新的若干措施》的通知",
+      "summary": "据国家医疗保障局 · 动态与政策公开材料：国家金融监督管理总局上海监管局、上海市医疗保障局等7部门印发《关于促... 2026-07-15",
+      "happenedAt": "2026-07-15T00:00:00.000Z",
+      "priorityScore": 67,
+      "sourceCount": 1,
+      "evidenceStatus": "primary_only",
+      "rankingReason": "影响 80 · 业务价值 59 · 可信度 78 · 关注度 19",
+      "evidenceUrls": ["https://www.nhsa.gov.cn/art/2026/7/15/art_14_21434.html"],
+      "href": "events/国家金融监督管理总局上海监管局-上海市医疗保障局等7部门印发-关于促进商业健康保险高质量发展助力生物医药产业创新的若干措施-的通知-2026-07-18/"
+    },
+    {
+      "id": "building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-a-2026-07-18",
+      "kind": "fact",
+      "title": "Building Reusable, Scalable Prior Authorization Tools: A Case Study in Policy Digitization and HL7 Da Vinci DTR Implementation",
+      "summary": "HL7 Da Vinci Project 定于2026年6月24日（美东时间下午4时至5时30分）举办六月社区圆桌会议，届时 Blue Cross Blue Shield Association（BCBSA）和 Itiliti Health 的代表将分享关于政策数字化与 HL7 FHIR 问卷标准化的案例研究，该案例对齐 Da Vinci Documentation Templates and Rules（DTR）Implementation Guide。演讲者包括 BCBSA 临床事务副总裁 Dr. Razia Hashhi、Itiliti Health 联合创始人兼 CEO Michael Lunzer、HL7 Da Vinci Project 项目协调员 Casey Thompson，主持人由 HL7 Da Vinci Project 项目经理 Alix Goss 担任。会议还将表彰2025年度 HL7 Da Vinci Project 社区冠军。",
+      "happenedAt": "2026-06-18T19:35:21.000Z",
+      "priorityScore": 67,
+      "sourceCount": 1,
+      "evidenceStatus": "primary_only",
+      "rankingReason": "影响 86 · 业务价值 52 · 可信度 75 · 关注度 15",
+      "evidenceUrls": [
+        "https://blog.hl7.org/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-and-hl7-da-vinci-dtr-implementation"
+      ],
+      "href": "events/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-a-2026-07-18/"
+    }
+  ],
   "manualReview": {
     "clusteringAccuracyPercent": null,
     "top10DecisionValueCount": null,
