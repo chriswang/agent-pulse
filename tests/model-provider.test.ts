@@ -3,7 +3,7 @@ import { createJsonModelClient, resolveModelIdentity } from "../src/ai/provider.
 import { loadConfig } from "../src/config/env.js";
 
 describe("provider-neutral JSON model client", () => {
-  it("uses Ark Coding Chat Completions without DeepSeek-only parameters", async () => {
+  it("uses Ark Coding Chat Completions with request-scoped reasoning effort", async () => {
     const request = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
       expect(String(url)).toBe("https://ark.cn-beijing.volces.com/api/coding/v3/chat/completions");
       expect(new Headers(init?.headers).get("authorization")).toBe("Bearer ark-secret-value");
@@ -11,7 +11,7 @@ describe("provider-neutral JSON model client", () => {
       expect(body.model).toBe("glm-5.2");
       expect(body.response_format).toBeUndefined();
       expect(body.thinking).toBeUndefined();
-      expect(body.reasoning_effort).toBeUndefined();
+      expect(body.reasoning_effort).toBe("low");
       expect(body.messages[0].content).toContain("Return exactly one valid JSON object");
       return new Response(
         JSON.stringify({
@@ -41,7 +41,9 @@ describe("provider-neutral JSON model client", () => {
       maxAttempts: 1,
     });
 
-    await expect(client.completeJson({ system: "system", user: "user" })).resolves.toEqual({
+    await expect(
+      client.completeJson({ system: "system", user: "user", reasoningEffort: "low" }),
+    ).resolves.toEqual({
       value: { ok: true },
       model: "glm-5.2",
       usage: { promptTokens: 9, completionTokens: 5, totalTokens: 14 },
