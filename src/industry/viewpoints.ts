@@ -181,19 +181,28 @@ export async function analyzeIndustryViewpoints(
   let viewpoints: IndustryViewpoint[] = previous.viewpoints;
 
   if (prompt) {
-    try {
-      const completion = await client.completeJson({
-        system: SYSTEM_PROMPT,
-        user: prompt,
-        maxTokens: 8_000,
-        reasoningEffort: "low",
-      });
-      Object.assign(usage, completion.usage);
-      const parsed = validateModelOutput(completion.value, candidates, profile);
-      viewpoints = parsed.viewpoints.map((draft) => buildViewpoint(draft, candidates, referenceAt));
-      status = "success";
-    } catch (error) {
-      errorCode = safeErrorCode(error);
+    for (let generation = 1; generation <= 2; generation += 1) {
+      try {
+        const completion = await client.completeJson({
+          system: SYSTEM_PROMPT,
+          user: prompt,
+          maxTokens: 8_000,
+          reasoningEffort: "low",
+          temperature: 0,
+        });
+        addUsage(usage, completion.usage);
+        const parsed = validateModelOutput(completion.value, candidates, profile);
+        viewpoints = parsed.viewpoints.map((draft) =>
+          buildViewpoint(draft, candidates, referenceAt),
+        );
+        status = "success";
+        errorCode = undefined;
+        break;
+      } catch (error) {
+        addUsage(usage, errorUsage(error));
+        errorCode = safeErrorCode(error);
+        if (generation === 2 || errorCode !== "invalid_json") break;
+      }
     }
   }
 
@@ -619,6 +628,21 @@ function safeErrorCode(error: unknown): string {
     .toLowerCase()
     .replace(/[^a-z0-9_-]+/g, "_")
     .slice(0, 80);
+}
+
+function errorUsage(error: unknown): ModelUsage {
+  const usage = (error as { usage?: Partial<ModelUsage> }).usage;
+  return {
+    promptTokens: usage?.promptTokens ?? 0,
+    completionTokens: usage?.completionTokens ?? 0,
+    totalTokens: usage?.totalTokens ?? 0,
+  };
+}
+
+function addUsage(target: ModelUsage, value: ModelUsage): void {
+  target.promptTokens += value.promptTokens;
+  target.completionTokens += value.completionTokens;
+  target.totalTokens += value.totalTokens;
 }
 
 function isMissingFile(error: unknown): boolean {
