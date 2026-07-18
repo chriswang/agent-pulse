@@ -308,6 +308,7 @@ async function validateIndustryPublicSite(
     sources: "data/sources.json",
     tracks: "data/tracks.json",
     industry: "data/industry-pilot.json",
+    viewpoints: "data/viewpoints.json",
   } as const;
   const dataText = {
     timeline: await read(dataPaths.timeline),
@@ -315,6 +316,7 @@ async function validateIndustryPublicSite(
     scout: await read(dataPaths.scout),
     sources: await read(dataPaths.sources),
     tracks: await read(dataPaths.tracks),
+    viewpoints: await read(dataPaths.viewpoints),
     industry: industryText,
   };
   const timeline = parse<{
@@ -334,16 +336,22 @@ async function validateIndustryPublicSite(
   );
   const sources = parse<unknown[]>(dataPaths.sources, dataText.sources, []);
   const tracks = parse<Array<{ slug?: string }>>(dataPaths.tracks, dataText.tracks, []);
+  const viewpoints = parse<{ generatedAt?: string; viewpoints?: unknown[] }>(
+    dataPaths.viewpoints,
+    dataText.viewpoints,
+    {},
+  );
   const industry = parse<{
     profileSlug?: string;
     generatedAt?: string;
     window?: { start?: string; historyStart?: string };
     sources?: { configured?: number };
-    intelligence?: { signals?: number; publishedEvents?: number };
+    intelligence?: { signals?: number; publishedEvents?: number; viewpoints?: number };
   }>(dataPaths.industry, dataText.industry, {});
   const events = Array.isArray(timeline.events) ? timeline.events : [];
   const publicSignals = Array.isArray(signals.signals) ? signals.signals : [];
   const publicScout = Array.isArray(scout.insights) ? scout.insights : [];
+  const publicViewpoints = Array.isArray(viewpoints.viewpoints) ? viewpoints.viewpoints : [];
   const generatedAt = typeof timeline.generatedAt === "string" ? timeline.generatedAt : null;
   if (!generatedAt || !Number.isFinite(Date.parse(generatedAt))) {
     add("invalid_generated_at", dataPaths.timeline, "Timeline generatedAt is missing or invalid");
@@ -351,6 +359,7 @@ async function validateIndustryPublicSite(
   for (const [path, value] of [
     [dataPaths.signals, signals.generatedAt],
     [dataPaths.scout, scout.generatedAt],
+    [dataPaths.viewpoints, viewpoints.generatedAt],
     [dataPaths.industry, industry.generatedAt],
   ] as const) {
     if (value !== generatedAt) {
@@ -376,6 +385,13 @@ async function validateIndustryPublicSite(
       "industry_count_mismatch",
       dataPaths.industry,
       `Expected ${publicSignals.length} signals, received ${industry.intelligence?.signals ?? "missing"}`,
+    );
+  }
+  if (industry.intelligence?.viewpoints !== publicViewpoints.length) {
+    add(
+      "industry_count_mismatch",
+      dataPaths.industry,
+      `Expected ${publicViewpoints.length} viewpoints, received ${industry.intelligence?.viewpoints ?? "missing"}`,
     );
   }
   const windowStart = industry.window?.historyStart;
@@ -441,6 +457,13 @@ async function validateIndustryPublicSite(
   if (!(pageHtml.get("index.html") ?? "").includes("industry-pilot-hero")) {
     add("missing_industry_home", "index.html", "Industry pilot scorecard is missing");
   }
+  assertCount(
+    "index.html",
+    pageHtml.get("index.html") ?? "",
+    /class="industry-viewpoint-meta"/g,
+    publicViewpoints.length,
+    add,
+  );
   assertCount(
     "signals/index.html",
     pageHtml.get("signals/index.html") ?? "",

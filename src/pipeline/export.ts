@@ -16,6 +16,7 @@ import {
   loadIndustryRules,
   scopeAssessmentFromSignal,
 } from "../industry/rules.js";
+import { loadIndustryViewpoints } from "../industry/viewpoints.js";
 import { evaluateSystem, latestEvaluation } from "./evaluate.js";
 import { loadResearchImpactReport, researchImpactAssessmentForEvent } from "./research-impact.js";
 import { loadMergedIndustryNarratives } from "./stage-promotion.js";
@@ -261,6 +262,9 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
   const industryPilot = industryProfile
     ? await buildIndustryPilotReport(db, industryProfile, config.rootDir, generatedAt)
     : null;
+  const industryViewpoints = industryProfile
+    ? await loadIndustryViewpoints(industryProfile.slug, config.rootDir)
+    : null;
 
   await rm(config.distDir, { recursive: true, force: true });
   await mkdir(join(config.distDir, "data"), { recursive: true });
@@ -316,6 +320,14 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     ...(industryPilot
       ? [writeJson(join(config.distDir, "data/industry-pilot.json"), industryPilot)]
       : []),
+    ...(industryViewpoints
+      ? [
+          writeJson(join(config.distDir, "data/viewpoints.json"), {
+            ...industryViewpoints,
+            generatedAt,
+          }),
+        ]
+      : []),
   ]);
 
   const model: StaticSiteModel = {
@@ -351,6 +363,7 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     github,
     ...(industryProfile ? { industryProfile } : {}),
     ...(industryPilot ? { industryPilot } : {}),
+    ...(industryViewpoints ? { industryViewpoints: { ...industryViewpoints, generatedAt } } : {}),
   };
 
   const allPages = renderStaticPages(model);

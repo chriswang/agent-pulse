@@ -13,6 +13,7 @@ industry-packs/medical-health-data-elements/
   rules.json                ├─ scope, aliases, scoring and publication policy
   narratives.json           ├─ 30-day evidence baseline and track judgments
   data/snapshot.json        ├─ fork-only runtime state
+  data/viewpoints.json      ├─ bounded model output and measured attention evidence
   data/pilot-report.json    └─ seven-day acceptance evidence
 ```
 
@@ -27,6 +28,8 @@ industry-packs/medical-health-data-elements/
 - 20—30 个来源，含 tier、role、采集方式、生命周期、合规说明与用途；
 - 六条行业观察主线；
 - 7 天试跑阈值与人工验收字段说明。
+
+来源组合不仅满足地域配额，还必须覆盖事实与观点两类用途。30 个试跑来源中至少 4 个中国来源应能稳定提供专家分析、行业媒体或公开讨论内容；政策、事实原始来源继续保留 Tier 1 优先级，但不再用大量同质地方政策栏目挤占观点覆盖。
 
 行业模式下 fresh database 只 seed 该行业包来源和主线，不 seed 上游 AI 行业历史 Event、Actor、资源或 Narrative。来源默认 `shadow`；`trial.readySourceSlugs` 只列入本轮已经通过现场审计、内容相关性和质量门槛的来源，并在行业试跑中映射为 `active/ready`。新增或失效来源仍走 shadow observation，不改变上游通用 E4 准入规则。
 
@@ -80,6 +83,20 @@ JSON mode: prompt-only, followed by strict local JSON parse and Zod validation
 
 事实摘要、行业判断、未来信号和业务价值分别持久化使用的 Evidence URL。相关性不足、中文输出失败、证据映射不完整或评分不可解释时保持 review/triage。
 
+## 5.1 观点与热度
+
+`Viewpoint` 不是事实节点，保存在行业包的独立、可审计报告中。每条 Viewpoint 包含：
+
+- 中文主张、摘要与内容性质（观点、分析或预测）；
+- 原文 URL、作者或发布机构、日期和关联主线；
+- 适用对象、业务含义、共识/分歧和可证伪观察点；
+- 独立发布机构、独立作者、平台、互动数据、时间衰减和热度状态；
+- 模型名、输入哈希、Token 用量和运行状态，不保存 prompt、原 completion 或 reasoning。
+
+方舟只读取最近 30 天、通过 `include` 或进入观点候选规则的最多 40 条短摘录；单次最多输出 10 个观点聚类。模型返回的 URL 必须是输入 URL 子集，中文字段和枚举经过 Zod 校验。热度分由程序根据真实传播证据计算：有互动指标才可显示“实测热门”；至少两个独立发布方可显示“多源关注”；其余只能显示“新出现观点”。
+
+统一 Top 10 合并已发布 Event 与 Viewpoint，保留 `fact` / `viewpoint` 类型、证据状态和原文入口。Event 按确定性影响、价值、置信度和热度排序；Viewpoint 按可审计关注度、来源权威、时效和目标受众覆盖排序。没有合格对象时不凑数。
+
 ## 6. 30 天历史证据与 7 天领域观察
 
 行业包独立 `narratives.json`。首次运行从当前日期向前回填 30 天，并从新的验证起始日连续运行 7 天。六条主线每条至少 3 个已审核 Event、两个独立来源，才显示阶段趋势判断、影响对象、反向信号和下一观察点。未达到门槛时不得隐藏已经采集的证据：页面继续显示有效 Signal、候选事实、单一 Tier 1 事实 Event 与缺口说明。
@@ -99,7 +116,8 @@ restore industry snapshot
   -> daily run: incremental collection
   -> deterministic cluster + track classification + fact extraction
   -> deterministic industry scope
-  -> industry cluster / scoring (no model call during baseline)
+  -> bounded Ark viewpoint classification / semantic clustering
+  -> optional evidence-ready Event enrichment
   -> deterministic readiness / publish
   -> generate 30-day baseline report
   -> write privacy-safe industry snapshot
@@ -108,7 +126,7 @@ restore industry snapshot
   -> optional weekly Issue
 ```
 
-本轮明确设置 `MODEL_ENRICHMENT_ENABLED=false`，Ark 步骤不会执行。首次回填必须有真实的 30 天日期下界，并对同源分页设置页数、响应体和速率上限；不能把“清空游标后重抓首页”称为历史回填。确定性路径负责中文事实摘要、主体、主线和原始证据绑定。后续只有经用户确认才允许模型整理；AI 失败仍不阻断确定性采集与快照回流。Pages 使用独立 `industry-pages.yml`，从行业快照构建根首页。
+完整验证设置 `MODEL_ENRICHMENT_ENABLED=true`。首次回填必须有真实的 30 天日期下界，并对同源分页设置页数、响应体和速率上限；不能把“清空游标后重抓首页”称为历史回填。确定性路径负责事实摘要、主体、主线、原始证据、热度计算与最终排序。AI 失败不丢弃采集结果，但当日模型分析记为失败且不能计入完整 7 天通过条件。Pages 使用独立 `industry-pages.yml`，从行业快照和 Viewpoint 报告构建根首页。
 
 首次真实回填前必须清理旧基线的 Signal、Event、聚类关系与运行计数，保留来源目录和最新来源审计；验证窗口从新规则首次成功运行重新计时。连续性按七个独立日历日的完整 run 计算，不能只按最早时间推算。
 
@@ -119,7 +137,8 @@ restore industry snapshot
 - 当前试跑天数与信源成功率；
 - 配置来源、可自动采集来源、健康来源与待替换来源；
 - 最近信号、已形成 Event、多来源 Event 与证据覆盖；
-- 自动排序的 Top 10 候选及原始证据入口；
+- 热门观点、多源关注、观点共识与分歧；
+- 同时覆盖事实与观点的 Top 10 及原始证据入口；
 - 聚类准确率、决策价值和节省时间的人工填写状态；
 - 医院、数据集团、保司/TPA、药企、药械等关注对象与六条观察主线。
 
