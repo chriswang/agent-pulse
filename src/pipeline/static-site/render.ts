@@ -213,8 +213,8 @@ export function pageLayout(input: PageChrome): string {
 </head>
 <body class="${escapeHtml(input.bodyClass || "")}" data-page="${input.active}">
   <a class="skip-link" href="#main">${escapeHtml(t("ui.skipMain", locale))}</a>
-  <header class="topbar">
-    <a class="brand" href="${prefix}" aria-label="${escapeHtml(t("brand.aria", locale))}">
+  <header class="topbar${industryMode ? " industry-topbar" : ""}">
+    <a class="brand" href="${prefix}" aria-label="${escapeHtml(industryMode ? brandName : t("brand.aria", locale))}">
       <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
       <span><strong>${escapeHtml(brandName)}</strong><small>${escapeHtml(brandSubtitle)}</small></span>
     </a>

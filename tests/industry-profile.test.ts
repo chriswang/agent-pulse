@@ -261,6 +261,8 @@ describe("medical health data elements industry profile", () => {
       expect(integrity.issues).toEqual([]);
       const home = await readFile(join(config.distDir, "index.html"), "utf8");
       expect(home).toContain("医疗健康数据要素情报站");
+      expect(home).toContain("industry-lead-hero");
+      expect(home).not.toContain("industry-intelligence-heading");
       expect(home).toContain("正在形成的行业方向");
       expect(home).toContain("重点事件");
       expect(home).toContain("值得关注的观点与文章");
