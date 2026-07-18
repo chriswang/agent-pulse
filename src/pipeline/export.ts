@@ -16,7 +16,7 @@ import {
   loadIndustryRules,
   scopeAssessmentFromSignal,
 } from "../industry/rules.js";
-import { loadIndustryViewpoints } from "../industry/viewpoints.js";
+import { loadIndustryViewpoints, reconcileIndustryViewpoints } from "../industry/viewpoints.js";
 import { evaluateSystem, latestEvaluation } from "./evaluate.js";
 import { loadResearchImpactReport, researchImpactAssessmentForEvent } from "./research-impact.js";
 import { loadMergedIndustryNarratives } from "./stage-promotion.js";
@@ -263,7 +263,10 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     ? await buildIndustryPilotReport(db, industryProfile, config.rootDir, generatedAt)
     : null;
   const industryViewpoints = industryProfile
-    ? await loadIndustryViewpoints(industryProfile.slug, config.rootDir)
+    ? reconcileIndustryViewpoints(
+        await loadIndustryViewpoints(industryProfile.slug, config.rootDir),
+        signals.map((signal) => signal.url),
+      )
     : null;
 
   await rm(config.distDir, { recursive: true, force: true });
@@ -404,11 +407,10 @@ function briefPublicText(value: string): string {
   return text.length <= 220 ? text : `${text.slice(0, 217).trimEnd()}…`;
 }
 
-function selectIndustrySignals<
+export function selectIndustrySignals<
   T extends {
     rawMetaJson: string;
     sourceRegion: string;
-    language: string;
     publishedAt: string;
   },
 >(signals: T[], rules: IndustryRules): T[] {
@@ -416,9 +418,7 @@ function selectIndustrySignals<
     const scope = scopeAssessmentFromSignal({ raw_meta_json: signal.rawMetaJson });
     return scope?.profileSlug === rules.profileSlug && scope.decision === "include";
   });
-  const china = included.filter(
-    (signal) => signal.sourceRegion === "CN" || signal.language.toLowerCase().startsWith("zh"),
-  );
+  const china = included.filter((signal) => signal.sourceRegion === "CN");
   const global = included.filter((signal) => !china.includes(signal));
   const maximumGlobal = Math.floor(
     (china.length * (100 - rules.targetChinaContentPercent)) / rules.targetChinaContentPercent,

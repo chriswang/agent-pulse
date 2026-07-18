@@ -10,7 +10,10 @@ import { Repository } from "../src/db/repository.js";
 import { seedDatabase } from "../src/db/seed.js";
 import { loadIndustryProfile } from "../src/industry/profile.js";
 import { assessIndustryScope, loadIndustryRules } from "../src/industry/rules.js";
-import { analyzeIndustryViewpoints } from "../src/industry/viewpoints.js";
+import {
+  analyzeIndustryViewpoints,
+  reconcileIndustryViewpoints,
+} from "../src/industry/viewpoints.js";
 
 const databases: ReturnType<typeof createDatabase>[] = [];
 
@@ -75,6 +78,11 @@ describe("industry viewpoint analysis", () => {
       heatStatus: "multi_source_attention",
     });
     expect(report.viewpoints[0]?.heatScore).toBeLessThan(60);
+    expect(reconcileIndustryViewpoints(report, ["https://unrelated.example/item"])).toMatchObject({
+      model: { status: "skipped", name: "not-run" },
+      runs: [],
+      viewpoints: [],
+    });
   });
 
   it("rejects model evidence URLs that were not in the bounded input", async () => {
@@ -107,10 +115,17 @@ describe("industry viewpoint analysis", () => {
     const { db, config, profile } = await fixture();
     await insertManyViewpointSignals(db, config.rootDir);
     let promptInputs: Array<{ url: string; sourceSlug: string; summary: string }> = [];
+    let promptRules: string[] = [];
+    let requestedMaxTokens: number | undefined;
     const client: JsonModelClient = {
       async completeJson(request) {
-        const input = JSON.parse(request.user) as { inputs: typeof promptInputs };
+        const input = JSON.parse(request.user) as {
+          inputs: typeof promptInputs;
+          rules: string[];
+        };
         promptInputs = input.inputs;
+        promptRules = input.rules;
+        requestedMaxTokens = request.maxTokens;
         return {
           model: "glm-5.2",
           usage: { promptTokens: 100, completionTokens: 80, totalTokens: 180 },
@@ -141,6 +156,8 @@ describe("industry viewpoint analysis", () => {
     expect(promptInputs).toHaveLength(16);
     expect(Math.max(...sourceCounts(promptInputs))).toBeLessThanOrEqual(5);
     expect(promptInputs.every((item) => item.summary.length <= 480)).toBe(true);
+    expect(requestedMaxTokens).toBe(4_000);
+    expect(promptRules.some((rule) => rule.includes("最多输出 5 个"))).toBe(true);
   });
 });
 

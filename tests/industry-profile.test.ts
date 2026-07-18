@@ -14,7 +14,7 @@ import {
   loadIndustryProfile,
 } from "../src/industry/profile.js";
 import { assessIndustryScope, loadIndustryRules } from "../src/industry/rules.js";
-import { exportStaticSite } from "../src/pipeline/export.js";
+import { exportStaticSite, selectIndustrySignals } from "../src/pipeline/export.js";
 import { validatePublicSite } from "../src/pipeline/public-site-integrity.js";
 
 const profileSlug = "medical-health-data-elements";
@@ -86,6 +86,34 @@ describe("medical health data elements industry profile", () => {
         REPOSITORY_SNAPSHOT_PATH: "../private/snapshot.json",
       }),
     ).toThrow(/must stay inside the repository/);
+  });
+
+  it("keeps translated global material inside the international content quota", () => {
+    const rules = loadIndustryRules(profileSlug);
+    if (!rules) throw new Error("missing_industry_rules");
+    const input = {
+      title: "医疗健康数据要素授权运营行业分析",
+      summary: "医疗健康数据流通、医院应用和保险服务需要可验证的授权运营闭环。",
+      tags: ["医疗健康数据", "授权运营"],
+    };
+    const scope = assessIndustryScope(input, { slug: "hl7-blog" }, rules);
+    expect(scope.decision).toBe("include");
+    const makeSignals = (sourceRegion: "CN" | "GLOBAL", count: number) =>
+      Array.from({ length: count }, (_, index) => ({
+        id: `${sourceRegion}-${index}`,
+        rawMetaJson: JSON.stringify({ industryScope: scope }),
+        sourceRegion,
+        language: "zh-CN",
+        publishedAt: `2026-07-${String(10 + index).padStart(2, "0")}T00:00:00.000Z`,
+      }));
+
+    const selected = selectIndustrySignals(
+      [...makeSignals("CN", 8), ...makeSignals("GLOBAL", 8)],
+      rules,
+    );
+
+    expect(selected).toHaveLength(10);
+    expect(selected.filter((signal) => signal.sourceRegion === "GLOBAL")).toHaveLength(2);
   });
 
   it("seeds only the isolated industry catalog and starts with honest empty intelligence", async () => {
