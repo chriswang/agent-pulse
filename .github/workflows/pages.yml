@@ -23,6 +23,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.repository == 'barretlee/agent-pulse'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -66,6 +67,7 @@ jobs:
           path: dist
 
   deploy:
+    if: github.repository == 'barretlee/agent-pulse'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
