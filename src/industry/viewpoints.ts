@@ -122,7 +122,7 @@ const modelOutputSchema = z
           .strict(),
       )
       .min(1)
-      .max(10),
+      .max(3),
   })
   .strict();
 
@@ -185,7 +185,8 @@ export async function analyzeIndustryViewpoints(
       const completion = await client.completeJson({
         system: SYSTEM_PROMPT,
         user: prompt,
-        maxTokens: 4_000,
+        maxTokens: 8_000,
+        reasoningEffort: "low",
       });
       Object.assign(usage, completion.usage);
       const parsed = validateModelOutput(completion.value, candidates, profile);
@@ -392,7 +393,7 @@ function buildPrompt(candidates: Candidate[], profile: IndustryProfile): string 
       "trackSlugs 必须来自 availableTracks.slug，audiences 必须来自 availableAudiences。",
       "不要判断观点是真实 Event，不要输出热度分数；热度由程序按真实传播证据计算。",
       "只输出直接涉及医疗健康数据治理、授权、流通、开发利用、标准互操作或支付保险数据应用的观点；纯 AI 编程、一般医院 IT 建设或未说明数据机制的国产化观点不要输出。",
-      "最多输出 5 个最有决策价值且彼此不同的观点聚类，不为覆盖数量拆分相近观点。",
+      "最多输出 3 个最有决策价值且彼此不同的观点聚类，不为覆盖数量拆分相近观点。",
       "保持精炼：claim 不超过 60 字，summary 不超过 160 字，whyItMatters 不超过 120 字，counterpoint 和 nextSignal 各不超过 100 字。",
       "只输出 JSON object，不要输出 Markdown。",
     ],

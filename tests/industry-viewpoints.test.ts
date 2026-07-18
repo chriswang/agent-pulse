@@ -130,6 +130,7 @@ describe("industry viewpoint analysis", () => {
     let promptInputs: Array<{ url: string; sourceSlug: string; summary: string }> = [];
     let promptRules: string[] = [];
     let requestedMaxTokens: number | undefined;
+    let requestedReasoningEffort: string | undefined;
     const client: JsonModelClient = {
       async completeJson(request) {
         const input = JSON.parse(request.user) as {
@@ -139,6 +140,7 @@ describe("industry viewpoint analysis", () => {
         promptInputs = input.inputs;
         promptRules = input.rules;
         requestedMaxTokens = request.maxTokens;
+        requestedReasoningEffort = request.reasoningEffort;
         return {
           model: "glm-5.2",
           usage: { promptTokens: 100, completionTokens: 80, totalTokens: 180 },
@@ -169,8 +171,9 @@ describe("industry viewpoint analysis", () => {
     expect(promptInputs).toHaveLength(16);
     expect(Math.max(...sourceCounts(promptInputs))).toBeLessThanOrEqual(5);
     expect(promptInputs.every((item) => item.summary.length <= 480)).toBe(true);
-    expect(requestedMaxTokens).toBe(4_000);
-    expect(promptRules.some((rule) => rule.includes("最多输出 5 个"))).toBe(true);
+    expect(requestedMaxTokens).toBe(8_000);
+    expect(requestedReasoningEffort).toBe("low");
+    expect(promptRules.some((rule) => rule.includes("最多输出 3 个"))).toBe(true);
   });
 });
 

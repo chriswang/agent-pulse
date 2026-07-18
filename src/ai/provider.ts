@@ -51,7 +51,7 @@ export function createJsonModelClient(
     providerName: identity.provider === "ark" ? "Volcengine Ark" : "Model provider",
     jsonMode: identity.jsonMode,
     thinkingMode: "none",
-    supportsReasoningEffort: false,
+    supportsReasoningEffort: identity.provider === "ark",
     ...options,
   });
 }
