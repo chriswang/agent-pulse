@@ -225,3 +225,14 @@ jobs:
               echo "- Readiness: $(jq -r '.readiness' "$PILOT_REPORT")"
             fi
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Require successful viewpoint analysis
+        if: always()
+        env:
+          VIEWPOINT_STATUS: ${{ steps.viewpoints.outputs.status || 'not-run' }}
+        shell: bash
+        run: |
+          if [[ "$VIEWPOINT_STATUS" != "ok" ]]; then
+            echo "Ark viewpoint analysis did not produce a valid result: $VIEWPOINT_STATUS" >&2
+            exit 1
+          fi
