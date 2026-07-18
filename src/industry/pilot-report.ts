@@ -170,6 +170,20 @@ export async function buildIndustryPilotReport(
       readManualReview(rootDir, profile.slug),
       loadIndustryViewpoints(profile.slug, rootDir),
     ]);
+  const currentViewpointReport = signalRows.length
+    ? viewpointReport
+    : {
+        ...viewpointReport,
+        model: {
+          provider: profile.model.provider,
+          name: "not-run",
+          status: "skipped" as const,
+          inputHash: null,
+          usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+        },
+        runs: [],
+        viewpoints: [],
+      };
   const automatedSlugs = new Set(
     profile.sources
       .filter(
@@ -309,14 +323,14 @@ export async function buildIndustryPilotReport(
     manualReview.dailyMinutesBefore,
     manualReview.dailyMinutesAfter,
   ].every((value) => value !== null);
-  const successfulModelRuns = viewpointReport.runs.filter(
+  const successfulModelRuns = currentViewpointReport.runs.filter(
     (run) =>
       run.status === "success" &&
       run.date >= validationStart.toISOString().slice(0, 10) &&
       run.date < validationEndExclusive.toISOString().slice(0, 10),
   );
   const modelSuccessfulDays = new Set(successfulModelRuns.map((run) => run.date)).size;
-  const totalModelTokens = viewpointReport.runs.reduce(
+  const totalModelTokens = currentViewpointReport.runs.reduce(
     (total, run) => total + run.usage.totalTokens,
     0,
   );
@@ -326,7 +340,7 @@ export async function buildIndustryPilotReport(
     chineseReadyPublishers.size >= profile.trial.minimumChineseReadySources &&
     multiSourceEvents.length > 0 &&
     highPriorityEvents.length > 0 &&
-    viewpointReport.viewpoints.length > 0 &&
+    currentViewpointReport.viewpoints.length > 0 &&
     modelSuccessfulDays >= targetDays;
   const readiness: IndustryPilotReport["readiness"] = !deterministicReady
     ? "collecting"
@@ -385,17 +399,18 @@ export async function buildIndustryPilotReport(
       multiSourceRatePercent: percent(multiSourceEvents.length, eventsInWindow.length),
       highPriorityEvents: highPriorityEvents.length,
       highPriorityEvidenceCoveragePercent: percent(evidenceReady.length, highPriorityEvents.length),
-      viewpoints: viewpointReport.viewpoints.length,
-      multiSourceViewpoints: viewpointReport.viewpoints.filter((item) => item.sourceCount >= 2)
-        .length,
-      measuredHotViewpoints: viewpointReport.viewpoints.filter(
+      viewpoints: currentViewpointReport.viewpoints.length,
+      multiSourceViewpoints: currentViewpointReport.viewpoints.filter(
+        (item) => item.sourceCount >= 2,
+      ).length,
+      measuredHotViewpoints: currentViewpointReport.viewpoints.filter(
         (item) => item.heatStatus === "measured_hot",
       ).length,
     },
     modelAnalysis: {
-      provider: viewpointReport.model.provider,
-      name: viewpointReport.model.name,
-      status: viewpointReport.model.status,
+      provider: currentViewpointReport.model.provider,
+      name: currentViewpointReport.model.name,
+      status: currentViewpointReport.model.status,
       successfulDays: modelSuccessfulDays,
       targetDays,
       totalTokens: totalModelTokens,
@@ -432,7 +447,7 @@ export async function buildIndustryPilotReport(
         evidenceUrls: event.evidence.map((evidence) => evidence.url),
         href: `events/${event.slug}/`,
       })),
-      ...viewpointReport.viewpoints.map((viewpoint) => ({
+      ...currentViewpointReport.viewpoints.map((viewpoint) => ({
         id: viewpoint.id,
         kind: "viewpoint" as const,
         title: viewpoint.claim,

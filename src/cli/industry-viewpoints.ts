@@ -25,7 +25,10 @@ export async function runIndustryViewpointsCli(): Promise<void> {
       db,
       profile,
       config.rootDir,
-      createJsonModelClient(config, { timeoutMs: config.AI_ENRICHMENT_TIMEOUT_MS }),
+      createJsonModelClient(config, {
+        timeoutMs: Math.max(config.AI_ENRICHMENT_TIMEOUT_MS, 90_000),
+        maxAttempts: 2,
+      }),
       identity,
     );
     process.stdout.write(`${JSON.stringify({ enabled: true, ...report }, null, 2)}\n`);

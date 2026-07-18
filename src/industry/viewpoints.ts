@@ -139,7 +139,14 @@ interface Candidate {
   sourceRole: string;
   sourceRegion: string;
   metrics: SignalMetrics;
+  scopeDecision: "include" | "hold";
+  scopeScore: number;
 }
+
+const DEFAULT_MAX_CANDIDATES = 16;
+const HARD_MAX_CANDIDATES = 40;
+const MAX_CANDIDATES_PER_SOURCE = 5;
+const MAX_PROMPT_SUMMARY_CHARS = 480;
 
 export interface AnalyzeViewpointsOptions {
   referenceAt?: string;
@@ -164,7 +171,7 @@ export async function analyzeIndustryViewpoints(
     profile,
     rootDir,
     referenceAt,
-    Math.min(options.maxCandidates ?? 40, 40),
+    Math.min(options.maxCandidates ?? DEFAULT_MAX_CANDIDATES, HARD_MAX_CANDIDATES),
   );
   const prompt = candidates.length ? buildPrompt(candidates, profile) : null;
   const inputHash = prompt ? createHash("sha256").update(prompt).digest("hex") : null;
@@ -178,7 +185,7 @@ export async function analyzeIndustryViewpoints(
       const completion = await client.completeJson({
         system: SYSTEM_PROMPT,
         user: prompt,
-        maxTokens: 4_000,
+        maxTokens: 2_600,
       });
       Object.assign(usage, completion.usage);
       const parsed = validateModelOutput(completion.value, candidates, profile);
@@ -290,15 +297,15 @@ async function loadCandidates(
     .where("signals.published_at", "<=", referenceAt)
     .where("sources.role", "in", ["expert", "media", "research", "heat"])
     .orderBy("signals.published_at", "desc")
-    .limit(Math.max(maxCandidates * 4, maxCandidates))
+    .limit(Math.max(maxCandidates * 10, 100))
     .execute();
-  const selected: Candidate[] = [];
+  const eligible: Candidate[] = [];
   const urls = new Set<string>();
   for (const row of rows) {
     const scope = assessStoredIndustryScope(row, { slug: row.sourceSlug }, rules);
     if (scope.decision === "exclude" || urls.has(row.url)) continue;
     urls.add(row.url);
-    selected.push({
+    eligible.push({
       title: row.title,
       summary: row.summary,
       url: row.url,
@@ -311,10 +318,42 @@ async function loadCandidates(
       sourceRole: row.sourceRole,
       sourceRegion: row.sourceRegion,
       metrics: parseJson<SignalMetrics>(row.metricsJson, {}),
+      scopeDecision: scope.decision,
+      scopeScore: scope.score,
     });
+  }
+
+  eligible.sort(compareCandidates);
+  const selected: Candidate[] = [];
+  const perSource = new Map<string, number>();
+  for (const candidate of eligible) {
+    const sourceCount = perSource.get(candidate.sourceSlug) ?? 0;
+    if (sourceCount >= MAX_CANDIDATES_PER_SOURCE) continue;
+    selected.push(candidate);
+    perSource.set(candidate.sourceSlug, sourceCount + 1);
     if (selected.length >= maxCandidates) break;
   }
   return selected;
+}
+
+function compareCandidates(left: Candidate, right: Candidate): number {
+  const decision = scopeDecisionRank(right.scopeDecision) - scopeDecisionRank(left.scopeDecision);
+  if (decision) return decision;
+  if (right.scopeScore !== left.scopeScore) return right.scopeScore - left.scopeScore;
+  const region = Number(right.sourceRegion === "CN") - Number(left.sourceRegion === "CN");
+  if (region) return region;
+  const role = sourceRoleRank(right.sourceRole) - sourceRoleRank(left.sourceRole);
+  if (role) return role;
+  if (left.sourceTier !== right.sourceTier) return left.sourceTier - right.sourceTier;
+  return right.publishedAt.localeCompare(left.publishedAt) || left.url.localeCompare(right.url);
+}
+
+function scopeDecisionRank(value: Candidate["scopeDecision"]): number {
+  return value === "include" ? 1 : 0;
+}
+
+function sourceRoleRank(value: string): number {
+  return value === "expert" ? 4 : value === "research" ? 3 : value === "media" ? 2 : 1;
 }
 
 function buildPrompt(candidates: Candidate[], profile: IndustryProfile): string {
@@ -353,11 +392,12 @@ function buildPrompt(candidates: Candidate[], profile: IndustryProfile): string 
     availableAudiences: profile.audiences,
     inputs: candidates.map((candidate) => ({
       title: truncate(candidate.title, 300),
-      summary: truncate(candidate.summary, 900),
+      summary: truncate(candidate.summary, MAX_PROMPT_SUMMARY_CHARS),
       url: candidate.url,
       author: candidate.author,
       publishedAt: candidate.publishedAt,
       source: candidate.source,
+      sourceSlug: candidate.sourceSlug,
       sourceRole: candidate.sourceRole,
       sourceRegion: candidate.sourceRegion,
     })),
