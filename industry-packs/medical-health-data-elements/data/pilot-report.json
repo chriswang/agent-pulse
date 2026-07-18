@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-18T02:24:54.055Z",
+  "generatedAt": "2026-07-18T02:41:26.297Z",
   "window": {
     "start": "2026-07-18T00:00:00.000Z",
     "end": "2026-07-24T00:00:00.000Z",
     "targetDays": 7,
     "observedDays": 1,
     "historyStart": "2026-06-18T00:00:00.000Z",
-    "historyEnd": "2026-07-18T02:24:54.055Z",
+    "historyEnd": "2026-07-18T02:41:26.297Z",
     "historyLookbackDays": 30
   },
   "sources": {
@@ -16,22 +16,22 @@
     "automated": 30,
     "manual": 0,
     "audited": 30,
-    "healthy": 27,
+    "healthy": 24,
     "degraded": 1,
-    "failed": 2,
+    "failed": 5,
     "unchecked": 0,
-    "healthRatePercent": 90,
+    "healthRatePercent": 80,
     "chineseConfigured": 24,
-    "chineseHealthy": 21,
-    "chineseReadyPublishers": 15,
+    "chineseHealthy": 18,
+    "chineseReadyPublishers": 12,
     "minimumChineseReady": 12,
     "chinaContentTargetPercent": 80
   },
   "collection": {
-    "runs": 101,
-    "successfulRuns": 100,
-    "failedRuns": 1,
-    "successRatePercent": 99,
+    "runs": 126,
+    "successfulRuns": 121,
+    "failedRuns": 5,
+    "successRatePercent": 96,
     "targetPercent": 90,
     "status": "pass"
   },
@@ -42,17 +42,17 @@
     "multiSourceRatePercent": 0,
     "highPriorityEvents": 0,
     "highPriorityEvidenceCoveragePercent": null,
-    "viewpoints": 0,
+    "viewpoints": 2,
     "multiSourceViewpoints": 0,
     "measuredHotViewpoints": 0
   },
   "modelAnalysis": {
     "provider": "ark",
     "name": "glm-5.2",
-    "status": "failed",
-    "successfulDays": 0,
+    "status": "success",
+    "successfulDays": 1,
     "targetDays": 7,
-    "totalTokens": 0
+    "totalTokens": 9383
   },
   "topCandidates": [],
   "topItems": [
@@ -99,6 +99,37 @@
         "https://blog.hl7.org/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-and-hl7-da-vinci-dtr-implementation"
       ],
       "href": "events/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-a-2026-07-18/"
+    },
+    {
+      "id": "viewpoint-b5891a55f7cc0958",
+      "kind": "viewpoint",
+      "title": "医疗信息化国产化已成必然趋势，数据平台正从汇聚向实时数据中枢升级",
+      "summary": "国产化数据基础设施升级直接影响医院数据平台架构选型与互操作能力，分布式数据库可支撑实时数据汇聚交互查询，为数据要素流通提供底层支撑。",
+      "happenedAt": "2026-07-16T00:00:00.000Z",
+      "priorityScore": 41,
+      "sourceCount": 1,
+      "evidenceStatus": "viewpoint_evidence",
+      "rankingReason": "关注度 14 · 1 个独立发布方 · 0 位作者",
+      "evidenceUrls": [
+        "https://www.chima.org.cn/Html/News/Articles/17893.html",
+        "https://www.chima.org.cn/Html/News/Articles/17915.html"
+      ],
+      "href": "#viewpoint-b5891a55f7cc0958"
+    },
+    {
+      "id": "viewpoint-89b7f35b9a5684b7",
+      "kind": "viewpoint",
+      "title": "HL7 Da Vinci DTR标准可实现可复用、可扩展的预先授权工具",
+      "summary": "预先授权是医保与商保理赔关键环节，DTR标准通过FHIR问卷标准化可减少人工干预，提升授权效率与数据互操作性。",
+      "happenedAt": "2026-06-18T19:35:21.000Z",
+      "priorityScore": 40,
+      "sourceCount": 1,
+      "evidenceStatus": "viewpoint_evidence",
+      "rankingReason": "关注度 0 · 1 个独立发布方 · 0 位作者",
+      "evidenceUrls": [
+        "https://blog.hl7.org/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-and-hl7-da-vinci-dtr-implementation"
+      ],
+      "href": "#viewpoint-89b7f35b9a5684b7"
     }
   ],
   "manualReview": {

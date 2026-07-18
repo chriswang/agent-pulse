@@ -1,32 +1,116 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-18T02:23:45.728Z",
+  "generatedAt": "2026-07-18T02:38:09.055Z",
   "model": {
     "provider": "ark",
     "name": "glm-5.2",
-    "status": "failed",
+    "status": "success",
     "inputHash": "e7cc9a623cd2c76316cda4fd9c903ed4dc23247e6c8c1eb144eada04a24eac79",
     "usage": {
-      "promptTokens": 0,
-      "completionTokens": 0,
-      "totalTokens": 0
+      "promptTokens": 3858,
+      "completionTokens": 5525,
+      "totalTokens": 9383
     }
   },
   "runs": [
     {
       "date": "2026-07-18",
-      "status": "failed",
+      "status": "success",
       "candidates": 16,
-      "clusters": 0,
+      "clusters": 2,
       "inputHash": "e7cc9a623cd2c76316cda4fd9c903ed4dc23247e6c8c1eb144eada04a24eac79",
       "usage": {
-        "promptTokens": 0,
-        "completionTokens": 0,
-        "totalTokens": 0
-      },
-      "errorCode": "invalid_json"
+        "promptTokens": 3858,
+        "completionTokens": 5525,
+        "totalTokens": 9383
+      }
     }
   ],
-  "viewpoints": []
+  "viewpoints": [
+    {
+      "id": "viewpoint-b5891a55f7cc0958",
+      "claim": "医疗信息化国产化已成必然趋势，数据平台正从汇聚向实时数据中枢升级",
+      "summary": "国家政策推动下国产应用被视为医疗信息化必然方向。南京市中西医结合医院采用OFD-H临床文档标准，广东省人民医院从国外集中式数据库迁移至国产分布式HTAP数据库，推动医院信息平台从传统数据汇聚平台升级为实时数据中枢，解决医疗数据实时汇聚交互查询问题。",
+      "nature": "analysis",
+      "stance": "supportive",
+      "trackSlugs": ["health-data-infrastructure", "policy-and-compliance"],
+      "audiences": ["医院", "数据集团"],
+      "whyItMatters": "国产化数据基础设施升级直接影响医院数据平台架构选型与互操作能力，分布式数据库可支撑实时数据汇聚交互查询，为数据要素流通提供底层支撑。",
+      "counterpoint": "国产数据库在复杂医疗场景下的稳定性、生态成熟度和长期运维成本仍需验证，迁移过程可能影响业务连续性。",
+      "nextSignal": "关注更多三甲医院核心业务系统采用国产分布式数据库的实际运行效果和性能指标。",
+      "publishedAt": "2026-07-16T00:00:00.000Z",
+      "sourceCount": 1,
+      "authorCount": 0,
+      "platformCount": 1,
+      "engagement": {
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "tweets": 0,
+        "measured": false
+      },
+      "heatScore": 14,
+      "heatStatus": "emerging",
+      "evidence": [
+        {
+          "title": "吕云杰:基于OFD-H临床文档管理和应用创新实践",
+          "url": "https://www.chima.org.cn/Html/News/Articles/17893.html",
+          "source": "CHIMA · 中国医院协会信息专业委员会",
+          "sourceSlug": "chima",
+          "author": null,
+          "publishedAt": "2026-06-29T00:00:00.000Z",
+          "sourceRole": "expert",
+          "sourceTier": 2
+        },
+        {
+          "title": "广东省人民医院:信息集成平台升级实践",
+          "url": "https://www.chima.org.cn/Html/News/Articles/17915.html",
+          "source": "CHIMA · 中国医院协会信息专业委员会",
+          "sourceSlug": "chima",
+          "author": null,
+          "publishedAt": "2026-07-16T00:00:00.000Z",
+          "sourceRole": "expert",
+          "sourceTier": 2
+        }
+      ]
+    },
+    {
+      "id": "viewpoint-89b7f35b9a5684b7",
+      "claim": "HL7 Da Vinci DTR标准可实现可复用、可扩展的预先授权工具",
+      "summary": "BCBSA和Itiliti Health分享案例，展示通过政策数字化和HL7 FHIR问卷标准化对齐Da Vinci DTR实施指南，构建可复用、可扩展的预先授权工具，推动保险预授权流程标准化与自动化。",
+      "nature": "analysis",
+      "stance": "supportive",
+      "trackSlugs": ["payer-and-insurance", "standards-and-conferences"],
+      "audiences": ["保险公司", "TPA", "保险科技公司"],
+      "whyItMatters": "预先授权是医保与商保理赔关键环节，DTR标准通过FHIR问卷标准化可减少人工干预，提升授权效率与数据互操作性。",
+      "counterpoint": "DTR实施需保险方与医疗机构双方系统改造，协调成本高，不同地区政策差异可能影响标准化落地。",
+      "nextSignal": "关注更多保险机构采用DTR标准后的授权处理效率和拒赔率变化数据。",
+      "publishedAt": "2026-06-18T19:35:21.000Z",
+      "sourceCount": 1,
+      "authorCount": 0,
+      "platformCount": 1,
+      "engagement": {
+        "likes": 0,
+        "comments": 0,
+        "reposts": 0,
+        "tweets": 0,
+        "measured": false
+      },
+      "heatScore": 0,
+      "heatStatus": "emerging",
+      "evidence": [
+        {
+          "title": "Building Reusable, Scalable Prior Authorization Tools: A Case Study in Policy Digitization and HL7 Da Vinci DTR Implementation",
+          "url": "https://blog.hl7.org/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-and-hl7-da-vinci-dtr-implementation",
+          "source": "HL7 International Blog",
+          "sourceSlug": "hl7-blog",
+          "author": null,
+          "publishedAt": "2026-06-18T19:35:21.000Z",
+          "sourceRole": "expert",
+          "sourceTier": 1
+        }
+      ]
+    }
+  ]
 }
