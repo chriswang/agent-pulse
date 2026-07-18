@@ -3,6 +3,7 @@ import type {
   JsonCompletionRequest,
   JsonCompletionResult,
   JsonModelClient,
+  ModelUsage,
 } from "./model-contract.js";
 
 export type JsonMode = "native" | "prompt-only";
@@ -134,28 +135,29 @@ export class OpenAICompatibleClient implements JsonModelClient {
       const choice = payload.choices[0];
       if (!choice)
         throw this.makeError(`${this.providerName} returned no completion choice`, "empty_choice");
+      const usage = modelUsage(payload.usage);
       if (choice.finish_reason === "length") {
-        throw this.makeError(
-          `${this.providerName} JSON completion was truncated`,
-          "truncated_response",
+        throw withUsage(
+          this.makeError(
+            `${this.providerName} JSON completion was truncated`,
+            "truncated_response",
+          ),
+          usage,
         );
       }
       let value: unknown;
       try {
-        value = JSON.parse(unwrapJsonContent(choice.message.content));
+        value = parseJsonContent(choice.message.content);
       } catch {
-        throw this.makeError(`${this.providerName} returned invalid JSON content`, "invalid_json");
+        throw withUsage(
+          this.makeError(`${this.providerName} returned invalid JSON content`, "invalid_json"),
+          usage,
+        );
       }
-      const promptTokens = payload.usage?.prompt_tokens ?? 0;
-      const completionTokens = payload.usage?.completion_tokens ?? 0;
       return {
         value,
         model: payload.model ?? this.model,
-        usage: {
-          promptTokens,
-          completionTokens,
-          totalTokens: payload.usage?.total_tokens ?? promptTokens + completionTokens,
-        },
+        usage,
       };
     }
     throw this.makeError(`${this.providerName} retry loop exhausted`, "retry_exhausted");
@@ -194,6 +196,33 @@ function unwrapJsonContent(value: string): string {
   const trimmed = value.trim();
   const fenced = trimmed.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
   return (fenced?.[1] ?? trimmed).trim();
+}
+
+function parseJsonContent(value: string): unknown {
+  const candidate = unwrapJsonContent(value);
+  try {
+    return JSON.parse(candidate);
+  } catch {
+    const start = candidate.indexOf("{");
+    const end = candidate.lastIndexOf("}");
+    if (start < 0 || end <= start) throw new Error("missing_json_object");
+    return JSON.parse(candidate.slice(start, end + 1));
+  }
+}
+
+function modelUsage(usage: z.infer<typeof responseSchema>["usage"]): ModelUsage {
+  const promptTokens = usage?.prompt_tokens ?? 0;
+  const completionTokens = usage?.completion_tokens ?? 0;
+  return {
+    promptTokens,
+    completionTokens,
+    totalTokens: usage?.total_tokens ?? promptTokens + completionTokens,
+  };
+}
+
+function withUsage(error: Error, usage: ModelUsage): Error {
+  Object.defineProperty(error, "usage", { value: usage, enumerable: false });
+  return error;
 }
 
 function isRetryable(status: number): boolean {

@@ -15,10 +15,10 @@
 - DeepSeek 兼容路径保持原 `response_format`、thinking 与 retry 行为；
 - Ark 请求使用 Coding API `/api/coding/v3/chat/completions`、Bearer key 和 `glm-5.2`；
 - Ark 默认不发送 `response_format`、`thinking`、`reasoning_effort`；观点聚类请求显式发送 `reasoning_effort=low`；
-- 支持纯 JSON 和 fenced JSON，非 JSON、截断、空 choice 与认证失败产生安全错误码；
+- 支持纯 JSON、fenced JSON 和被单段说明文字包裹的单一 JSON 对象；多个对象、非 JSON、截断、空 choice 与认证失败产生安全错误码；
 - `MODEL_API_KEY` 优先，旧 `DEEPSEEK_API_KEY` 继续可用；
 - 日志和错误不包含 key、prompt 或原 response。
-- 观点分析硬上限为 40 条有界短摘录，首轮请求默认最多 16 条、单一来源最多 5 条、单条摘要最多 480 字；请求单次最多等待 90 秒并最多尝试两次，提示最多输出 3 个精炼聚类，使用低推理强度和 8,000 Token 完成预算，本地 Schema 最多接受 3 个聚类；输出 URL 必须来自输入候选；中文、枚举、长度和 Token 用量通过本地 Schema。
+- 观点分析硬上限为 40 条有界短摘录，首轮请求默认最多 16 条、单一来源最多 5 条、单条摘要最多 480 字；单次请求最多等待 90 秒且网络级最多尝试两次，提示最多输出 3 个精炼聚类，使用低推理强度、零温度和 8,000 Token 完成预算，本地 Schema 最多接受 3 个聚类；安全提取后仍为 `invalid_json` 时只额外生成一次，成功与失败响应的可用 Token 都累计；输出 URL 必须来自输入候选；中文、枚举、长度和 Token 用量通过本地 Schema。
 - 模型不能写热度总分、事实状态或发布状态；模型失败时保留采集快照并记录安全错误码，但当日完整分析不计为成功。
 
 ## 3. 行业来源

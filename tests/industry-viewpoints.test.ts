@@ -124,6 +124,52 @@ describe("industry viewpoint analysis", () => {
     expect(report.viewpoints).toEqual([]);
   });
 
+  it("retries invalid JSON once and accumulates failed response usage", async () => {
+    const { db, config, profile } = await fixture();
+    await insertViewpointSignals(db, config.rootDir);
+    let calls = 0;
+    const client: JsonModelClient = {
+      async completeJson(request) {
+        calls += 1;
+        const input = JSON.parse(request.user) as { inputs: Array<{ url: string }> };
+        if (calls === 1) {
+          throw Object.assign(new Error("invalid_json"), {
+            code: "invalid_json",
+            usage: { promptTokens: 20, completionTokens: 30, totalTokens: 50 },
+          });
+        }
+        return {
+          model: "glm-5.2",
+          usage: { promptTokens: 21, completionTokens: 31, totalTokens: 52 },
+          value: { viewpoints: [validViewpoint([input.inputs[0]?.url ?? ""])] },
+        };
+      },
+    };
+    const outputPath = join(await mkdtemp(join(tmpdir(), "viewpoints-retry-")), "viewpoints.json");
+
+    const report = await analyzeIndustryViewpoints(
+      db,
+      profile,
+      config.rootDir,
+      client,
+      {
+        provider: "ark",
+        baseUrl: profile.model.baseUrl,
+        model: profile.model.name,
+        jsonMode: "prompt-only",
+      },
+      { referenceAt: "2026-07-18T12:00:00.000Z", outputPath },
+    );
+
+    expect(calls).toBe(2);
+    expect(report.model.status).toBe("success");
+    expect(report.model.usage).toEqual({
+      promptTokens: 41,
+      completionTokens: 61,
+      totalTokens: 102,
+    });
+  });
+
   it("bounds a request to 16 ranked candidates and no more than 5 per source", async () => {
     const { db, config, profile } = await fixture();
     await insertManyViewpointSignals(db, config.rootDir);
@@ -131,6 +177,7 @@ describe("industry viewpoint analysis", () => {
     let promptRules: string[] = [];
     let requestedMaxTokens: number | undefined;
     let requestedReasoningEffort: string | undefined;
+    let requestedTemperature: number | undefined;
     const client: JsonModelClient = {
       async completeJson(request) {
         const input = JSON.parse(request.user) as {
@@ -141,6 +188,7 @@ describe("industry viewpoint analysis", () => {
         promptRules = input.rules;
         requestedMaxTokens = request.maxTokens;
         requestedReasoningEffort = request.reasoningEffort;
+        requestedTemperature = request.temperature;
         return {
           model: "glm-5.2",
           usage: { promptTokens: 100, completionTokens: 80, totalTokens: 180 },
@@ -173,6 +221,7 @@ describe("industry viewpoint analysis", () => {
     expect(promptInputs.every((item) => item.summary.length <= 480)).toBe(true);
     expect(requestedMaxTokens).toBe(8_000);
     expect(requestedReasoningEffort).toBe("low");
+    expect(requestedTemperature).toBe(0);
     expect(promptRules.some((rule) => rule.includes("最多输出 3 个"))).toBe(true);
   });
 });
