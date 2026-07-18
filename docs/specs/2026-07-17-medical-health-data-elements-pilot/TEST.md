@@ -14,11 +14,11 @@
 
 - DeepSeek 兼容路径保持原 `response_format`、thinking 与 retry 行为；
 - Ark 请求使用 Coding API `/api/coding/v3/chat/completions`、Bearer key 和 `glm-5.2`；
-- Ark 默认不发送 `response_format`、`thinking`、`reasoning_effort`；
+- Ark 默认不发送 `response_format`、`thinking`、`reasoning_effort`；观点聚类请求显式发送 `reasoning_effort=low`；
 - 支持纯 JSON 和 fenced JSON，非 JSON、截断、空 choice 与认证失败产生安全错误码；
 - `MODEL_API_KEY` 优先，旧 `DEEPSEEK_API_KEY` 继续可用；
 - 日志和错误不包含 key、prompt 或原 response。
-- 观点分析硬上限为 40 条有界短摘录，首轮请求默认最多 16 条、单一来源最多 5 条、单条摘要最多 480 字；请求单次最多等待 90 秒并最多尝试两次，提示最多输出 5 个精炼聚类，响应预算为 4,000 Token，本地 Schema 最多接受 10 个聚类；输出 URL 必须来自输入候选；中文、枚举、长度和 Token 用量通过本地 Schema。
+- 观点分析硬上限为 40 条有界短摘录，首轮请求默认最多 16 条、单一来源最多 5 条、单条摘要最多 480 字；请求单次最多等待 90 秒并最多尝试两次，提示最多输出 3 个精炼聚类，使用低推理强度和 8,000 Token 完成预算，本地 Schema 最多接受 3 个聚类；输出 URL 必须来自输入候选；中文、枚举、长度和 Token 用量通过本地 Schema。
 - 模型不能写热度总分、事实状态或发布状态；模型失败时保留采集快照并记录安全错误码，但当日完整分析不计为成功。
 
 ## 3. 行业来源
@@ -94,6 +94,7 @@
 - 试跑阶段页面使用“领域观察”，不把 30 天历史证据描述为长期趋势计算；
 - 当前 7 个偏题 Event 不再进入 timeline、Top 10 或领域观察；
 - 专用 workflow 使用行业 snapshot；完整验证设置 `MODEL_ENRICHMENT_ENABLED=true`，只向方舟发送通过门禁的有界短摘录；
+- 观点模型失败时仍保存采集快照、报告与 artifact，但 workflow 最终门禁必须失败，不能显示为完整验证成功；
 - 首次回填显式重置旧行业情报状态，使用 30 天日期边界；报告显示 7 天验证进度，而不是 30 天等待进度；
 - 上游写数据 workflow 在 Fork 中禁用；
 - PR/main CI、industry workflow、Pages deployment 与线上 smoke 全部成功。
