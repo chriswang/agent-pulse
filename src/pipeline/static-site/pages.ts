@@ -276,14 +276,22 @@ function page(
       ...(model.industryProfile
         ? {
             brand: {
-              name: model.industryProfile.shortName,
-              subtitle: "POWERED BY AGENT PULSE",
+              name: locale === "en" ? "MEDICAL DATA INTELLIGENCE" : "医疗健康数据要素情报站",
+              subtitle: industryBrandStatus(model, locale),
             },
           }
         : {}),
       ...extra,
     }),
   };
+}
+
+function industryBrandStatus(model: StaticSiteModel, locale: Locale): string {
+  const report = model.industryPilot;
+  if (!report) return "POWERED BY AGENT PULSE";
+  return locale === "en"
+    ? `UPDATED ${formatDate(report.generatedAt, locale)} · ${report.intelligence.publishedEvents} EVENTS · ${report.intelligence.viewpoints} VIEWS · ${report.intelligence.signals} UPDATES`
+    : `更新 ${formatDate(report.generatedAt, locale)} · ${report.intelligence.publishedEvents} 事件 · ${report.intelligence.viewpoints} 观点 · ${report.intelligence.signals} 动态`;
 }
 
 function toolPage(
@@ -544,10 +552,10 @@ function industryIntelligenceHome(model: StaticSiteModel, locale: Locale): strin
     .sort((left, right) => right.events.length - left.events.length)
     .slice(0, 4);
   const facts = report.topItems.filter((item) => item.kind === "fact").slice(0, 6);
-  return `<section class="industry-intelligence-hero"><div class="shell"><div class="industry-intelligence-heading"><div><span class="section-kicker">MEDICAL DATA INTELLIGENCE</span><h1>${zh ? "医疗健康数据要素情报站" : "Medical and Health Data Intelligence"}</h1><p>${zh ? "聚焦政策、数据基础设施、医保商保、药企药械与市场动作，保留可回链的事实、观点和下一步观察。" : "Evidence-linked facts, viewpoints, and next signals across policy, infrastructure, payers, life sciences, and market moves."}</p></div><div class="industry-intelligence-meta"><span>${zh ? "最近更新" : "Latest update"}</span><strong>${escapeHtml(formatDate(report.generatedAt, locale))}</strong><small>${report.intelligence.publishedEvents} ${zh ? "个事实事件" : "fact events"} · ${report.intelligence.viewpoints} ${zh ? "个观点主题" : "viewpoint themes"} · ${report.intelligence.signals} ${zh ? "条来源动态" : "source updates"}</small></div></div>${
+  return `<section class="industry-lead-hero"><div class="shell">${
     lead
-      ? `<a class="industry-lead-story" href="${leadHref}"><div><span>${lead.kind === "fact" ? (zh ? "今日重点事件" : "Lead event") : zh ? "今日重点观点" : "Lead viewpoint"} · ${escapeHtml(formatDate(lead.happenedAt, locale))}</span><h2>${escapeHtml(lead.title)}</h2><p>${escapeHtml(lead.summary)}</p></div><aside><span>${lead.sourceCount} ${zh ? "个来源" : "sources"}</span><strong>${zh ? "查看详情" : "Read more"} ${icon("arrow-right")}</strong></aside></a>`
-      : `<div class="industry-lead-story empty"><div><span>${zh ? "今日重点" : "Lead intelligence"}</span><h2>${zh ? "正在整理最新行业变化" : "Preparing the latest industry changes"}</h2><p>${zh ? "先查看已采集的来源动态；达到事实或观点门槛后，重点内容会自动出现在这里。" : "Review source updates while new items pass fact and viewpoint gates."}</p></div><a class="text-link" href="__PREFIX__signals/">${zh ? "查看来源更新" : "View source updates"} ${icon("arrow-right")}</a></div>`
+      ? `<a class="industry-lead-story" href="${leadHref}"><div><span>${lead.kind === "fact" ? (zh ? "今日重点事件" : "Lead event") : zh ? "今日重点观点" : "Lead viewpoint"} · ${escapeHtml(formatDate(lead.happenedAt, locale))}</span><h1>${escapeHtml(lead.title)}</h1><p>${escapeHtml(lead.summary)}</p></div><aside><span>${lead.sourceCount} ${zh ? "个来源" : "sources"}</span><strong>${zh ? "查看详情" : "Read more"} ${icon("arrow-right")}</strong></aside></a>`
+      : `<div class="industry-lead-story empty"><div><span>${zh ? "今日重点" : "Lead intelligence"}</span><h1>${zh ? "正在整理最新行业变化" : "Preparing the latest industry changes"}</h1><p>${zh ? "先查看已采集的来源动态；达到事实或观点门槛后，重点内容会自动出现在这里。" : "Review source updates while new items pass fact and viewpoint gates."}</p></div><a class="text-link" href="__PREFIX__signals/">${zh ? "查看来源更新" : "View source updates"} ${icon("arrow-right")}</a></div>`
   }</div></section>
     <section class="section shell"><header class="section-head section-head-action"><div><span class="section-kicker">01 / EMERGING DIRECTIONS</span><h2>${zh ? "正在形成的行业方向" : "Emerging industry directions"}</h2><p>${zh ? "只展示已经出现事实事件的主线；证据未达到长期趋势门槛时，明确标为观察方向。" : "Only tracks with fact events are shown; early evidence remains an emerging direction."}</p></div><a class="text-link" href="__PREFIX__lines/">${zh ? "查看全部领域" : "View all areas"} ${icon("arrow-right")}</a></header>${
       activeTracks.length
