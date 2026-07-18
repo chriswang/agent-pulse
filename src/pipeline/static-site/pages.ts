@@ -564,7 +564,7 @@ function industryIntelligenceHome(model: StaticSiteModel, locale: Locale): strin
               const latest = sortEventsByLatestDevelopment(events)[0];
               if (!latest) return "";
               const sourceCount = evidenceSourceCountFor(events.flatMap((event) => event.evidence));
-              return `<a href="__PREFIX__lines/${escapeHtml(track.slug)}/" style="--track:${escapeHtml(track.color)}"><div><span>${escapeHtml(track.icon)}</span><b>${zh ? "观察方向" : "Emerging direction"}</b></div><h3>${escapeHtml(track.name)}</h3><p>${escapeHtml(latest.title)}</p><footer><span>${events.length} ${zh ? "个事件" : "events"} · ${sourceCount} ${zh ? "个独立来源" : "independent sources"}</span>${icon("arrow-right")}</footer></a>`;
+              return `<a href="__PREFIX__lines/${escapeHtml(track.slug)}/" style="--track:${escapeHtml(track.color)}"><div class="industry-direction-meta"><span>${escapeHtml(track.icon)}</span><strong>${escapeHtml(track.name)}</strong><small class="industry-direction-status">${zh ? "观察方向" : "Emerging direction"}</small></div><h3>${escapeHtml(latest.title)}</h3><p>${escapeHtml(latest.summary)}</p><footer><span>${events.length} ${zh ? "个事件" : "events"} · ${sourceCount} ${zh ? "个独立来源" : "independent sources"}</span>${icon("arrow-right")}</footer></a>`;
             })
             .join("")}</div>`
         : emptyState(
