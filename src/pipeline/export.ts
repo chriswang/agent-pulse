@@ -209,7 +209,23 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
     riskLevel: resource.risk_level,
     verifiedAt: resource.verified_at,
   }));
-  const visibleSignals = industryRules ? selectIndustrySignals(signals, industryRules) : signals;
+  const industryPilot = industryProfile
+    ? await buildIndustryPilotReport(db, industryProfile, config.rootDir, generatedAt)
+    : null;
+  const visibleSignals = industryRules
+    ? selectIndustrySignals(
+        signals,
+        industryRules,
+        industryPilot
+          ? {
+              windowStart: industryPilot.window.historyStart,
+              windowEndExclusive: new Date(
+                Date.parse(industryPilot.window.historyEnd) + 1,
+              ).toISOString(),
+            }
+          : {},
+      )
+    : signals;
   const publicSignals: PublicSignal[] = visibleSignals
     .filter((signal) => safePublicUrl(signal.url))
     .map((signal) => ({
@@ -259,9 +275,6 @@ export async function exportStaticSite(db: Kysely<DatabaseSchema>, config: AppCo
       categories: [...new Set(sources.map((source) => source.source_category))],
     },
   };
-  const industryPilot = industryProfile
-    ? await buildIndustryPilotReport(db, industryProfile, config.rootDir, generatedAt)
-    : null;
   const industryViewpoints = industryProfile
     ? reconcileIndustryViewpoints(
         await loadIndustryViewpoints(industryProfile.slug, config.rootDir),
@@ -413,10 +426,19 @@ export function selectIndustrySignals<
     sourceRegion: string;
     publishedAt: string;
   },
->(signals: T[], rules: IndustryRules): T[] {
+>(
+  signals: T[],
+  rules: IndustryRules,
+  window: { windowStart?: string; windowEndExclusive?: string } = {},
+): T[] {
   const included = signals.filter((signal) => {
     const scope = scopeAssessmentFromSignal({ raw_meta_json: signal.rawMetaJson });
-    return scope?.profileSlug === rules.profileSlug && scope.decision === "include";
+    return (
+      scope?.profileSlug === rules.profileSlug &&
+      scope.decision === "include" &&
+      (!window.windowStart || signal.publishedAt >= window.windowStart) &&
+      (!window.windowEndExclusive || signal.publishedAt < window.windowEndExclusive)
+    );
   });
   const china = included.filter((signal) => signal.sourceRegion === "CN");
   const global = included.filter((signal) => !china.includes(signal));
