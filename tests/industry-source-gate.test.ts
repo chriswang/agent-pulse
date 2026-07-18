@@ -23,12 +23,12 @@ describe("industry source gate", () => {
 
     expect(result).toMatchObject({
       pass: true,
-      chineseReadyPublishers: 19,
+      chineseReadyPublishers: 17,
       minimumChinesePublishers: 12,
       internationalReadyPublishers: 3,
       minimumInternationalPublishers: 3,
     });
-    expect(result.chineseReadySlugs).toHaveLength(20);
+    expect(result.chineseReadySlugs).toHaveLength(18);
   });
 
   it("keeps the gate open when one Chinese publisher has a transient failure", () => {
@@ -39,7 +39,7 @@ describe("industry source gate", () => {
     const result = evaluateIndustrySourceGate(profile, report);
 
     expect(result.pass).toBe(true);
-    expect(result.chineseReadyPublishers).toBe(18);
+    expect(result.chineseReadyPublishers).toBe(16);
     expect(result.rejectedReadySlugs).toContainEqual({
       slug: "nhsa-policy",
       reason: "content_stale",
@@ -65,6 +65,6 @@ describe("industry source gate", () => {
     const result = evaluateIndustrySourceGate(profile, report);
 
     expect(result.pass).toBe(false);
-    expect(result.chineseReadyPublishers).toBe(11);
+    expect(result.chineseReadyPublishers).toBe(9);
   });
 });

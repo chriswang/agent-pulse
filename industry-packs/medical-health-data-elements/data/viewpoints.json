@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "profileSlug": "medical-health-data-elements",
+  "generatedAt": "1970-01-01T00:00:00.000Z",
+  "model": {
+    "provider": "ark",
+    "name": "not-run",
+    "status": "skipped",
+    "inputHash": null,
+    "usage": {
+      "promptTokens": 0,
+      "completionTokens": 0,
+      "totalTokens": 0
+    }
+  },
+  "runs": [],
+  "viewpoints": []
+}

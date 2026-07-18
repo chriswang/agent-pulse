@@ -6,10 +6,20 @@ export const capabilities = [
     name: "医疗健康数据要素行业包",
     domain: "product",
     status: "experimental",
-    maturity: 44,
+    maturity: 52,
     release: "unreleased",
     evidence:
-      "the rebuilt isolated pack has 30 governed sources, six tracks, deterministic scope and Chinese-output gates; day one of the GitHub 30+7 validation cleared 18 China and 3 international publishers, achieved 96% collection success, retained 12 in-scope Signals and published 2 Tier 1 fact Events; multi-source Events remain at zero, the model is paused, and six more calendar days plus manual decision-value review remain",
+      "the isolated pack now has 30 governed sources, six tracks, China-first deterministic scope, separate fact Event and viewpoint Viewpoint channels, three new shadow-first Chinese expert/media sources, bounded Ark GLM-5.2 clustering and a fresh July 18-24 full validation window; prior day-one results remain historical and do not count toward the restarted run",
+  },
+  {
+    slug: "industry-viewpoint-monitoring",
+    name: "行业观点与关注度监测",
+    domain: "intelligence",
+    status: "experimental",
+    maturity: 48,
+    release: "unreleased",
+    evidence:
+      "schema-validated opinion, analysis and forecast clusters preserve original URLs; Ark receives at most 40 scope-filtered inputs, cannot set fact or heat status, and public output records input hashes, daily run status and token usage while deterministic code derives attention only from real publisher, author, platform and engagement evidence",
   },
   {
     slug: "source-catalog",

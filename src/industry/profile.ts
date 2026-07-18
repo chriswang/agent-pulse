@@ -123,6 +123,18 @@ export const IndustryProfileSchema = z
         message: "Industry pilot requires at least 20 automated candidate sources",
       });
     }
+    const chineseViewpointSources = profile.sources.filter(
+      (source) =>
+        source.region === "CN" && ["expert", "media", "research", "heat"].includes(source.role),
+    );
+    if (chineseViewpointSources.length < 4) {
+      context.addIssue({
+        code: "custom",
+        path: ["sources"],
+        message:
+          "Industry pilot requires at least 4 Chinese expert, media, research, or heat sources",
+      });
+    }
     const sourceBySlug = new Map(profile.sources.map((source) => [source.slug, source]));
     const readySlugs = new Set<string>();
     for (const [index, slug] of profile.trial.readySourceSlugs.entries()) {

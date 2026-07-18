@@ -13,7 +13,7 @@ describe("medical health industry workflows", () => {
     expect(workflow).not.toContain("data/snapshot/v1.json");
     expect(workflow).toContain("MODEL_PROVIDER: ark");
     expect(workflow).toContain("MODEL_NAME: glm-5.2");
-    expect(workflow).toContain('MODEL_ENRICHMENT_ENABLED: "false"');
+    expect(workflow).toContain('MODEL_ENRICHMENT_ENABLED: "true"');
     expect(workflow).toContain("MODEL_API_KEY: $" + "{{ secrets.MODEL_API_KEY }}");
     expect(workflow.indexOf("industry:sources:gate")).toBeLessThan(
       workflow.indexOf("npm run collect"),
@@ -21,8 +21,12 @@ describe("medical health industry workflows", () => {
     expect(workflow).toContain("if: $" + "{{ env.MODEL_ENRICHMENT_ENABLED == 'true' }}");
     expect(workflow).toContain("npm run --silent industry:reset -- --confirm");
     expect(workflow).toContain("--backfill --lookback-days=30 --max-pages=6 --drain");
-    expect(workflow).toContain('cron: "17 12 18-23 7 *"');
+    expect(workflow).toContain('cron: "17 12 19-24 7 *"');
     expect(workflow.indexOf("industry:reset")).toBeLessThan(workflow.indexOf("npm run collect"));
+    expect(workflow.indexOf("npm run collect")).toBeLessThan(
+      workflow.indexOf("Cluster industry viewpoints with Ark GLM-5.2"),
+    );
+    expect(workflow).toContain("npm run --silent industry:viewpoints");
     expect(workflow.indexOf("npm run collect")).toBeLessThan(
       workflow.indexOf("Enrich evidence-ready Events with Ark GLM-5.2"),
     );
@@ -35,6 +39,7 @@ describe("medical health industry workflows", () => {
       workflow.indexOf('git add -- "$REPOSITORY_SNAPSHOT_PATH"'),
     );
     expect(workflow).toContain('git add -- "$REPOSITORY_SNAPSHOT_PATH"');
+    expect(workflow).toContain("industry-packs/medical-health-data-elements/data/viewpoints.json");
   });
 
   it("can verify the source gate on GitHub without calling a model or deploying", async () => {

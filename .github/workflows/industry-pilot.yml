@@ -2,8 +2,8 @@ name: Build medical health 30-day history and 7-day validation
 
 on:
   schedule:
-    # Day 1 is the manual backfill on July 17; these six runs finish the seven-day window.
-    - cron: "17 12 18-23 7 *"
+    # Day 1 is the manual backfill on July 18; these six runs finish the seven-day window.
+    - cron: "17 12 19-24 7 *"
   workflow_dispatch:
     inputs:
       backfill:
@@ -35,7 +35,7 @@ jobs:
       MODEL_BASE_URL: https://ark.cn-beijing.volces.com/api/coding/v3
       MODEL_NAME: glm-5.2
       MODEL_JSON_MODE: prompt-only
-      MODEL_ENRICHMENT_ENABLED: "false"
+      MODEL_ENRICHMENT_ENABLED: "true"
       SOURCE_HEALTH_REPORT: data/reports/medical-health-data-elements-source-health.json
       PILOT_REPORT: industry-packs/medical-health-data-elements/data/pilot-report.json
     steps:
@@ -80,6 +80,31 @@ jobs:
             npm run collect -- --drain
           fi
 
+      - name: Cluster industry viewpoints with Ark GLM-5.2
+        id: viewpoints
+        continue-on-error: true
+        env:
+          AI_ENRICHMENT_ENABLED: "true"
+          MODEL_API_KEY: ${{ secrets.MODEL_API_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${MODEL_API_KEY:-}" ]]; then
+            echo "status=missing-key" >> "$GITHUB_OUTPUT"
+            echo "MODEL_API_KEY is required for the full validation run." >&2
+            exit 1
+          fi
+          set +e
+          npm run --silent industry:viewpoints | tee "$RUNNER_TEMP/viewpoint-analysis.json"
+          status="${PIPESTATUS[0]}"
+          set -e
+          if [[ "$status" -eq 0 ]]; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=failed" >> "$GITHUB_OUTPUT"
+            exit "$status"
+          fi
+
       - name: Enrich evidence-ready Events with Ark GLM-5.2
         id: enrichment
         if: ${{ env.MODEL_ENRICHMENT_ENABLED == 'true' }}
@@ -122,9 +147,11 @@ jobs:
           npm run --silent public:validate
           test -s dist/index.html
           test -s dist/data/industry-pilot.json
+          test -s dist/data/viewpoints.json
           test -s dist/data/sources.json
           grep -F '看清医疗健康数据要素的关键变化' dist/index.html >/dev/null
           node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/industry-pilot.json
+          node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/viewpoints.json
           node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/sources.json
           if grep -R -E '"(token|secret|password|cookie|authorization|api[_-]?key)"[[:space:]]*:' dist industry-packs/medical-health-data-elements/data; then
             echo "Sensitive material detected in public industry output" >&2
@@ -139,6 +166,7 @@ jobs:
           npx biome format --write
           "$REPOSITORY_SNAPSHOT_PATH"
           "$PILOT_REPORT"
+          "industry-packs/medical-health-data-elements/data/viewpoints.json"
           "$SOURCE_HEALTH_REPORT"
 
       - name: Commit measured pilot state
@@ -146,7 +174,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add -- "$REPOSITORY_SNAPSHOT_PATH" "$PILOT_REPORT" "$SOURCE_HEALTH_REPORT"
+          git add -- "$REPOSITORY_SNAPSHOT_PATH" "$PILOT_REPORT" "industry-packs/medical-health-data-elements/data/viewpoints.json" "$SOURCE_HEALTH_REPORT"
           git diff --check --cached
           if git diff --cached --quiet; then
             echo "No measured pilot changes."
@@ -173,6 +201,8 @@ jobs:
           path: |
             ${{ env.SOURCE_HEALTH_REPORT }}
             ${{ env.PILOT_REPORT }}
+            industry-packs/medical-health-data-elements/data/viewpoints.json
+            ${{ runner.temp }}/viewpoint-analysis.json
             ${{ runner.temp }}/ai-enrichment.json
           if-no-files-found: ignore
           retention-days: 14
@@ -183,12 +213,15 @@ jobs:
         run: |
           {
             echo "## Medical health data elements pilot"
+            echo "- Ark viewpoint analysis: ${{ steps.viewpoints.outputs.status || 'not-run' }}"
             echo "- Ark enrichment: ${{ steps.enrichment.outputs.status || 'not-run' }}"
             echo "- Snapshot changed: ${{ steps.commit.outputs.changed || 'unknown' }}"
             if [[ -s "$PILOT_REPORT" ]]; then
               echo "- Observed days: $(jq -r '.window.observedDays' "$PILOT_REPORT") / $(jq -r '.window.targetDays' "$PILOT_REPORT")"
               echo "- Collection success: $(jq -r '.collection.successRatePercent // "pending"' "$PILOT_REPORT")%"
               echo "- Multi-source Events: $(jq -r '.intelligence.multiSourceEvents' "$PILOT_REPORT")"
+              echo "- Viewpoints: $(jq -r '.intelligence.viewpoints' "$PILOT_REPORT")"
+              echo "- Model tokens: $(jq -r '.modelAnalysis.totalTokens' "$PILOT_REPORT")"
               echo "- Readiness: $(jq -r '.readiness' "$PILOT_REPORT")"
             fi
           } >> "$GITHUB_STEP_SUMMARY"

@@ -442,6 +442,7 @@ function industryPilotHome(model: StaticSiteModel, locale: Locale): string {
   const zh = locale === "zh-CN";
   const collectionRate = report.collection.successRatePercent;
   const evidenceRate = report.intelligence.highPriorityEvidenceCoveragePercent;
+  const viewpoints = model.industryViewpoints?.viewpoints ?? [];
   const recentSignals = model.signals.slice(0, 8);
   const sourceSample = [...model.sources]
     .sort(
@@ -491,11 +492,57 @@ function industryPilotHome(model: StaticSiteModel, locale: Locale): string {
       ${industryMetric(zh ? "规范化信号" : "Normalized signals", report.intelligence.signals, zh ? `最近 ${report.window.targetDays} 天` : `last ${report.window.targetDays} days`)}
       ${industryMetric(zh ? "多来源事件" : "Multi-source events", report.intelligence.multiSourceEvents, `${formatPercent(report.intelligence.multiSourceRatePercent, zh)} ${zh ? "事件占比" : "of events"}`)}
       ${industryMetric(zh ? "高优先级证据覆盖" : "High-priority evidence", formatPercent(evidenceRate, zh), `${report.intelligence.highPriorityEvents} ${zh ? "个高优先级事件" : "high-priority events"}`, evidenceRate === null ? "pending" : evidenceRate === 100 ? "pass" : "fail")}
+      ${industryMetric(zh ? "观点聚类" : "Viewpoint clusters", report.intelligence.viewpoints, `${report.intelligence.multiSourceViewpoints} ${zh ? "个有多来源关注" : "with multi-source attention"}`)}
+      ${industryMetric(zh ? "方舟分析" : "Ark analysis", report.modelAnalysis.status === "success" ? (zh ? "已运行" : "Ran") : zh ? "未完成" : "Incomplete", `${report.modelAnalysis.successfulDays} / ${report.modelAnalysis.targetDays} ${zh ? "天 · " : "days · "}${report.modelAnalysis.totalTokens} tokens`, report.modelAnalysis.status === "success" ? "pass" : "pending")}
     </div></section>
     <section class="section section-tint"><div class="shell"><header class="section-head"><div><span class="section-kicker">02 / WATCH MAP</span><h2>${zh ? "六条观察主线" : "Six monitoring tracks"}</h2></div></header><div class="industry-track-grid">${profile.tracks.map((track) => `<article style="--track:${escapeHtml(track.color)}"><span>${escapeHtml(track.icon)}</span><div><h3>${escapeHtml(track.name)}</h3><p>${escapeHtml(track.description)}</p></div></article>`).join("")}</div><div class="industry-audiences"><strong>${zh ? "关注对象" : "Audiences"}</strong>${profile.audiences.map((audience) => `<span>${escapeHtml(audience)}</span>`).join("")}</div></div></section>
     <section class="section shell"><header class="section-head section-head-action"><div><span class="section-kicker">03 / SOURCE HEALTH</span><h2>${zh ? "首批信源是否真的能跑" : "Can the first source set run reliably?"}</h2></div><a class="text-link" href="__PREFIX__sources/">${zh ? "查看全部信源" : "View all sources"} ${icon("arrow-right")}</a></header><div class="industry-source-grid">${sourceSample.map((source) => `<a href="${escapeHtml(source.homepageUrl)}" target="_blank" rel="noopener noreferrer"><i class="${escapeHtml(source.healthStatus)}"></i><div><strong>${escapeHtml(source.name)}</strong><small>Tier ${source.tier} · ${escapeHtml(source.acquisition)} · ${escapeHtml(source.healthStatus)}</small></div>${icon("external-link")}</a>`).join("")}</div></section>
-    <section class="section section-tint"><div class="shell"><header class="section-head"><div><span class="section-kicker">04 / TOP CANDIDATES</span><h2>${zh ? "等待人工判断的 Top 10" : "Top 10 candidates for human review"}</h2></div></header>${report.topCandidates.length ? `<div class="industry-top-list">${report.topCandidates.map((candidate, index) => `<a href="__PREFIX__events/${escapeHtml(candidate.slug)}/"><span>${String(index + 1).padStart(2, "0")}</span><div><small>${escapeHtml(formatDate(candidate.happenedAt, locale))} · ${candidate.sourceCount} ${zh ? "个独立来源" : "independent sources"}</small><strong>${escapeHtml(candidate.title)}</strong></div><b>${candidate.priorityScore}</b>${icon("arrow-right")}</a>`).join("")}</div>` : emptyState(zh ? "还没有通过发布门禁的候选" : "No candidate has cleared the publication gate", zh ? "完成证据审计、采集和规则核验后，这里会出现可回链原始证据的候选。" : "Candidates with original evidence will appear after evidence audit, collection, and deterministic review.")}<div class="industry-manual-grid">${manualItems.map((item) => `<article><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></article>`).join("")}</div></div></section>
-    <section class="section shell"><header class="section-head section-head-action"><div><span class="section-kicker">05 / LATEST OBSERVATIONS</span><h2>${zh ? "最近采集到的公开动态" : "Latest public source observations"}</h2></div><a class="text-link" href="__PREFIX__signals/">${zh ? "查看全部更新" : "View all updates"} ${icon("arrow-right")}</a></header>${recentSignals.length ? `<div class="signal-stream industry-signal-stream">${recentSignals.map((signal) => signalCard(signal, locale)).join("")}</div>` : emptyState(zh ? "尚未形成动态" : "No observations yet", zh ? "行业快照已与上游演示数据隔离，首轮真实采集完成后再显示内容。" : "The industry snapshot is isolated from upstream demo data and will show only live collection results.")}</section>`;
+    <section class="section section-tint"><div class="shell"><header class="section-head"><div><span class="section-kicker">04 / VIEWPOINT PULSE</span><h2>${zh ? "行业观点与关注度" : "Industry viewpoints and attention"}</h2><p>${zh ? "观点不等于事实；系统保留原始出处，并只用真实多来源或互动数据标记关注度。" : "Viewpoints are not facts. Attention labels require real multi-source or engagement evidence."}</p></div></header>${
+      viewpoints.length
+        ? `<div class="industry-viewpoint-grid">${viewpoints
+            .map(
+              (viewpoint) =>
+                `<article id="${escapeHtml(viewpoint.id)}"><div class="industry-viewpoint-meta"><span>${escapeHtml(viewpointNatureLabel(viewpoint.nature, zh))}</span><b class="heat-label ${escapeHtml(viewpoint.heatStatus)}">${escapeHtml(viewpointHeatLabel(viewpoint.heatStatus, zh))}</b></div><h3>${escapeHtml(viewpoint.claim)}</h3><p>${escapeHtml(viewpoint.summary)}</p><small>${viewpoint.sourceCount} ${zh ? "个来源" : "sources"} · ${viewpoint.authorCount} ${zh ? "位作者" : "authors"} · ${viewpoint.platformCount} ${zh ? "个平台" : "platforms"}</small><div class="industry-viewpoint-evidence">${viewpoint.evidence
+                  .slice(0, 3)
+                  .map((evidence) => {
+                    const url = safeExternalLink(evidence.url);
+                    return url
+                      ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(evidence.source)} ${icon("external-link")}</a>`
+                      : "";
+                  })
+                  .join("")}</div></article>`,
+            )
+            .join("")}</div>`
+        : emptyState(
+            zh ? "尚未形成观点聚类" : "No viewpoint clusters yet",
+            zh
+              ? "媒体、专家和行业观察信源通过真实采集与方舟受控归纳后在此展示。"
+              : "Clusters appear after live collection and bounded Ark analysis of media and expert sources.",
+          )
+    }</div></section>
+    <section class="section shell"><header class="section-head"><div><span class="section-kicker">05 / DECISION TOP 10</span><h2>${zh ? "事实与观点统一 Top 10" : "Unified fact and viewpoint Top 10"}</h2></div></header>${report.topItems.length ? `<div class="industry-top-list">${report.topItems.map((candidate, index) => `<a href="${candidate.kind === "fact" ? `__PREFIX__${escapeHtml(candidate.href)}` : escapeHtml(candidate.href)}"><span>${String(index + 1).padStart(2, "0")}</span><div><small>${candidate.kind === "fact" ? (zh ? "事实 Event" : "Fact Event") : zh ? "观点 Viewpoint" : "Viewpoint"} · ${escapeHtml(formatDate(candidate.happenedAt, locale))} · ${candidate.sourceCount} ${zh ? "个来源" : "sources"}</small><strong>${escapeHtml(candidate.title)}</strong><em>${escapeHtml(candidate.summary)}</em></div><b>${candidate.priorityScore}</b>${icon("arrow-right")}</a>`).join("")}</div>` : emptyState(zh ? "尚无可评审的 Top 10" : "No Top 10 items yet", zh ? "首轮媒体与专家采集、观点聚类和事实门禁完成后生成。" : "Generated after source collection, viewpoint clustering, and fact publication gates.")}<div class="industry-manual-grid">${manualItems.map((item) => `<article><span>${escapeHtml(item.label)}</span><strong>${escapeHtml(item.value)}</strong></article>`).join("")}</div></section>
+    <section class="section section-tint"><div class="shell"><header class="section-head section-head-action"><div><span class="section-kicker">06 / LATEST OBSERVATIONS</span><h2>${zh ? "最近采集到的公开动态" : "Latest public source observations"}</h2></div><a class="text-link" href="__PREFIX__signals/">${zh ? "查看全部更新" : "View all updates"} ${icon("arrow-right")}</a></header>${recentSignals.length ? `<div class="signal-stream industry-signal-stream">${recentSignals.map((signal) => signalCard(signal, locale)).join("")}</div>` : emptyState(zh ? "尚未形成动态" : "No observations yet", zh ? "行业快照已与上游演示数据隔离，首轮真实采集完成后再显示内容。" : "The industry snapshot is isolated from upstream demo data and will show only live collection results.")}</div></section>`;
+}
+
+function viewpointNatureLabel(nature: "opinion" | "analysis" | "forecast", zh: boolean): string {
+  return zh
+    ? { opinion: "观点", analysis: "分析", forecast: "预测" }[nature]
+    : { opinion: "Opinion", analysis: "Analysis", forecast: "Forecast" }[nature];
+}
+
+function viewpointHeatLabel(
+  status: "measured_hot" | "multi_source_attention" | "emerging",
+  zh: boolean,
+): string {
+  return zh
+    ? { measured_hot: "有互动热度", multi_source_attention: "多来源关注", emerging: "新出现" }[
+        status
+      ]
+    : {
+        measured_hot: "Measured engagement",
+        multi_source_attention: "Multi-source attention",
+        emerging: "Emerging",
+      }[status];
 }
 
 function industryMetric(

@@ -24,6 +24,7 @@ export async function resetIndustryIntelligence(
     await transaction.deleteFrom("scout_insights").execute();
     await transaction.deleteFrom("events").execute();
     await transaction.deleteFrom("signals").execute();
+    await transaction.deleteFrom("source_runs").execute();
     await transaction.deleteFrom("jobs").where("type", "=", "collect").execute();
     await transaction
       .updateTable("sources")

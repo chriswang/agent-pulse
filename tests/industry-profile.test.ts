@@ -40,16 +40,22 @@ describe("medical health data elements industry profile", () => {
       phase: "pilot",
       baselineDays: 30,
       historyLookbackDays: 30,
-      baselineStartDate: "2026-07-17",
-      validationStartDate: "2026-07-17",
+      baselineStartDate: "2026-07-18",
+      validationStartDate: "2026-07-18",
       durationDays: 7,
       targetChinaContentPercent: 80,
       minimumChineseReadySources: 12,
       maximumReadySourceAgeDays: 90,
     });
-    expect(profile.trial.readySourceSlugs).toHaveLength(23);
-    expect(sources.filter((source) => source.enabled)).toHaveLength(23);
-    expect(sources.filter((source) => source.enabled && source.region === "CN")).toHaveLength(20);
+    expect(profile.trial.readySourceSlugs).toHaveLength(21);
+    expect(sources.filter((source) => source.enabled)).toHaveLength(21);
+    expect(sources.filter((source) => source.enabled && source.region === "CN")).toHaveLength(18);
+    expect(
+      profile.sources.filter(
+        (source) =>
+          source.region === "CN" && ["expert", "media", "research", "heat"].includes(source.role),
+      ).length,
+    ).toBeGreaterThanOrEqual(4);
   });
 
   it("rejects duplicate source slugs", () => {
@@ -103,17 +109,17 @@ describe("medical health data elements industry profile", () => {
         db,
         requiredProfile(config.rootDir),
         config.rootDir,
-        "2026-07-17T00:00:00.000Z",
+        "2026-07-18T00:00:00.000Z",
       );
       expect(report).toMatchObject({
         readiness: "collecting",
         window: {
-          start: "2026-07-17T00:00:00.000Z",
-          end: "2026-07-23T00:00:00.000Z",
+          start: "2026-07-18T00:00:00.000Z",
+          end: "2026-07-24T00:00:00.000Z",
           targetDays: 7,
           observedDays: 0,
-          historyStart: "2026-06-17T00:00:00.000Z",
-          historyEnd: "2026-07-17T00:00:00.000Z",
+          historyStart: "2026-06-18T00:00:00.000Z",
+          historyEnd: "2026-07-18T00:00:00.000Z",
           historyLookbackDays: 30,
         },
         sources: {
@@ -125,6 +131,7 @@ describe("medical health data elements industry profile", () => {
         },
         collection: { status: "pending", successRatePercent: null },
         intelligence: { signals: 0, publishedEvents: 0 },
+        modelAnalysis: { status: "skipped", successfulDays: 0, totalTokens: 0 },
         manualReview: { status: "pending" },
       });
     } finally {
@@ -242,6 +249,8 @@ describe("medical health data elements industry profile", () => {
       expect(report.intelligence.publishedEvents).toBe(1);
       expect(report.intelligence.highPriorityEvents).toBe(0);
       expect(report.topCandidates).toEqual([]);
+      expect(report.topItems).toHaveLength(1);
+      expect(report.topItems[0]).toMatchObject({ kind: "fact", evidenceStatus: "primary_only" });
 
       await exportStaticSite(db, config);
       const integrity = await validatePublicSite(config.distDir, now);

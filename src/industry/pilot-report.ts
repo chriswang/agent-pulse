@@ -12,6 +12,7 @@ import {
   loadIndustryRules,
   scopeAssessmentFromSignal,
 } from "./rules.js";
+import { loadIndustryViewpoints } from "./viewpoints.js";
 
 const manualReviewSchema = z
   .object({
@@ -68,6 +69,17 @@ export interface IndustryPilotReport {
     multiSourceRatePercent: number | null;
     highPriorityEvents: number;
     highPriorityEvidenceCoveragePercent: number | null;
+    viewpoints: number;
+    multiSourceViewpoints: number;
+    measuredHotViewpoints: number;
+  };
+  modelAnalysis: {
+    provider: string;
+    name: string;
+    status: "success" | "failed" | "skipped";
+    successfulDays: number;
+    targetDays: number;
+    totalTokens: number;
   };
   topCandidates: Array<{
     slug: string;
@@ -77,6 +89,19 @@ export interface IndustryPilotReport {
     priorityScore: number;
     sourceCount: number;
     evidenceUrls: string[];
+  }>;
+  topItems: Array<{
+    id: string;
+    kind: "fact" | "viewpoint";
+    title: string;
+    summary: string;
+    happenedAt: string;
+    priorityScore: number;
+    sourceCount: number;
+    evidenceStatus: "independently_corroborated" | "primary_only" | "viewpoint_evidence";
+    rankingReason: string;
+    evidenceUrls: string[];
+    href: string;
   }>;
   manualReview: {
     clusteringAccuracyPercent: number | null;
@@ -111,38 +136,40 @@ export async function buildIndustryPilotReport(
     validationStart.getTime() - profile.trial.historyLookbackDays * 86_400_000,
   );
   const evidenceEndExclusive = new Date(reference.getTime() + 1);
-  const [sources, checks, events, runs, signalRows, manualReview] = await Promise.all([
-    repository.listSources(),
-    repository.latestSourceChecks(),
-    repository.publicEvents(),
-    db
-      .selectFrom("source_runs")
-      .innerJoin("sources", "sources.id", "source_runs.source_id")
-      .select([
-        "source_runs.status",
-        "source_runs.started_at as startedAt",
-        "source_runs.finished_at as finishedAt",
-        "sources.slug as sourceSlug",
-      ])
-      .where("source_runs.started_at", ">=", validationStart.toISOString())
-      .where("source_runs.started_at", "<", validationEndExclusive.toISOString())
-      .execute(),
-    db
-      .selectFrom("signals")
-      .innerJoin("sources", "sources.id", "signals.source_id")
-      .select([
-        "signals.title",
-        "signals.summary",
-        "signals.tags_json",
-        "signals.raw_meta_json",
-        "signals.created_at as createdAt",
-        "signals.published_at as publishedAt",
-        "sources.slug",
-        "sources.region",
-      ])
-      .execute(),
-    readManualReview(rootDir, profile.slug),
-  ]);
+  const [sources, checks, events, runs, signalRows, manualReview, viewpointReport] =
+    await Promise.all([
+      repository.listSources(),
+      repository.latestSourceChecks(),
+      repository.publicEvents(),
+      db
+        .selectFrom("source_runs")
+        .innerJoin("sources", "sources.id", "source_runs.source_id")
+        .select([
+          "source_runs.status",
+          "source_runs.started_at as startedAt",
+          "source_runs.finished_at as finishedAt",
+          "sources.slug as sourceSlug",
+        ])
+        .where("source_runs.started_at", ">=", validationStart.toISOString())
+        .where("source_runs.started_at", "<", validationEndExclusive.toISOString())
+        .execute(),
+      db
+        .selectFrom("signals")
+        .innerJoin("sources", "sources.id", "signals.source_id")
+        .select([
+          "signals.title",
+          "signals.summary",
+          "signals.tags_json",
+          "signals.raw_meta_json",
+          "signals.created_at as createdAt",
+          "signals.published_at as publishedAt",
+          "sources.slug",
+          "sources.region",
+        ])
+        .execute(),
+      readManualReview(rootDir, profile.slug),
+      loadIndustryViewpoints(profile.slug, rootDir),
+    ]);
   const automatedSlugs = new Set(
     profile.sources
       .filter(
@@ -282,12 +309,25 @@ export async function buildIndustryPilotReport(
     manualReview.dailyMinutesBefore,
     manualReview.dailyMinutesAfter,
   ].every((value) => value !== null);
+  const successfulModelRuns = viewpointReport.runs.filter(
+    (run) =>
+      run.status === "success" &&
+      run.date >= validationStart.toISOString().slice(0, 10) &&
+      run.date < validationEndExclusive.toISOString().slice(0, 10),
+  );
+  const modelSuccessfulDays = new Set(successfulModelRuns.map((run) => run.date)).size;
+  const totalModelTokens = viewpointReport.runs.reduce(
+    (total, run) => total + run.usage.totalTokens,
+    0,
+  );
   const deterministicReady =
     observedDays >= targetDays &&
     automatedRuns.length > 0 &&
     chineseReadyPublishers.size >= profile.trial.minimumChineseReadySources &&
     multiSourceEvents.length > 0 &&
-    highPriorityEvents.length > 0;
+    highPriorityEvents.length > 0 &&
+    viewpointReport.viewpoints.length > 0 &&
+    modelSuccessfulDays >= targetDays;
   const readiness: IndustryPilotReport["readiness"] = !deterministicReady
     ? "collecting"
     : !manualComplete
@@ -345,6 +385,20 @@ export async function buildIndustryPilotReport(
       multiSourceRatePercent: percent(multiSourceEvents.length, eventsInWindow.length),
       highPriorityEvents: highPriorityEvents.length,
       highPriorityEvidenceCoveragePercent: percent(evidenceReady.length, highPriorityEvents.length),
+      viewpoints: viewpointReport.viewpoints.length,
+      multiSourceViewpoints: viewpointReport.viewpoints.filter((item) => item.sourceCount >= 2)
+        .length,
+      measuredHotViewpoints: viewpointReport.viewpoints.filter(
+        (item) => item.heatStatus === "measured_hot",
+      ).length,
+    },
+    modelAnalysis: {
+      provider: viewpointReport.model.provider,
+      name: viewpointReport.model.name,
+      status: viewpointReport.model.status,
+      successfulDays: modelSuccessfulDays,
+      targetDays,
+      totalTokens: totalModelTokens,
     },
     topCandidates: [...highPriorityEvents]
       .sort(
@@ -362,6 +416,42 @@ export async function buildIndustryPilotReport(
         sourceCount: sourceCount(event),
         evidenceUrls: event.evidence.map((evidence) => evidence.url),
       })),
+    topItems: [
+      ...eventsInWindow.map((event) => ({
+        id: event.slug,
+        kind: "fact" as const,
+        title: event.title,
+        summary: event.factSummary,
+        happenedAt: event.happenedAt,
+        priorityScore: priorityScore(event),
+        sourceCount: sourceCount(event),
+        evidenceStatus: (sourceCount(event) >= 2 ? "independently_corroborated" : "primary_only") as
+          | "independently_corroborated"
+          | "primary_only",
+        rankingReason: `影响 ${event.impactScore} · 业务价值 ${event.valueScore} · 可信度 ${event.confidenceScore} · 关注度 ${event.heatScore}`,
+        evidenceUrls: event.evidence.map((evidence) => evidence.url),
+        href: `events/${event.slug}/`,
+      })),
+      ...viewpointReport.viewpoints.map((viewpoint) => ({
+        id: viewpoint.id,
+        kind: "viewpoint" as const,
+        title: viewpoint.claim,
+        summary: viewpoint.whyItMatters,
+        happenedAt: viewpoint.publishedAt,
+        priorityScore: viewpointPriorityScore(viewpoint),
+        sourceCount: viewpoint.sourceCount,
+        evidenceStatus: "viewpoint_evidence" as const,
+        rankingReason: `关注度 ${viewpoint.heatScore} · ${viewpoint.sourceCount} 个独立发布方 · ${viewpoint.authorCount} 位作者`,
+        evidenceUrls: viewpoint.evidence.map((evidence) => evidence.url),
+        href: `#${viewpoint.id}`,
+      })),
+    ]
+      .sort(
+        (left, right) =>
+          right.priorityScore - left.priorityScore ||
+          right.happenedAt.localeCompare(left.happenedAt),
+      )
+      .slice(0, profile.trial.topN),
     manualReview: {
       clusteringAccuracyPercent: manualReview.clusteringAccuracyPercent,
       top10DecisionValueCount: manualReview.top10DecisionValueCount,
@@ -398,6 +488,21 @@ function priorityScore(event: EnrichedEvent): number {
       event.confidenceScore * 0.2 +
       event.heatScore * 0.1,
   );
+}
+
+function viewpointPriorityScore(viewpoint: {
+  heatScore: number;
+  sourceCount: number;
+  authorCount: number;
+  evidence: Array<{ sourceTier: number }>;
+}): number {
+  const authority = viewpoint.evidence.some((item) => item.sourceTier === 1)
+    ? 90
+    : viewpoint.evidence.some((item) => item.sourceTier === 2)
+      ? 75
+      : 55;
+  const corroboration = Math.min(100, viewpoint.sourceCount * 35 + viewpoint.authorCount * 10);
+  return Math.round(viewpoint.heatScore * 0.4 + authority * 0.35 + corroboration * 0.25);
 }
 
 function publicIndustrySignalCount(

@@ -204,6 +204,12 @@
   display: block;
   margin-top: 4px;
 }
+.industry-top-list em {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font: 400 13px / 1.55 var(--sans);
+}
 .industry-top-list a > b {
   color: var(--fact);
   font-size: 20px;
@@ -224,6 +230,52 @@
   margin-top: 9px;
   font-size: 22px;
 }
+.industry-viewpoint-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.industry-viewpoint-grid article {
+  padding: 22px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+.industry-viewpoint-grid h3 {
+  margin: 14px 0 8px;
+  font-size: 20px;
+}
+.industry-viewpoint-grid p,
+.industry-viewpoint-grid small {
+  color: var(--muted);
+}
+.industry-viewpoint-meta,
+.industry-viewpoint-evidence {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.industry-viewpoint-meta span,
+.industry-viewpoint-meta .heat-label,
+.industry-viewpoint-evidence a {
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  font: 11px / 1.4 var(--mono);
+}
+.industry-viewpoint-meta b.measured_hot {
+  color: var(--danger);
+}
+.industry-viewpoint-meta b.multi_source_attention {
+  color: var(--fact);
+}
+.industry-viewpoint-evidence {
+  margin-top: 14px;
+}
+.industry-viewpoint-evidence a {
+  text-decoration: none;
+}
 .industry-signal-stream {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -232,6 +284,9 @@
   .industry-score-grid,
   .industry-track-grid,
   .industry-source-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .industry-viewpoint-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .industry-pilot-hero-grid {
@@ -245,6 +300,9 @@
   .industry-source-grid,
   .industry-manual-grid,
   .industry-signal-stream {
+    grid-template-columns: 1fr;
+  }
+  .industry-viewpoint-grid {
     grid-template-columns: 1fr;
   }
   .industry-pilot-hero {
