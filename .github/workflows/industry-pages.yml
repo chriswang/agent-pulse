@@ -49,7 +49,7 @@ jobs:
           npm run --silent public:validate
           test -s dist/index.html
           test -s dist/data/industry-pilot.json
-          grep -F '看清医疗健康数据要素的关键变化' dist/index.html >/dev/null
+          grep -F '医疗健康数据要素情报站' dist/index.html >/dev/null
           node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' dist/data/industry-pilot.json
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
