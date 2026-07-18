@@ -19,7 +19,7 @@ describe("provider-neutral JSON model client", () => {
           choices: [
             {
               finish_reason: "stop",
-              message: { content: '```json\n{"ok":true}\n```' },
+              message: { content: '结果如下：\n```json\n{"ok":true}\n```\n请查收。' },
             },
           ],
           usage: { prompt_tokens: 9, completion_tokens: 5, total_tokens: 14 },
@@ -47,6 +47,35 @@ describe("provider-neutral JSON model client", () => {
       value: { ok: true },
       model: "glm-5.2",
       usage: { promptTokens: 9, completionTokens: 5, totalTokens: 14 },
+    });
+  });
+
+  it("preserves token usage on invalid JSON errors", async () => {
+    const config = loadConfig({
+      NODE_ENV: "test",
+      DATABASE_URL: "sqlite::memory:",
+      MODEL_PROVIDER: "ark",
+      MODEL_API_KEY: "ark-secret-value",
+      MODEL_BASE_URL: "https://ark.cn-beijing.volces.com/api/coding/v3",
+      MODEL_NAME: "glm-5.2",
+      MODEL_JSON_MODE: "prompt-only",
+    });
+    const client = createJsonModelClient(config, {
+      maxAttempts: 1,
+      fetch: async () =>
+        new Response(
+          JSON.stringify({
+            model: "glm-5.2",
+            choices: [{ finish_reason: "stop", message: { content: "not json" } }],
+            usage: { prompt_tokens: 11, completion_tokens: 7, total_tokens: 18 },
+          }),
+          { status: 200 },
+        ),
+    });
+
+    await expect(client.completeJson({ system: "system", user: "user" })).rejects.toMatchObject({
+      code: "invalid_json",
+      usage: { promptTokens: 11, completionTokens: 7, totalTokens: 18 },
     });
   });
 
