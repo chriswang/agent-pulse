@@ -82,7 +82,9 @@
       "sourceCount": 1,
       "evidenceStatus": "primary_only",
       "rankingReason": "影响 80 · 业务价值 59 · 可信度 78 · 关注度 19",
-      "evidenceUrls": ["https://www.nhsa.gov.cn/art/2026/7/15/art_14_21434.html"],
+      "evidenceUrls": [
+        "https://www.nhsa.gov.cn/art/2026/7/15/art_14_21434.html"
+      ],
       "href": "events/国家金融监督管理总局上海监管局-上海市医疗保障局等7部门印发-关于促进商业健康保险高质量发展助力生物医药产业创新的若干措施-的通知-2026-07-18/"
     },
     {
@@ -115,21 +117,6 @@
         "https://www.chima.org.cn/Html/News/Articles/17915.html"
       ],
       "href": "#viewpoint-b5891a55f7cc0958"
-    },
-    {
-      "id": "viewpoint-89b7f35b9a5684b7",
-      "kind": "viewpoint",
-      "title": "HL7 Da Vinci DTR标准可实现可复用、可扩展的预先授权工具",
-      "summary": "预先授权是医保与商保理赔关键环节，DTR标准通过FHIR问卷标准化可减少人工干预，提升授权效率与数据互操作性。",
-      "happenedAt": "2026-06-18T19:35:21.000Z",
-      "priorityScore": 40,
-      "sourceCount": 1,
-      "evidenceStatus": "viewpoint_evidence",
-      "rankingReason": "关注度 0 · 1 个独立发布方 · 0 位作者",
-      "evidenceUrls": [
-        "https://blog.hl7.org/building-reusable-scalable-prior-authorization-tools-a-case-study-in-policy-digitization-and-hl7-da-vinci-dtr-implementation"
-      ],
-      "href": "#viewpoint-89b7f35b9a5684b7"
     }
   ],
   "manualReview": {
