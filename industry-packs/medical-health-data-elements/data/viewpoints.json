@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "profileSlug": "medical-health-data-elements",
-  "generatedAt": "2026-07-18T01:54:44.683Z",
+  "generatedAt": "2026-07-18T01:58:50.439Z",
   "model": {
     "provider": "ark",
     "name": "glm-5.2",
     "status": "failed",
-    "inputHash": "1286f211d27711bc6b3b589c04335f4a50e8b63bac92bda9b787a06546a0fda2",
+    "inputHash": "bc1365d151ef4bcb1d6f89d0caf30caa282605990672b798cdc730e595c88a41",
     "usage": {
       "promptTokens": 0,
       "completionTokens": 0,
@@ -19,7 +19,7 @@
       "status": "failed",
       "candidates": 16,
       "clusters": 0,
-      "inputHash": "1286f211d27711bc6b3b589c04335f4a50e8b63bac92bda9b787a06546a0fda2",
+      "inputHash": "bc1365d151ef4bcb1d6f89d0caf30caa282605990672b798cdc730e595c88a41",
       "usage": {
         "promptTokens": 0,
         "completionTokens": 0,
