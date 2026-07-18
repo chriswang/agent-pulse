@@ -259,6 +259,16 @@ describe("medical health data elements industry profile", () => {
         counts: { events: 0, signals: 0, actors: 0, sources: 30 },
       });
       expect(integrity.issues).toEqual([]);
+      const home = await readFile(join(config.distDir, "index.html"), "utf8");
+      expect(home).toContain("医疗健康数据要素情报站");
+      expect(home).toContain("正在形成的行业方向");
+      expect(home).toContain("重点事件");
+      expect(home).toContain("值得关注的观点与文章");
+      expect(home).toContain("最新来源动态");
+      expect(home).not.toContain("BASELINE SCORECARD");
+      expect(home).not.toContain("SOURCE HEALTH");
+      expect(home).not.toContain("采集成功率");
+      expect(home).not.toContain("tokens");
       const policyTrackPage = await readFile(join(config.distDir, "lines/index.html"), "utf8");
       expect(policyTrackPage).toContain("国家数据局 · 通知公告");
       expect(policyTrackPage).not.toContain("暂无匹配来源");
